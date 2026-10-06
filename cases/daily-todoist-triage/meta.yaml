@@ -1,0 +1,73 @@
+schema_version: 1
+id: daily-todoist-triage
+title: 毎朝のTodoist整理をAIへ委譲
+status: validated
+publication: draft
+category: scheduled-automation
+tags:
+- chatgpt
+- todoist
+- triage
+- delegation
+- automation
+summary: 複数の入力経路からたまるTodoistのInboxをAIが整理し、人間が決めた期限・優先度・除外ルールで毎朝の運用を設定する。
+platforms:
+- ChatGPT
+modes:
+- work
+- scheduled
+human_roles:
+- 毎朝確認する習慣に合わせた周期の選択
+- 優先度の基準と繰り返しプロジェクトの除外を決定
+- 整理結果の確認と例外判断
+- 本人が担う作業と実際の対応
+ai_roles:
+- Inboxの読み取り、分類、順序整理、サブタスク化
+- 所要時間の推定と委譲先のラベル付け
+- 変更可能な予定と確定期限を区別して期限を整理
+- スケジュールの登録と指示文の更新
+- 架空テストの準備と変更後の読み取り確認
+verification:
+  checked_on: '2026-10-06'
+  confirmed:
+  - 初回のInbox整理後も既存98件の未完了タスクを保持し、分類・ラベル・親子関係・日付を読み取り確認
+  - 2分以内・10分以内・30分以内・30分超・Workに委譲・ClaudeCodeに委譲・本人対応・AI補助・いつかの9種類のラベルを作成
+  - 本人が整理結果とタグを確認し、優先度の修正後の内容を了承
+  - 優先度修正後はP1が0件、P2が6件、P3が0件、P4が92件で、日付・ラベル・親子関係の維持を確認
+  - 毎日06:00 Asia/Tokyoのスケジュールが有効で、初回を2026-10-07に設定
+  - 同じ日次スケジュールの日曜実行に週次見直しを含めた
+  - 有効スケジュール数の上限に対応し、本人の承認で既存の関連する週次処理を統合した後に日次処理を登録
+  - 架空のテスト7件を、優先度P4・ラベルなし・日付なし・親なしで登録し、初期状態を確認
+  - 繰り返しプロジェクトの完全除外、その他のプロジェクトの期限確認を読み取り限定、変更対象をInbox限定とする指示を保存
+  - 日付がある13件の説明欄に出所と扱いを追記し、日付自体を変更していないことを確認
+  - 大きな目標の現状確認と次の一件の選択を行うサブタスクを1件追加
+  - 最後の読み取り確認で106件（既存98件・架空テスト7件・次の一手1件）を確認
+  - 最後の追記時には既存タスクの名前・優先度・日付・ラベル・親子関係を保持し、架空テストの初期状態も維持
+  unconfirmed:
+  - 2026-10-07朝の初回自動実行とTodoist更新の成否
+  - 架空テストの分類・タグ・親子関係・優先度・日付の結果
+  - 自動実行を繰り返した際の重複抑制と本人の変更の保持
+  - 日曜の週次見直しと他プロジェクトの期限確認の実行結果
+  - 所要時間推定と委譲先判定の正確さ
+  - 委譲候補の作業を別のAIが実際に完了すること
+  - 本人の削減時間と継続運用の効果
+evidence:
+- type: user-confirmed-conversation
+  description: このチャットでの本人の依頼、整理結果の了承、優先度の修正、繰り返しの除外指定を一般化して記録。
+- type: tool-write-and-readback
+  description: このチャットでTodoistへの変更と再取得を行い、件数・変更対象・保持対象を確認。私的なタスク本文やIDは保存しない。
+- type: automation-metadata
+  description: このチャットでスケジュールを登録・更新し、有効状態・周期・指示文を再取得して確認。初回実行の成功はまだ確認していない。
+- type: test-fixtures
+  description: 重要かつ緊急、重要だが緊急でない、短時間、コード作業、関連する調査2件、文脈不明の計7件を準備。架空タスクを実作業や今日の作業量へ混ぜない指示を保存。
+outcomes:
+  measured: false
+  notes: 初回整理と運用設定は確認済み。自動実行の成功率、判定精度、削減時間は未測定。
+visual:
+  cover: cover.png
+  kind: conceptual-diagram
+  language: ja
+  explanation: null
+  source: cases/daily-todoist-triage/figure.py
+links:
+  related_case: ../scheduled-reviews/
