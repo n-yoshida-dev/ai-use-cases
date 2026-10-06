@@ -19,4 +19,9 @@ outcomes:
 visual:
   cover: cover.png
   kind: conceptual-diagram
+  language: ja
+  explanation: null
+  source: null
 links: {}
+platforms: []
+modes: []

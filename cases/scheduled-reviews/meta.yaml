@@ -7,6 +7,9 @@ outcomes:
 visual:
   cover: cover.png
   kind: conceptual-diagram
+  language: ja
+  explanation: flow.png
+  source: scripts/render_covers.py
 links: {}
 id: scheduled-reviews
 title: スケジュールによる定期レビュー
@@ -36,3 +39,7 @@ verification:
 evidence:
 - type: automation-metadata
   description: 2026-10-06に既存タスクの有効状態・指示・実行日時を読み取り確認。実行日時だけで成功とは判定しない。
+platforms:
+- ChatGPT
+modes:
+- scheduled

@@ -7,6 +7,9 @@ outcomes:
 visual:
   cover: cover.png
   kind: conceptual-diagram
+  language: ja
+  explanation: flow.png
+  source: scripts/render_covers.py
 links: {}
 id: youtube-playlist-cleanup
 title: YouTubeマイリスト整理をAIへ委譲
@@ -35,3 +38,7 @@ verification:
 evidence:
 - type: user-confirmed-conversation
   description: 2026-10-06の本人発言と本チャットに提示された文脈。完了した作業ログは未取得。
+platforms:
+- ChatGPT
+modes:
+- work
