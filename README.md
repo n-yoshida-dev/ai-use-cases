@@ -2,6 +2,17 @@
 
 ChatGPT・Claude.aiのチャット／Work／スケジュール（Claude Codeのルーティンを含む）で、AIへ任せる作業と人間の判断を設計した事例集。図から概要をつかみ、気になるケースへ進めます。
 
+## 仕組み全体
+
+| 日々のタスク管理 | 文脈と読書の循環 |
+| --- | --- |
+| [![Todoistへ集まる入力と毎日の整理](systems/daily-task-hub/cover.png)](systems/daily-task-hub/) | [![複数AI・コンテキスト・読書の連携](systems/context-reading-loop/cover.png)](systems/context-reading-loop/) |
+| **[メール・音声・手入力から実行へ](systems/daily-task-hub/)** | **[会話の文脈から次に読む本へ](systems/context-reading-loop/)** |
+
+[全体構成の一覧](systems/README.md)
+
+## 個別ケース
+
 | GUI作業の委譲 | 定期レビューの自動化 | 毎朝のメール仕分け |
 | --- | --- | --- |
 | [![YouTube整理の仕組み](cases/youtube-playlist-cleanup/cover.png)](cases/youtube-playlist-cleanup/) | [![定期レビューの仕組み](cases/scheduled-reviews/cover.png)](cases/scheduled-reviews/) | [![メール仕分けの仕組み](cases/daily-email-triage/cover.png)](cases/daily-email-triage/) |

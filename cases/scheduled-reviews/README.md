@@ -23,4 +23,6 @@ AIが最新情報と記録を確認・分析し、人間が提案を評価して
 
 </details>
 
+[文脈と読書の全体像](../../systems/context-reading-loop/)
+
 [一覧へ戻る](../../README.md)

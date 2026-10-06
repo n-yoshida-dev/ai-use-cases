@@ -1,0 +1,105 @@
+schema_version: 1
+kind: system-overview
+visual:
+  cover: cover.png
+  language: ja
+  source: figure.py
+  render: python figure.py /path/to/NotoSansJP.ttf
+  dependencies:
+  - Python 3
+  - Pillow
+  - scripts/figkit.py
+  - 日本語フォント
+id: daily-task-hub
+title: メール・音声・手入力から実行へ
+summary: Todoistを共有のタスク置き場に、複数の登録経路と毎日の整理をつなぐ。
+related_cases:
+- daily-email-triage
+- daily-todoist-triage
+nodes:
+- id: gmail
+  role: メールの入力元
+  source: Gmail
+  privacy: private
+- id: claude
+  role: 毎朝のメール仕分け・登録
+  source: cases/daily-email-triage
+  privacy: private
+- id: voice
+  role: 本人の音声入力
+  source: iPhoneアクションボタン
+  privacy: private
+- id: manual
+  role: 本人の手入力
+  source: アプリ・ブラウザ
+  privacy: private
+- id: todoist
+  role: タスクの正本・Inbox
+  source: Todoist
+  privacy: private
+- id: chatgpt
+  role: Inboxの毎日整理
+  source: cases/daily-todoist-triage
+  privacy: private
+- id: person
+  role: 判断・対応・実行
+  source: 本人
+  privacy: private
+edges:
+- source: gmail
+  target: claude
+  operation: read
+  flow: information
+  evidence: repository-confirmed
+- source: claude
+  target: todoist
+  operation: write
+  flow: information
+  evidence: repository-confirmed
+- source: voice
+  target: todoist
+  operation: write
+  flow: information
+  evidence: user-reported
+- source: manual
+  target: todoist
+  operation: write
+  flow: information
+  evidence: user-reported
+- source: todoist
+  target: chatgpt
+  operation: read
+  flow: information
+  evidence: repository-confirmed
+- source: chatgpt
+  target: todoist
+  operation: write
+  flow: information
+  evidence: initial-run-confirmed; daily-schedule-configured
+- source: todoist
+  target: person
+  operation: read-and-act
+  flow: information
+  evidence: user-reported
+verification:
+  checked_on: '2026-10-06'
+  confirmed:
+  - メール仕分けケースの設定・出力記録
+  - Todoist整理の初回実行・日次設定
+  user_reported:
+  - メールからの登録は最大5件
+  - iPhoneの音声とアプリ・ブラウザからの入力
+  unconfirmed:
+  - Claude.aiという今回の説明と、ケースのClaude Codeルーティン記録の実行環境の一致
+  - 音声登録の中継手段
+  - 確認メールの登録条件
+  - 日次整理の次回実行成功
+  - 同日のメール仕分けとタスク整理の実行順序
+constraints:
+- 繰り返しプロジェクトは参照・変更・報告から除外
+- 自動整理の書き込みはInboxのみ
+- 各定期処理は独立・連続実行保証なし
+evidence:
+- cases/daily-email-triage/README.md
+- cases/daily-todoist-triage/README.md
+- 本人の今回の説明

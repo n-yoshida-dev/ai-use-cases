@@ -1,0 +1,113 @@
+schema_version: 1
+kind: system-overview
+visual:
+  cover: cover.png
+  language: ja
+  source: figure.py
+  render: python figure.py /path/to/NotoSansJP.ttf
+  dependencies:
+  - Python 3
+  - Pillow
+  - scripts/figkit.py
+  - 日本語フォント
+id: context-reading-loop
+title: 会話の文脈から次に読む本へ
+summary: 複数AIの会話から残す非公開文脈と、公開の読書記録を週次レビューでつなぐ。
+related_cases:
+- scheduled-reviews
+nodes:
+- id: chatgpt-chat
+  role: 自サービスの会話差分
+  source: ChatGPT
+  privacy: private
+- id: claude-chat
+  role: 自サービスの会話差分
+  source: Claude.ai
+  privacy: private
+- id: context
+  role: 長期文脈の正本
+  source: https://github.com/n-yoshida-dev/personal-ai-context
+  privacy: private
+- id: review
+  role: 文脈・読書記録・参照可能な最近の会話を読み、順位とレビューを更新
+  source: ChatGPT週次読書レビュー
+  privacy: private
+- id: reading
+  role: 本・進捗・感想・読後アクション・順位・レビューの正本
+  source: https://github.com/n-yoshida-dev/reading-log
+  privacy: public
+- id: pages
+  role: 本棚と次に読む本の表示
+  source: reading-logのGitHub Pages
+  privacy: public
+- id: person
+  role: 読む・本人の感想を会話で記録
+  source: 本人
+  privacy: private
+edges:
+- source: chatgpt-chat
+  target: context
+  operation: write-delta
+  flow: information
+  evidence: protocol-and-schedule-confirmed
+- source: claude-chat
+  target: context
+  operation: write-delta
+  flow: information
+  evidence: repository-protocol-confirmed; live-setting-unverified
+- source: context
+  target: review
+  operation: read
+  flow: information
+  evidence: schedule-configured
+- source: chatgpt-chat
+  target: review
+  operation: read-available-recent-chat
+  flow: information
+  evidence: schedule-configured
+- source: reading
+  target: review
+  operation: read
+  flow: information
+  evidence: schedule-configured
+- source: review
+  target: reading
+  operation: write-order-and-review
+  flow: information
+  evidence: schedule-configured
+- source: reading
+  target: pages
+  operation: display
+  flow: information
+  evidence: repository-confirmed
+- source: pages
+  target: person
+  operation: read-and-act
+  flow: information
+  evidence: repository-confirmed
+- source: person
+  target: reading
+  operation: write-via-chat
+  flow: information
+  evidence: repository-protocol-confirmed
+verification:
+  checked_on: '2026-10-06'
+  confirmed:
+  - 両リポジトリのREADMEとAI運用ルール
+  - ChatGPTの週次読書・コンテキスト更新の有効設定
+  user_reported: []
+  unconfirmed:
+  - Claude側の現行スケジュール設定
+  - 各実行での保存成功
+  - 読書推薦の効果
+constraints:
+- 読書レビューはpersonal-ai-contextへ書き戻さない
+- 非公開の個人情報や会話全文をreading-logへ転記しない
+- 公開の理由は必要な範囲に一般化
+- 各サービスは自サービスの会話差分を記録し、書き込み直前に最新mainを確認
+- 別々の定期実行を同週更新完了待ちのイベント連鎖と扱わない
+evidence:
+- cases/scheduled-reviews/README.md
+- 'reading-log: README.md・AI_RULES.md'
+- 'personal-ai-context: README.md・meta/update-protocol.md（公開可能な運用関係のみ）'
+- ChatGPTの有効な定期実行設定（確認日の状態）

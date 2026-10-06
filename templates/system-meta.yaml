@@ -1,0 +1,18 @@
+schema_version: 1
+kind: system-overview
+id: system-id
+title: タイトル
+summary: 複数のケースと入力・正本をつなぐ概要
+related_cases: []
+nodes: []
+edges: []
+verification:
+  checked_on: null
+  confirmed: []
+  user_reported: []
+  unconfirmed: []
+evidence: []
+visual:
+  cover: cover.png
+  language: ja
+  source: figure.py
