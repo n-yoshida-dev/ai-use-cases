@@ -1,0 +1,53 @@
+schema_version: 1
+id: daily-email-triage
+title: 毎朝のメール仕分けをAIへ委譲
+status: validated
+publication: draft
+category: scheduled-automation
+tags:
+- claude
+- gmail
+- triage
+- automation
+summary: ルールで先にノイズを外し、残りをAIが毎朝読んで仕分け、必要な日だけ通知する。
+human_roles:
+- 判定基準の決定（修正は必要なときだけ）
+- メールの整理と実際の対応
+ai_roles:
+- 未読メールの判定
+- ラベル付け
+- タスク登録
+- 通知
+verification:
+  checked_on: '2026-10-06'
+  confirmed:
+  - ルーティンが有効で、毎朝の実行に設定されている
+  - 2026-10-06朝の実行記録がある
+  - 仕分け用ラベルが付いたメールがある（要対応22件・要確認102件）
+  - タスク登録用の送信が20通ある（2026-08-16〜2026-10-06）
+  - 直近2回の送信は、Todoist側でタスクが作られたことまで確認
+  unconfirmed:
+  - 判定の正確さ（見逃し・過剰な通知の件数）
+  - プッシュ通知の到達
+  - 本人の削減時間
+evidence:
+- type: automation-metadata
+  description: 2026-10-06にルーティンの有効状態・周期・指示・直近の実行記録を読み取り確認。実行記録だけで成功とは判定しない。
+- type: output-inspection
+  description: 2026-10-06にGmailのラベル・送信記録とTodoistのタスクを、件数と日時で確認。メール本文は保存していない。
+- type: procedure-document
+  description: 非公開の手順書（判定基準・手順・設計理由）を読み、仕組みを一般化して記載。
+outcomes:
+  measured: false
+  notes: 削減時間・判定精度は未測定
+visual:
+  cover: cover.png
+  kind: conceptual-diagram
+  language: ja
+  explanation: flow.png
+  source: cases/daily-email-triage/figure.py
+links: {}
+platforms:
+- Claude Code
+modes:
+- scheduled
