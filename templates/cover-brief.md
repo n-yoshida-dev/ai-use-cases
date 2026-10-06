@@ -19,3 +19,9 @@
 編集元：`scripts/render_covers.py`。Python 3、Pillow、日本語フォントが必要。
 Google FontsのNoto Sans JP等を用意し、`python scripts/render_covers.py --font /absolute/path/NotoSansJP.ttf` を実行する。
 フォント本体は同梱しない。生成後は両ケースのcover.png・flow.pngの欠字・はみ出し・重なりを目視確認する。
+
+## 3件目以降の生成
+
+編集元：`cases/<id>/figure.py`。絵の部品（人物・画面・封筒・時計など）は `scripts/figkit.py` を使う。
+`python cases/<id>/figure.py --font /absolute/path/日本語フォント` で、そのケースの図だけを生成する。
+フォントが違うと見た目が同じでもPNGのバイナリが変わるため、他ケースの画像は再生成しない。
