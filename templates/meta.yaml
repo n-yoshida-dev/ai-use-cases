@@ -1,0 +1,22 @@
+schema_version: 1
+id: case-id
+title: タイトル
+status: captured
+publication: draft
+category: computer-use
+tags: []
+summary: 公開用の短い要約
+human_roles: []
+ai_roles: []
+verification:
+  checked_on: null
+  confirmed: []
+  unconfirmed: []
+evidence: []
+outcomes:
+  measured: false
+  notes: 未測定
+visual:
+  cover: cover.png
+  kind: conceptual-diagram
+links: {}

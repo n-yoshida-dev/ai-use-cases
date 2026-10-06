@@ -1,0 +1,38 @@
+schema_version: 1
+status: captured
+publication: draft
+outcomes:
+  measured: false
+  notes: 削減時間・成功率は未測定
+visual:
+  cover: cover.png
+  kind: conceptual-diagram
+links: {}
+id: scheduled-reviews
+title: スケジュールによる定期レビュー
+category: scheduled-automation
+tags:
+- chatgpt
+- reviews
+- automation
+summary: 定期的な情報確認・分析をスケジュールで実行し、人間が提案を評価する。
+human_roles:
+- 目的・周期・判断基準の設定
+- 提案の採否と次の行動
+ai_roles:
+- 記録取得
+- 情報収集と分析
+- 許可範囲の保存・更新
+- 報告
+verification:
+  checked_on: '2026-10-06'
+  confirmed:
+  - 既存の週次処理が有効
+  - 週次読書レビューとコンテキスト更新に2026-10-04の実行日時記録がある
+  unconfirmed:
+  - 各実行の成果物の正確性
+  - 保存・更新の成功
+  - 本人の削減時間
+evidence:
+- type: automation-metadata
+  description: 2026-10-06に既存タスクの有効状態・指示・実行日時を読み取り確認。実行日時だけで成功とは判定しない。

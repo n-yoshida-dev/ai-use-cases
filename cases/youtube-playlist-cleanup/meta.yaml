@@ -1,0 +1,37 @@
+schema_version: 1
+status: captured
+publication: draft
+outcomes:
+  measured: false
+  notes: 削減時間・成功率は未測定
+visual:
+  cover: cover.png
+  kind: conceptual-diagram
+links: {}
+id: youtube-playlist-cleanup
+title: YouTubeマイリスト整理をAIへ委譲
+category: computer-use
+tags:
+- youtube
+- gui
+- delegation
+summary: 整理方針を人間が決め、GUI上の棚卸し・分類・操作をAIへ委譲する。
+human_roles:
+- 残す基準と整理方針
+- 例外判断
+ai_roles:
+- 棚卸し
+- 分類・統合候補抽出
+- 許可範囲のGUI操作
+verification:
+  checked_on: '2026-10-06'
+  confirmed:
+  - 本人が整理操作をWorkへ依頼したこと
+  - 作成・削除・統合も依頼範囲に含むこと
+  unconfirmed:
+  - 実際の変更件数
+  - 完了結果
+  - 変更前後の比較
+evidence:
+- type: user-confirmed-conversation
+  description: 2026-10-06の本人発言と本チャットに提示された文脈。完了した作業ログは未取得。
