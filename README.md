@@ -20,12 +20,12 @@ ChatGPT・Claude.aiのチャット／Work／スケジュール（Claude Codeの�
 | AIが棚卸し・分類・操作を担当。人間が整理方針を決める。 | AIが定期的に情報を確認・分析。人間が方針と次の行動を決める。 | AIが毎朝読んで仕分け・通知。人間が判定基準を決め、対応する。 |
 | 記録済み：作業依頼と方針／完了結果は未確認 | 設定・実行履歴を確認／成果物と効果は未検証 | 設定・出力を確認／判定の正確さと効果は未測定 |
 
-| 毎朝のタスク整理 |
-| --- |
-| [![Todoist整理の仕組み](cases/daily-todoist-triage/cover.png)](cases/daily-todoist-triage/) |
-| **[毎朝のTodoist整理](cases/daily-todoist-triage/)** |
-| AIがInboxの分類・期限・順序を整理。人間が優先度と除外範囲を決める。 |
-| 初回整理・設定を確認／翌朝の自動実行とテスト結果は未確認 |
+| 毎朝のタスク整理 | ブックマークの整理 |
+| --- | --- |
+| [![Todoist整理の仕組み](cases/daily-todoist-triage/cover.png)](cases/daily-todoist-triage/) | [![保存から活用への仕組み](cases/bookmark-to-action/cover.png)](cases/bookmark-to-action/) |
+| **[毎朝のTodoist整理](cases/daily-todoist-triage/)** | **[ブックマークを使える情報へ](cases/bookmark-to-action/)** |
+| AIがInboxの分類・期限・順序を整理。人間が優先度と除外範囲を決める。 | AIが分類・移行。人間が保存先・例外・使う情報を決める。 |
+| 初回整理・設定を確認／翌朝の自動実行とテスト結果は未確認 | 初回整理と週次設定を確認／定期実行・効果は未検証 |
 
 図は仕組みの概念図です。実画面や実績の証拠ではありません。
 

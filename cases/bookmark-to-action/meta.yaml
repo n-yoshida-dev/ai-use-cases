@@ -1,0 +1,51 @@
+schema_version: 1
+id: bookmark-to-action
+title: ブックマークを使える情報へ整理
+status: validated
+publication: published
+category: information-organization
+tags: [bookmarks, delegation, classification, automation]
+summary: 一時保存をAIが棚卸しし、保存庫・購入検討・実行タスク・行き先へ振り分ける。
+platforms: [ChatGPT]
+modes: [work, scheduled]
+human_roles:
+- 保存先の役割と最新wishlistを指定
+- 分類設計を委譲し、残す基準と例外を判断
+- 週次の周期を選択し、実際に読む・買う・訪問する
+ai_roles:
+- 棚卸しと分類・タグの設計
+- 各保存先での重複確認・移行・読書候補選定
+- 移行先を確認した後に一時保存を解除
+- 変更履歴と保全の記録、週次設定
+verification:
+  checked_on: '2026-10-12'
+  confirmed:
+  - Xの一時保存を移行し再読み込みで状態を確認
+  - Raindropの分類・未整理状態・重複を照合
+  - 最新wishlist・Todoistの買い物・Mapsへ用途に応じて登録
+  - Mapsの改名・分類・移動を保存先の表示で確認
+  - 旧wishlistを保持し対応・メモ・画像参照を確認
+  - 本人が選んだ週次スケジュールを登録し有効状態を確認
+  unconfirmed:
+  - 次回以降の定期実行、ログイン維持、継続時の重複防止
+  - 旧画像ファイルの同一性と埋め込みの完全な移行
+  - 読書推薦の効果、削減時間、分類精度
+evidence:
+- type: user-confirmed-conversation
+  description: 保存先・分類委譲・最新DB・個別例外・週次日時の本人指定を一般化して記録。
+- type: tool-write-and-readback
+  description: このチャットで保存先・移動状態を確認。私的な利用件数・非公開URL・個別の内容・住所・タスクIDは掲載しない。
+- type: automation-metadata
+  description: 週次の登録結果でACTIVEを確認。将来の実行成功とは区別する。
+outcomes:
+  measured: false
+  notes: 初回整理と設定は確認済み。時間削減と継続運用の効果は未測定。
+visual:
+  cover: cover.png
+  kind: conceptual-diagram
+  language: ja
+  explanation: null
+  source: cases/bookmark-to-action/figure.py
+links:
+  related_system: ../../systems/daily-task-hub/
+  related_case: ../youtube-playlist-cleanup/
