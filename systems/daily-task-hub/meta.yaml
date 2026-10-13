@@ -16,7 +16,12 @@ summary: Todoistを共有のタスク置き場に、複数の登録経路と毎�
 related_cases:
 - daily-email-triage
 - daily-todoist-triage
+- bookmark-to-action
 nodes:
+- id: bookmarks
+  role: 週次のブックマーク振り分けから近々の買い物を登録
+  source: cases/bookmark-to-action
+  privacy: private
 - id: gmail
   role: メールの入力元
   source: Gmail
@@ -46,6 +51,11 @@ nodes:
   source: 本人
   privacy: private
 edges:
+- source: bookmarks
+  target: todoist
+  operation: write-shopping-project
+  flow: information
+  evidence: initial-run-confirmed; weekly-schedule-configured
 - source: gmail
   target: claude
   operation: read
@@ -82,10 +92,11 @@ edges:
   flow: information
   evidence: user-reported
 verification:
-  checked_on: '2026-10-06'
+  checked_on: '2026-10-12'
   confirmed:
   - メール仕分けケースの設定・出力記録
   - Todoist整理の初回実行・日次設定
+  - ブックマーク整理から買い物プロジェクトへの初回登録と週次設定
   user_reported:
   - メールからの登録は最大5件
   - iPhoneの音声とアプリ・ブラウザからの入力
@@ -95,11 +106,14 @@ verification:
   - 確認メールの登録条件
   - 日次整理の次回実行成功
   - 同日のメール仕分けとタスク整理の実行順序
+  - ブックマーク整理の週次自動実行成功
 constraints:
 - 繰り返しプロジェクトは参照・変更・報告から除外
-- 自動整理の書き込みはInboxのみ
+- 日次Inbox整理の書き込みはInboxのみ
 - 各定期処理は独立・連続実行保証なし
+- ブックマークからの登録先は買い物プロジェクトで日次Inbox整理の対象外
 evidence:
 - cases/daily-email-triage/README.md
 - cases/daily-todoist-triage/README.md
+- cases/bookmark-to-action/README.md
 - 本人の今回の説明
