@@ -42,7 +42,7 @@ def jar(x, y, level, c):
         fk.d.ellipse((cx - 11, cy - 11, cx + 11, cy + 11), fill=fk.AMBER, outline='#8f5a22', width=2)
 
 
-fk.begin('お小遣いの買い物計画をAIと組む', '欲しいものの入力はNotionのまま → AIが積立を分けた計画を画面にする')
+fk.begin('お小遣いの買い物計画をAIと組む', '欲しいものの入力はNotionのまま → AIが点数で並べた計画を画面にする')
 
 # 左：本人が画像つきで入れる欲しいもの（正本）
 wish_db(90, 262)
@@ -58,16 +58,17 @@ fk.centered(720, 526, '読む・計算する', 24, fk.GRAY)
 fk.dashed_arrow([(585, 412), (345, 412)], fk.FAINT, 4)
 fk.centered(465, 422, '決めたら反映', 22, fk.GRAY)
 
-# 右：計画を見る画面（積立を2つに分ける）
+# 右：計画を見る画面（積立はひとつ。高すぎる物は保留）
 fk.arrow([(860, 365), (945, 365)])
 fk.centered(898, 320, '画面を作る', 21, fk.TEAL)
 fk.rr((960, 236, 1370, 600), 'white', fk.BLUE, 3, 14)
 fk.d.rounded_rectangle((962, 238, 1368, 276), radius=12, fill='#e7eef6')
 fk.text(984, 242, '買う順番の計画', 22, fk.BLUE)
-jar(1010, 316, .35, fk.TEAL)
-fk.centered(1065, 458, '高いもの用', 23)
-jar(1200, 316, .7, fk.BLUE)
-fk.centered(1255, 458, '普段のもの用', 23)
+jar(1010, 316, .55, fk.TEAL)
+fk.centered(1065, 458, '積立はひとつ', 23)
+fk.rr((1200, 330, 1310, 448), 'white', fk.FAINT, 3, 18)
+fk.centered(1255, 372, '保留', 26, fk.GRAY)
+fk.centered(1255, 458, '高すぎる物', 23, fk.GRAY)
 for k in range(3):
     ry = 506 + k * 30
     fk.d.ellipse((1000, ry - 10, 1020, ry + 10), fill=fk.TEAL)
