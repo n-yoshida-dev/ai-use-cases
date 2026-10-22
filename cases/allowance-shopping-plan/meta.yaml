@@ -1,0 +1,56 @@
+schema_version: 1
+id: allowance-shopping-plan
+title: お小遣いの買い物計画をAIと組む
+status: captured
+publication: draft
+category: decision-support
+tags:
+- claude
+- notion
+- artifact
+- budgeting
+summary: 欲しいものはNotionに置いたまま、AIが積立を「高いもの用」「普段のもの用」に分けた買い物計画を画面にし、本人は画面を見て順番を相談する。
+human_roles:
+- 欲しいものを画像つきでNotionへ入力
+- 積立の分け方と買う順の最終判断
+- 計画画面を見て、隣のチャットで順番を相談
+ai_roles:
+- Notionの欲しいものデータベースの読み取り（claude.aiのNotionコネクタ）
+- 積立を2つに分けた計画と買う順の計算
+- 計画画面（アーティファクト）の作成と更新
+- 決まったことの画面とNotionへの反映（Notionは本人の了承後）
+verification:
+  checked_on: '2026-10-22'
+  confirmed:
+  - 非公開の手順書・作業メモ・計画画面の元ファイルがある
+  - 2026-10-22に、Notionの読み取りと初回の計画画面の公開を作業メモで確認
+  - 計画画面のアーティファクトが存在することを一覧で確認
+  user_reported:
+  - 欲しいものの正本はNotionのまま、表示だけアーティファクトにする（本人の決定）
+  - 順番の相談は計画画面を見ながら隣のチャットで行う（本人の決定）
+  - 以前、Notionから別の置き場へ移す仕組みを作ったが使いづらく、Notionに戻った
+  unconfirmed:
+  - 積立の分け方と買う順の確定（初回は仮の割合と並べ方）
+  - 相談で決まったことのNotionへの反映
+  - 2回目以降の更新と月ごとの継続
+  - 高いものの段階分け・欲しい度の棚卸しの機械化（改善中の論点）
+  - 計画どおりに買えたか、満足度などの効果
+evidence:
+- type: procedure-document
+  description: 非公開の手順書と作業メモを読み、仕組みを一般化して記載。金額・商品名・価格・合計・残高・NotionのURLやID・画面のURLは掲載しない。
+- type: artifact-metadata
+  description: 2026-10-22にアーティファクトの一覧で計画画面の存在と更新日を確認。画面の中身は掲載しない。
+outcomes:
+  measured: false
+  notes: 試作段階。効果は未測定
+visual:
+  cover: cover.png
+  kind: conceptual-diagram
+  language: ja
+  explanation: null
+  source: cases/allowance-shopping-plan/figure.py
+links: {}
+platforms:
+- Claude Code
+modes:
+- work

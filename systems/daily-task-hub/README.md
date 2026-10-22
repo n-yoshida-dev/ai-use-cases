@@ -19,6 +19,8 @@
 
 メールケースの記録では実行環境はClaude Codeのルーティン、今回の本人説明ではClaude.aiと呼ばれているため、全体図では「Claude側」とする。最大5件の上限と音声経路は本人説明に基づき、設定を直接検証していない。要確認メールの全件タスク化も未確認。
 
+2026-10-21からは、整理後のTodoistを各リポジトリの作業・予定と並べて1日の時刻割りにする[横断タスクボード](../cross-task-board/)を別の全体構成として試用中。そこではClaude Codeが本人の指示を受けたときだけ、Todoistのタスクを完了・日付変更する。
+
 関連する個別ケース：[メール仕分け](../../cases/daily-email-triage/) ／ [Todoist整理](../../cases/daily-todoist-triage/) ／ [ブックマーク整理](../../cases/bookmark-to-action/)
 
 [全体構成一覧](../README.md) ／ [トップ](../../README.md)

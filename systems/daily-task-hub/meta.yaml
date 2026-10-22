@@ -17,6 +17,8 @@ related_cases:
 - daily-email-triage
 - daily-todoist-triage
 - bookmark-to-action
+related_systems:
+- cross-task-board
 nodes:
 - id: bookmarks
   role: 週次のブックマーク振り分けから近々の買い物を登録

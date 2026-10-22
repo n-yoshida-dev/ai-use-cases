@@ -1,0 +1,125 @@
+schema_version: 1
+kind: system-overview
+visual:
+  cover: cover.png
+  language: ja
+  source: figure.py
+  render: python figure.py /path/to/NotoSansJP.ttf
+  dependencies:
+  - Python 3
+  - Pillow
+  - scripts/figkit.py
+  - 日本語フォント
+id: cross-task-board
+title: 今日やることを1枚のボードにまとめる
+summary: Todoist・予定・各リポジトリの作業・人間待ち・開発状況をClaude Codeが集め、時刻つきのボードにして本人が実行する。
+related_cases:
+- daily-todoist-triage
+related_systems:
+- daily-task-hub
+nodes:
+- id: todoist
+  role: 個人タスクの正本（Inboxと各プロジェクト。買い物・繰り返しは読まない）
+  source: Todoist
+  privacy: private
+- id: calendar
+  role: 今日・明日の予定
+  source: Googleカレンダー
+  privacy: private
+- id: repos
+  role: 学習・アプリ開発・執筆・雑務の計画と引き継ぎ
+  source: 本人の各リポジトリ（ローカル）
+  privacy: private
+- id: beads
+  role: 人間待ち（判断・レビュー・作業）の付箋
+  source: Beads（ローカル）
+  privacy: private
+- id: dashboards
+  role: 各アプリの開発状況
+  source: 各リポジトリのダッシュボード生成スクリプト
+  privacy: private
+- id: claude
+  role: 入力を読み、今日・明日の予定を時刻で組む。指示に応じてTodoistへ反映
+  source: Claude Code（PCのローカルのセッション）
+  privacy: private
+- id: board
+  role: スケジュール・分野別タスク・開発状況の表示。中身はアーティファクトのデータベースが正本
+  source: Claudeのアーティファクト「横断タスクボード」
+  privacy: private
+- id: person
+  role: ボードを見て実行、チェック・声で指示
+  source: 本人
+  privacy: private
+edges:
+- source: todoist
+  target: claude
+  operation: read
+  flow: information
+  evidence: work-log-confirmed
+- source: calendar
+  target: claude
+  operation: read
+  flow: information
+  evidence: work-log-confirmed
+- source: repos
+  target: claude
+  operation: read
+  flow: information
+  evidence: work-log-confirmed
+- source: beads
+  target: claude
+  operation: read
+  flow: information
+  evidence: work-log-confirmed
+- source: dashboards
+  target: board
+  operation: collect-and-publish
+  flow: information
+  evidence: work-log-confirmed (2026-10-22, 4件中4件成功)
+- source: claude
+  target: board
+  operation: write-database
+  flow: information
+  evidence: work-log-confirmed (書き込み件数とデータベースの件数の一致)
+- source: board
+  target: person
+  operation: read-and-act
+  flow: information
+  evidence: user-reported
+- source: person
+  target: claude
+  operation: instruct-by-voice
+  flow: trigger
+  evidence: work-log-confirmed
+- source: claude
+  target: todoist
+  operation: complete-or-reschedule-on-instruction
+  flow: information
+  evidence: work-log-confirmed (反映後に未完了の一覧から消えたことを確認)
+verification:
+  checked_on: '2026-10-22'
+  confirmed:
+  - 非公開の手順書・作業メモ・ボードの元ファイルと、関連するコミット履歴
+  - 2026-10-21にクラウドのセッションで初回のボードを作成
+  - 同日、PCのClaudeデスクトップ（WSL）のセッションでTodoist・カレンダー・アーティファクトとデータベースが使えることを確認
+  - ボードへの書き込み件数とデータベースの件数の一致（作業記録）
+  - 本人の指示によるTodoistの完了・日付変更と、反映後の確認（作業記録）
+  - 2026-10-22に開発状況タブを追加し、取り込みスクリプトが4件中4件成功（作業記録）
+  - ボードのアーティファクトが存在することを一覧で確認
+  user_reported:
+  - データを見る場所を分散させたくない（開発状況をボードに入れた理由）
+  - タスクの名前だけでは、どこで何をやればいいか分からない（作業フォルダを出した理由）
+  unconfirmed:
+  - 継続的な毎日の利用（記録は2日分）
+  - 優先順位の付け方の改善・時間の節約などの効果
+  - Todoistへの反映漏れの有無（検証手順はあるが、継続の記録はない）
+  - 毎朝のTodoist整理とボード作成の実行順序（独立に動く）
+constraints:
+- 自動実行はしない。本人の依頼で作る
+- クラウドのセッションではPCの中（未push・ローカルのBeads）が見えない
+- Todoistの完了・リスケ・削除は本人の指示があるときだけ
+- タスクの説明欄にある金額・口座の情報はボードにも作業メモにも写さない
+evidence:
+- 非公開の手順書・作業メモ（公開可能な仕組みのみ一般化）
+- 関連するコミット履歴（2026-10-21〜22）
+- アーティファクトの一覧（2026-10-22）

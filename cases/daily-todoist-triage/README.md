@@ -19,6 +19,6 @@
 
 削減時間・継続運用の効果は未測定。
 
-[タスク管理の全体像](../../systems/daily-task-hub/)
+[タスク管理の全体像](../../systems/daily-task-hub/) ／ [横断タスクボード](../../systems/cross-task-board/)
 
 [一覧へ戻る](../../README.md)
