@@ -29,7 +29,7 @@ nodes:
   source: Gmail
   privacy: private
 - id: claude
-  role: 毎朝のメール仕分け・登録
+  role: 毎朝のメール仕分け・登録。2026-10-28からはChatGPTの毎朝の処理の前段（idは移行前の名前のまま）
   source: cases/daily-email-triage
   privacy: private
 - id: voice
@@ -88,31 +88,36 @@ edges:
   operation: write
   flow: information
   evidence: initial-run-confirmed; daily-schedule-configured
+- source: claude
+  target: chatgpt
+  operation: same-run-sequence
+  flow: trigger
+  evidence: user-reported（2026-10-28から、メール仕分けの後に同じ処理でInbox整理へ進む）
 - source: todoist
   target: person
   operation: read-and-act
   flow: information
   evidence: user-reported
 verification:
-  checked_on: '2026-10-12'
+  checked_on: '2026-10-29'
   confirmed:
-  - メール仕分けケースの設定・出力記録
+  - メール仕分けケースの設定・出力記録（移行後のラベル付与を含む）
+  - メール仕分けの旧実行環境（Claude Codeのルーティン）の停止
   - Todoist整理の初回実行・日次設定
   - ブックマーク整理から買い物プロジェクトへの初回登録と週次設定
   user_reported:
-  - メールからの登録は最大5件
+  - メールからの登録は最大5件（移行前の説明。移行後の手順書に上限は無い）
+  - メール仕分けとInbox整理を同じ毎朝の処理で順に実行し、2026-10-29朝の初回で報告が届いた
   - iPhoneの音声とアプリ・ブラウザからの入力
   unconfirmed:
-  - Claude.aiという今回の説明と、ケースのClaude Codeルーティン記録の実行環境の一致
   - 音声登録の中継手段
   - 確認メールの登録条件
   - 日次整理の次回実行成功
-  - 同日のメール仕分けとタスク整理の実行順序
   - ブックマーク整理の週次自動実行成功
 constraints:
 - 繰り返しプロジェクトは参照・変更・報告から除外
 - 日次Inbox整理の書き込みはInboxのみ
-- 各定期処理は独立・連続実行保証なし
+- メール仕分けとInbox整理は同じ毎朝の処理で順に実行（2026-10-28から）。それ以外の定期処理は独立・連続実行保証なし
 - ブックマークからの登録先は買い物プロジェクトで日次Inbox整理の対象外
 evidence:
 - cases/daily-email-triage/README.md

@@ -6,37 +6,53 @@ publication: draft
 category: scheduled-automation
 tags:
 - claude
+- chatgpt
 - gmail
 - triage
 - automation
-summary: ルールで先にノイズを外し、残りをAIが毎朝読んで仕分け、毎朝通知する（0件の日も）。
+summary: ルールで先にノイズを外し、残りをAIが毎朝読んで仕分け、毎朝通知する（0件の日も）。2026-10-28にClaude CodeのルーティンからChatGPTの毎朝のTodoist整理の前段へ移した。
 human_roles:
 - 判定基準の決定（修正は必要なときだけ）
+- 実行するAIを移す判断
 - メールの整理と実際の対応
 ai_roles:
 - 未読メールの判定
 - ラベル付け
 - タスク登録
 - 通知
+history:
+- period: 2026-08-15〜2026-10-28
+  platform: Claude Code
+  form: 毎朝7時のルーティン。タスク登録は、追加しかできないメール経由の経路に絞った
+- period: 2026-10-28〜
+  platform: ChatGPT
+  form: 毎朝6時のTodoist整理のスケジュールの前段。Todoistへ直接登録し、続けて同じ実行でInboxを整理する
 verification:
-  checked_on: '2026-10-23'
+  checked_on: '2026-10-29'
   confirmed:
-  - ルーティンが有効で、毎朝の実行に設定されている（2026-10-06に確認）
-  - 2026-10-06朝の実行記録がある
-  - 仕分け用ラベルが付いたメールがある（要対応30件・要確認156件。2026-10-23）
-  - タスク登録用の送信が27通ある（2026-08-16〜2026-10-22）
-  - 2026-10-06時点の直近2回の送信は、Todoist側でタスクが作られたことまで確認
+  - ルーティンが有効で、毎朝の実行に設定されている（2026-10-06に確認。移行前）
+  - 2026-10-06朝の実行記録がある（移行前）
+  - 仕分け用ラベルが付いたメールがある（要対応30件・要確認156件。2026-10-23。移行前）
+  - タスク登録用の送信が27通ある（2026-08-16〜2026-10-22。移行前）
+  - 2026-10-06時点の直近2回の送信は、Todoist側でタスクが作られたことまで確認（移行前）
+  - 2026-10-28にClaude Codeのルーティンを停止した（停止後の設定を読み取り確認）
+  - ルーティン停止後に届いたメール2通に要確認ラベルが付いている（2026-10-29に件数と受信日時で確認。要対応は0件で、Todoistのメール由来タスクも0件と一致）
+  user_reported:
+  - ChatGPTのスケジュールからラベルの付け外しができた（2026-10-28の試し）
+  - 移行後の手動実行（2026-10-28夜）と、2026-10-29朝の初回で報告が届いた
   unconfirmed:
   - 判定の正確さ（見逃し・過剰な通知の件数）
-  - プッシュ通知の到達
+  - ChatGPT移行後のTodoistへのタスク登録（要対応がまだ0件のため）
   - 本人の削減時間
 evidence:
 - type: automation-metadata
-  description: 2026-10-06にルーティンの有効状態・周期・指示・直近の実行記録を読み取り確認。実行記録だけで成功とは判定しない。
+  description: 2026-10-06にルーティンの有効状態・周期・指示・直近の実行記録を読み取り確認。2026-10-28に停止後の状態を確認。実行記録だけで成功とは判定しない。
 - type: output-inspection
-  description: 2026-10-06と2026-10-23にGmailのラベル・送信記録を件数と日時で確認（Todoistのタスクは2026-10-06）。メール本文は保存していない。
+  description: 2026-10-06・2026-10-23・2026-10-29にGmailのラベル・送信記録を件数と日時で確認（Todoistのタスクは2026-10-06と2026-10-29）。メール本文は保存していない。
 - type: procedure-document
-  description: 非公開の手順書（判定基準・手順・設計理由）を読み、仕組みを一般化して記載。
+  description: 非公開の手順書（判定基準・手順・設計理由）を読み、仕組みを一般化して記載。移行時に手順書をChatGPT向けに書き換えた。
+- type: user-confirmed-conversation
+  description: 移行の判断、ChatGPTでの試しと初回実行の報告は、Claude Codeでの本人との会話による。ChatGPTのスケジュール設定そのものはClaudeから読めない。
 outcomes:
   measured: false
   notes: 削減時間・判定精度は未測定
@@ -46,8 +62,10 @@ visual:
   language: ja
   explanation: flow.png
   source: cases/daily-email-triage/figure.py
-links: {}
+links:
+  related_case: ../daily-todoist-triage/
 platforms:
 - Claude Code
+- ChatGPT
 modes:
 - scheduled
