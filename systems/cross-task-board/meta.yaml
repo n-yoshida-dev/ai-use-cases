@@ -12,7 +12,7 @@ visual:
   - 日本語フォント
 id: cross-task-board
 title: 今日やることを1枚のボードにまとめる
-summary: Todoist・予定・各リポジトリの作業・人間待ち・開発状況をClaude Codeが集め、時刻つきのボードにして本人が実行する。
+summary: Todoist・予定・各リポジトリの作業・人間待ち（各リポジトリのTODO.md）・開発状況をClaude Codeが集め、時刻つきのボードにして本人が実行する。
 related_cases:
 - daily-cross-task-board
 - daily-todoist-triage
@@ -31,9 +31,9 @@ nodes:
   role: 学習・アプリ開発・執筆・雑務の計画と引き継ぎ
   source: 本人の各リポジトリ（ローカル）
   privacy: private
-- id: beads
-  role: 人間待ち（判断・レビュー・作業）の付箋
-  source: Beads（ローカル）
+- id: repo-todos
+  role: 人間待ち（判断・レビュー・本人の作業）とタスクの正本。2026-10-29までは付箋の箱（Beads）に写していた
+  source: 各リポジトリ直下のTODO.md（点検スクリプトがまとめて読む）
   privacy: private
 - id: dashboards
   role: 各アプリの開発状況
@@ -71,11 +71,11 @@ edges:
   operation: read
   flow: information
   evidence: work-log-confirmed
-- source: beads
+- source: repo-todos
   target: claude
-  operation: read
+  operation: read-check-result
   flow: information
-  evidence: work-log-confirmed
+  evidence: procedure-document (2026-10-29に手順書とスキルを点検スクリプトの結果を読む形に変更。運用の記録はまだ無い)
 - source: dashboards
   target: board
   operation: collect-and-publish
@@ -118,6 +118,8 @@ verification:
   - ボードのアーティファクトが存在することを一覧で確認
   - 2026-10-23〜28に、夜の時間割の型・平日日中の配分の枠・「AIに任せる」タブ・依頼文で別の会話へ渡すスキルを追加（手順書・作業メモ）
   - 2026-10-29時点で作業記録は8日分
+  - 2026-10-29に人間待ちの置き場を付箋の箱（Beads）から各リポジトリのTODO.mdへ移し、ボードの手順書・スキルを点検スクリプトの結果を読む形に直した（手順書・スキルのコミット）
+  - 移行前の調査で、付箋の箱は生きている64件のうち30件が作成後一度も更新されていなかった（非公開の調査記録）
   user_reported:
   - データを見る場所を分散させたくない（開発状況をボードに入れた理由）
   - タスクの名前だけでは、どこで何をやればいいか分からない（作業フォルダを出した理由）
@@ -126,9 +128,10 @@ verification:
   - 優先順位の付け方の改善・時間の節約などの効果
   - Todoistへの反映漏れの有無（検証手順はあるが、継続の記録はない）
   - 毎朝のTodoist整理とボード作成の実行順序（独立に動く）
+  - 点検スクリプトのフック（会話の始め・コミットの直後）への組み込みと、TODO.mdへ移したあとの運用（2026-10-29時点で組み込み中）
 constraints:
 - 自動実行はしない。本人の依頼で作る
-- クラウドのセッションではPCの中（未push・ローカルのBeads）が見えない
+- クラウドのセッションではPCの中（未pushの変更）が見えない
 - Todoistの完了・リスケ・削除は本人の指示があるときだけ
 - タスクの説明欄にある金額・口座の情報はボードにも作業メモにも写さない
 evidence:

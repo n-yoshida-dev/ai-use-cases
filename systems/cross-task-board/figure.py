@@ -24,13 +24,16 @@ def folder(x, y, w=78, h=62, c=f.TEAL):
     f.d.line((x + 14, y + 46, x + w - 28, y + 46), fill=f.LINE, width=5)
 
 
-def sticky(x, y, s=68):
-    f.d.polygon([(x, y), (x + s, y), (x + s, y + s - 18), (x + s - 18, y + s), (x, y + s)],
-                fill=f.NOTE, outline=f.AMBER)
-    f.d.line([(x, y), (x + s, y), (x + s, y + s - 18), (x + s - 18, y + s), (x, y + s), (x, y)],
+def todo_page(x, y, s=68):
+    """各リポジトリのTODO.md（チェックボックスのある文書）"""
+    f.d.polygon([(x, y), (x + s - 16, y), (x + s, y + 16), (x + s, y + s), (x, y + s)],
+                fill='white', outline=f.AMBER)
+    f.d.line([(x, y), (x + s - 16, y), (x + s, y + 16), (x + s, y + s), (x, y + s), (x, y)],
              fill=f.AMBER, width=3, joint='curve')
-    f.d.line((x + 12, y + 22, x + s - 14, y + 22), fill=f.AMBER, width=5)
-    f.d.line((x + 12, y + 38, x + s - 26, y + 38), fill=f.AMBER, width=5)
+    for k in range(2):
+        by = y + 18 + k * 22
+        f.d.rectangle((x + 10, by, x + 22, by + 12), outline=f.AMBER, width=3)
+        f.d.line((x + 30, by + 6, x + s - 12 - k * 12, by + 6), fill=f.AMBER, width=5)
 
 
 def bars(x, y, w=78, h=64):
@@ -43,11 +46,11 @@ def bars(x, y, w=78, h=64):
 f.begin('今日やることを、1枚のボードに', 'タスク・予定・リポジトリの作業を集め、時刻つきの計画にする')
 
 # 左：入力（読むだけ）
-rows = [(272, 'Todoist'), (382, 'カレンダー'), (492, '各リポジトリ'), (602, '人間待ちの付箋'), (712, 'アプリの開発状況')]
+rows = [(272, 'Todoist'), (382, 'カレンダー'), (492, '各リポジトリ'), (602, '人間待ちのTODO'), (712, 'アプリの開発状況')]
 f.checklist(84, 218, 90, 108)
 calendar(86, 350)
 folder(86, 460)
-sticky(91, 568)
+todo_page(91, 568)
 bars(86, 680)
 for cy, label in rows:
     f.text(186, cy - 18, label, 25)
