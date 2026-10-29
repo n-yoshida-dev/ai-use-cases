@@ -14,6 +14,7 @@ id: cross-task-board
 title: 今日やることを1枚のボードにまとめる
 summary: Todoist・予定・各リポジトリの作業・人間待ち・開発状況をClaude Codeが集め、時刻つきのボードにして本人が実行する。
 related_cases:
+- daily-cross-task-board
 - daily-todoist-triage
 related_systems:
 - daily-task-hub
@@ -45,6 +46,10 @@ nodes:
 - id: board
   role: スケジュール・分野別タスク・開発状況の表示。中身はアーティファクトのデータベースが正本
   source: Claudeのアーティファクト「横断タスクボード」
+  privacy: private
+- id: other-sessions
+  role: 別のリポジトリの作業を行う、そのフォルダの新しい会話
+  source: Claude Code（各リポジトリ）
   privacy: private
 - id: person
   role: ボードを見て実行、チェック・声で指示
@@ -96,8 +101,13 @@ edges:
   operation: complete-or-reschedule-on-instruction
   flow: information
   evidence: work-log-confirmed (反映後に未完了の一覧から消えたことを確認)
+- source: claude
+  target: other-sessions
+  operation: handoff-prompt-pasted-by-person
+  flow: information
+  evidence: work-log-confirmed (依頼文を作り、本人が貼った会話の結果をあとで確認)
 verification:
-  checked_on: '2026-10-22'
+  checked_on: '2026-10-29'
   confirmed:
   - 非公開の手順書・作業メモ・ボードの元ファイルと、関連するコミット履歴
   - 2026-10-21にクラウドのセッションで初回のボードを作成
@@ -106,11 +116,13 @@ verification:
   - 本人の指示によるTodoistの完了・日付変更と、反映後の確認（作業記録）
   - 2026-10-22に開発状況タブを追加し、取り込みスクリプトが4件中4件成功（作業記録）
   - ボードのアーティファクトが存在することを一覧で確認
+  - 2026-10-23〜28に、夜の時間割の型・平日日中の配分の枠・「AIに任せる」タブ・依頼文で別の会話へ渡すスキルを追加（手順書・作業メモ）
+  - 2026-10-29時点で作業記録は8日分
   user_reported:
   - データを見る場所を分散させたくない（開発状況をボードに入れた理由）
   - タスクの名前だけでは、どこで何をやればいいか分からない（作業フォルダを出した理由）
   unconfirmed:
-  - 継続的な毎日の利用（記録は2日分）
+  - 毎日の継続利用（記録は8日分。記録の無い日がある）
   - 優先順位の付け方の改善・時間の節約などの効果
   - Todoistへの反映漏れの有無（検証手順はあるが、継続の記録はない）
   - 毎朝のTodoist整理とボード作成の実行順序（独立に動く）
@@ -121,5 +133,5 @@ constraints:
 - タスクの説明欄にある金額・口座の情報はボードにも作業メモにも写さない
 evidence:
 - 非公開の手順書・作業メモ（公開可能な仕組みのみ一般化）
-- 関連するコミット履歴（2026-10-21〜22）
+- 関連するコミット履歴（2026-10-21〜29）
 - アーティファクトの一覧（2026-10-22）

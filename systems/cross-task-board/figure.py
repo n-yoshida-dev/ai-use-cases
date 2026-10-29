@@ -92,5 +92,5 @@ f.centered(884, 722, '声で指示', 22, f.AMBER)
 f.dashed_arrow([(620, 372), (620, 198), (129, 198), (129, 214)], f.FAINT, 4)
 f.centered(400, 208, '指示した分だけ反映', 21, f.GRAY)
 
-f.footer('2026-10-21から試用（記録は2日分）／ 自動実行はしない ／ 効果は未測定')
+f.footer('2026-10-21から試用（記録は8日分）／ 自動実行はしない ／ 効果は未測定')
 f.im.quantize(colors=96).save(Path(__file__).with_name('cover.png'), optimize=True)

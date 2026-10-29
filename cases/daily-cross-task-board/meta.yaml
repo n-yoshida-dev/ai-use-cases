@@ -1,0 +1,63 @@
+schema_version: 1
+id: daily-cross-task-board
+title: 横断タスクボードで今日と明日を組む
+status: captured
+publication: draft
+category: decision-support
+tags:
+- claude
+- todoist
+- google-calendar
+- artifact
+- beads
+- scheduling
+summary: Claude CodeがTodoist・予定・各リポジトリ・人間待ちの付箋を読み、時刻つきの今日と明日の予定と平日日中の配分をボードに書く。本人はボードを見て決め、実行する。
+human_roles:
+- 「リスト作って」「更新して」と依頼する（声を含む）
+- 時間帯・夜の型・日中の配分の枠に入れる種類を決める
+- ボードでチェックし、完了・リスケ・削除を指示する
+- AIに任せるかと、別のフォルダで作業を始めるかを決める
+ai_roles:
+- Todoist・Googleカレンダーの読み取り（コネクタ）、各リポジトリの計画・コミット・人間待ちの付箋の読み取り
+- 優先順位に沿って、今日と明日の時刻の枠と平日日中の配分の枠に割り付ける
+- ボード（アーティファクトのデータベース）の書き換え
+- 書いた件数・時刻の重なり・ルーティンの抜けの検算
+- 本人の指示によるTodoistの完了・日付変更
+- 別のリポジトリの作業を、そのフォルダの新しい会話に渡す依頼文の作成
+verification:
+  checked_on: '2026-10-29'
+  confirmed:
+  - 非公開の手順書・作業メモ・ボードの元ファイル・スキル2つ（ボードの更新、依頼文の作成）がある
+  - 2026-10-21〜10-29のうち8日分の作業記録で、ボードの作成・更新と、書き込み件数とデータベースの件数の一致を確認
+  - 2026-10-23に夜の時間割の型、2026-10-25にルーティンを後ろへずらす決まり、2026-10-27に「AIに任せる」タブとスキル2つ、2026-10-28に平日日中の配分の枠を追加したことを、作業メモと手順書で確認
+  - 依頼文を作って別のフォルダの会話に渡し、その会話の結果（コミット・PR）をあとで確かめた記録がある（作業メモ）
+  user_reported:
+  - タスク管理の会話で別のリポジトリの作業まで続けたくない（依頼文で渡す理由）
+  - 仕事の合間は、音声入力・AIへの音声の指示・ChatGPT（Work）のブラウザ操作で進められるものを優先して、時刻ではなく配分で上から順に出してほしい
+  - 開始が遅れた日もルーティンは消さずに後ろへずらしてほしい
+  - データを見る場所を分散させたくない（開発状況をボードに入れた理由）
+  unconfirmed:
+  - 毎日の継続利用（作業記録の無い日がある）
+  - 時間の節約・やり残しの減少などの効果
+  - 別の会話で済んだタスクがボードに残る漏れ（作業メモに1回記録。対策は未定）
+evidence:
+- type: procedure-document
+  description: 非公開の手順書・作業メモ・スキルを読み、仕組みを一般化して記載。タスク名・TodoistやボードのID・アーティファクトのURL・予定の中身・金額は掲載しない。
+- type: commit-history
+  description: 手順書・作業メモ・ボードの元ファイルのコミット履歴（2026-10-21〜10-29）。
+outcomes:
+  measured: false
+  notes: 効果は未測定
+visual:
+  cover: cover.png
+  kind: conceptual-diagram
+  language: ja
+  explanation: null
+  source: cases/daily-cross-task-board/figure.py
+links:
+  related_system: ../../systems/cross-task-board/
+  related_case: ../daily-todoist-triage/
+platforms:
+- Claude Code
+modes:
+- work
