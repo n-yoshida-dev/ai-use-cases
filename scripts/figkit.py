@@ -9,6 +9,7 @@
 - 図の中に題名・副題・説明の帯・注記を入れない。絵・矢印・短いラベル（原則 12 字以内）だけで伝える
 - サービスは service()（ロゴ＋名前）で示す。ロゴは scripts/logos/（Simple Icons、CC0）。無いサービスは名前の文字だけ
 - 横幅は 1440px。縦は save() が中身に合わせて切り詰める（最大 900px）
+- AI が読みに行く関係は pull()（AI → 取りに行く先の順に点を渡す）。AI が書き込む関係・本人の操作・通知は arrow()
 """
 import math
 from pathlib import Path
@@ -69,6 +70,38 @@ def arrow(points, color=TEAL, width=6):
     d.polygon([(x, y),
                (x - 19 * math.cos(a - .5), y - 19 * math.sin(a - .5)),
                (x - 19 * math.cos(a + .5), y - 19 * math.sin(a + .5))], fill=color)
+
+
+def _offset(points, o):
+    """折れ線を法線方向に o だけずらす（角は miter）。水平・垂直の線分向け。"""
+    segs = []
+    for (x0, y0), (x1, y1) in zip(points, points[1:]):
+        length = math.hypot(x1 - x0, y1 - y0) or 1
+        segs.append((-(y1 - y0) / length, (x1 - x0) / length))
+    out = []
+    for i, (x, y) in enumerate(points):
+        n1 = segs[max(i - 1, 0)]; n2 = segs[min(i, len(segs) - 1)]
+        dot = n1[0] * n2[0] + n1[1] * n2[1]
+        k = o / (1 + dot) if dot > -0.9 else o
+        out.append((x + (n1[0] + n2[0]) * k, y + (n1[1] + n2[1]) * k))
+    return out
+
+
+def pull(points, color=TEAL, width=6, gap=9):
+    """AI が取りに行って読む関係。points は AI → サービス（取りに行く向き）。
+
+    細い線が AI からサービスへ向かい、太い線（データ）がサービスから AI へ戻る。
+    サービスが AI に押し込んでいるように見せないための部品。AI が書き込む関係は arrow() のまま。
+    """
+    out = _offset(points, -gap)
+    back = list(reversed(_offset(points, gap)))
+    d.line(out, fill=color, width=max(2, width // 2), joint='curve')
+    x, y = out[-1]; x0, y0 = out[-2]
+    a = math.atan2(y - y0, x - x0)
+    d.polygon([(x, y),
+               (x - 13 * math.cos(a - .5), y - 13 * math.sin(a - .5)),
+               (x - 13 * math.cos(a + .5), y - 13 * math.sin(a + .5))], fill=color)
+    arrow(back, color, width)
 
 
 def dashed_arrow(points, color=FAINT, width=4, dash=14, gap=10):

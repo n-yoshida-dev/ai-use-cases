@@ -50,11 +50,11 @@ fk.centered(455, 222, '書く', 22, fk.TEAL)
 fk.arrow([(LX + 85, 360), (DX - 10, 470)])
 fk.centered(455, 428, '問いを書く', 22, fk.TEAL)
 
-# 読む（2 つのファイル → 右の Claude）
-fk.arrow([(DX + 150, 212), (RX - 85, 300)])
-fk.centered(975, 222, '読む', 22, fk.TEAL)
-fk.arrow([(DX + 150, 470), (RX - 85, 360)])
-fk.centered(960, 366, '読む', 22, fk.TEAL)
+# 読む（右の Claude が 2 つのファイルを読みに行く）
+fk.pull([(RX - 85, 300), (DX + 150, 212)])
+fk.centered(975, 206, '読む', 22, fk.TEAL)
+fk.pull([(RX - 85, 360), (DX + 150, 470)])
+fk.centered(960, 362, '読む', 22, fk.TEAL)
 
 # 答えを書く（右の Claude → TODO。本人の答えを本人の言葉で残す）
 fk.arrow([(RX - 85, 410), (DX + 152, 530)], fk.AMBER, 5)
@@ -75,7 +75,7 @@ fk.centered(372, 766, '点検', 24, fk.TEAL)
 fk.arrow([(424, 650), (DX + 18, 568)], fk.TEAL, 5)
 fk.centered(600, 642, '古さを見つける', 22, fk.TEAL)
 
-# 右下中央：横断タスクボードが TODO を読む
+# 右下中央：横断タスクボードが TODO を読みに行く
 BX0, BY0, BX1, BY1 = 830, 640, 1090, 790
 fk.rr((BX0, BY0, BX1, BY1), 'white', fk.BLUE, 3, 14)
 for k, w in enumerate([150, 110, 130]):
@@ -83,7 +83,7 @@ for k, w in enumerate([150, 110, 130]):
     fk.rr((BX0 + 22, ry, BX0 + 70, ry + 26), '#eef3f8', fk.BLUE, 2, 7)
     fk.d.line((BX0 + 86, ry + 13, BX0 + 86 + w, ry + 13), fill=fk.LINE, width=6)
 fk.centered((BX0 + BX1) / 2, 800, '横断タスクボード', 24, fk.BLUE)
-fk.arrow([(DX + 122, 568), (BX0 + 30, BY0 - 8)], fk.BLUE, 5)
-fk.centered(848, 578, '読む', 22, fk.BLUE)
+fk.pull([(BX0 + 30, BY0 - 8), (DX + 122, 568)], fk.BLUE, 5)
+fk.centered(872, 574, '読む', 22, fk.BLUE)
 
 fk.save(Path(args.out))

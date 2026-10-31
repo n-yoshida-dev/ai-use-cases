@@ -41,9 +41,9 @@ fk.clock(640, 150, 36)
 fk.text(690, 130, '毎朝6:00', 30, fk.BLUE)
 fk.service('openai', 720, CY, 'ChatGPT')
 
-# Inbox → ChatGPT（読む） → Todoist（更新）
-fk.arrow([(362, CY), (640, CY)])
-fk.centered(501, CY - 42, '読む', 24, fk.TEAL)
+# ChatGPT が Inbox を取りに行って読む（pull） → Todoist（更新は書き込みなので arrow）
+fk.pull([(654, CY), (362, CY)])
+fk.centered(508, CY - 50, '読む', 24, fk.TEAL)
 fk.arrow([(800, CY), (1110, CY)])
 fk.centered(955, CY - 42, '更新', 24, fk.TEAL)
 
@@ -64,13 +64,13 @@ fk.text(px + 128, py + 133, '10分', 24, fk.TEAL)
 d.polygon([(px + 260, py + 126), (px + 260, py + 170), (px + 265, py + 152), (px + 302, py + 152), (px + 302, py + 126)],
           fill=fk.AMBER)
 
-# 下：本人が基準（優先度・例外・期限）を決めて ChatGPT へ指示する
+# 下：本人が基準（優先度・例外・期限）を書き（arrow）、ChatGPT がそれを読みに行く（pull）
 fk.person(218, 620, 0.48)
 fk.centered(218, 690, '本人', 24)
 fk.rr((372, 585, 814, 655), fk.NOTE, '#e7ca7c', 2, 12)
 fk.centered(593, 600, '優先度・例外・期限', 24)
 fk.arrow([(281, 620), (354, 620)], fk.AMBER, 5)
-fk.arrow([(720, 580), (720, 424)], fk.AMBER, 5)
-fk.text(738, 486, '指示', 24, fk.AMBER)
+fk.pull([(720, 424), (720, 580)], fk.AMBER, 5)
+fk.text(750, 486, '指示', 24, fk.AMBER)
 
 fk.save(HERE / "cover.png")

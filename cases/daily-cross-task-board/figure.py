@@ -53,9 +53,10 @@ fk.centered(675, 228, 'リポジトリ', 25)
 # 中央：Claude Code が読んで組む
 CX, CY = 510, 430
 fk.service('claude', CX, CY, 'Claude Code', tile=160)
-fk.arrow([(345, 262), (CX - 60, CY - 90)])
-fk.arrow([(510, 262), (CX, CY - 90)])
-fk.arrow([(655, 262), (CX + 60, CY - 90)])
+# Claude Code が取りに行って読む（細い線が向かい、太い線がデータを持ち帰る）
+fk.pull([(CX - 60, CY - 90), (345, 270)])
+fk.pull([(CX, CY - 90), (510, 270)])
+fk.pull([(CX + 60, CY - 90), (655, 270)])
 fk.centered(455, 282, '読む', 22, fk.TEAL)
 
 # 右：横断タスクボード（時刻の枠・配分の枠）
@@ -63,10 +64,10 @@ fk.arrow([(CX + 90, CY), (795, CY)])
 fk.centered(697, CY - 36, '書く', 22, fk.TEAL)
 bx0, by0, bx1, by1 = 810, 150, 1376, 540
 
-# 検算：書いたあとにボードから戻って確かめる（件数・時刻の重なり）
+# 検算：書いたあとにボードを読み直して確かめる（件数・時刻の重なり）。読みに行くので pull
 fk.checklist(640, 468, 76, 100)
-fk.arrow([(bx0, 518), (728, 518)], fk.TEAL, 5)
-fk.centered(769, 486, '検算', 20, fk.TEAL)
+fk.pull([(728, 518), (bx0, 518)], fk.TEAL, 5, gap=7)
+fk.centered(769, 478, '検算', 20, fk.TEAL)
 fk.rr((bx0, by0, bx1, by1), 'white', fk.BLUE, 3, 14)
 for k, (name, on) in enumerate([('予定', True), ('AIに任せる', False), ('開発状況', False)]):
     tx = bx0 + 22 + k * 160

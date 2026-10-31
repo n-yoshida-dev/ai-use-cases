@@ -54,19 +54,19 @@ fk.text(232, 288, '調べてメモ', 22, fk.TEAL)
 fk.service('notion', 210, 420, 'Notion')
 wish_db(300, 354)
 
-# 中央：Claude Code が読んで計算し、画面を作る
-fk.arrow([(515, 400), (638, 400)])
-fk.centered(576, 362, '読む', 22, fk.TEAL)
-fk.dashed_arrow([(638, 445), (515, 445)], fk.FAINT, 4)
-fk.centered(576, 456, '反映', 22, fk.GRAY)
+# 中央：Claude Code が取りに行って読み、計算し、画面を作る（書き戻しは必要なときだけ）
+fk.pull([(643, 404), (505, 404)])
+fk.centered(576, 356, '読む', 22, fk.TEAL)
+fk.dashed_arrow([(643, 452), (505, 452)], fk.FAINT, 4)
+fk.centered(576, 462, '反映', 22, fk.GRAY)
 fk.service('claude', 720, 420, 'Claude Code', tile=150)
 
-# 上：Amazon の値段の履歴（Keepa）を Claude が読む
+# 上：Amazon の値段の履歴（Keepa）を Claude が取りに行って読む（2 つの札を 1 つの枠にまとめ、pull は 1 本）
+fk.rr((580, 70, 872, 232), 'white', fk.BLUE, 3, 18)
 fk.service('amazon', 660, 150, 'Amazon', tile=118)
 fk.service('keepa', 792, 150, 'Keepa', tile=118)
-fk.arrow([(660, 215), (660, 338)], fk.BLUE, 5)
-fk.arrow([(790, 215), (790, 338)], fk.BLUE, 5)
-fk.centered(725, 258, '値段の履歴', 20, fk.BLUE)
+fk.pull([(720, 343), (720, 234)], fk.BLUE, 5)
+fk.text(744, 275, '値段の履歴', 20, fk.BLUE)
 
 # 右：計画の画面（積立はひとつ。高すぎる物は保留）
 fk.arrow([(800, 420), (945, 420)])

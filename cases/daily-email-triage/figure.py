@@ -26,12 +26,12 @@ CY = 470          # 左の列（Gmail → ルールで除外 → ChatGPT）の�
 GPT = 624         # ChatGPT の中心 x
 LABEL_Y = CY + 66 + 12   # service() が名前を書く高さ。同じ列の名前はここに揃える
 
-# 左：Gmail の新着 → ルールで先に除外（AIを使わない層）
+# 左：Gmail の新着 → ルールで先に除外（AIを使わない層）。残りは ChatGPT が取りに行って読む（pull）
 fk.service('gmail', 172, CY, 'Gmail')
 fk.arrow([(254, CY), (314, CY)])
 fk.funnel(326, CY - 65, 120, 130)
 fk.centered(386, LABEL_Y, 'ルールで除外', 25)
-fk.arrow([(458, CY), (524, CY)])
+fk.pull([(GPT - 66, CY), (426, CY)])
 
 # 中央：毎朝動く ChatGPT（2026-10-28 に Claude Code のルーティンから移した）
 fk.clock(GPT - 60, CY - 150)
@@ -74,10 +74,10 @@ fk.person(985, 724, .62)
 fk.centered(985, 810, '本人が対応', 26)
 fk.arrow([(1112, 724), (1035, 724)], fk.BLUE, 5)
 
-# 下：判定基準は毎朝読まれる入力（実線）。直すのは必要なときだけ（薄い点線）
+# 下：判定基準は毎朝 ChatGPT が読みに行く入力（pull）。直すのは必要なときだけ（薄い点線）
 fk.rr((GPT - 160, 700, GPT + 160, 770), fk.NOTE, '#e7ca7c', 2, 12)
 fk.centered(GPT, 717, '判定基準（手順書）', 26)
-fk.arrow([(GPT, 694), (GPT, 628)], fk.AMBER, 5)
+fk.pull([(GPT, 628), (GPT, 694)], fk.AMBER, 5)
 fk.dashed_arrow([(937, 735), (GPT + 174, 735)], fk.FAINT, 4)
 fk.centered(862, 696, '必要なら直す', 22, fk.GRAY)
 

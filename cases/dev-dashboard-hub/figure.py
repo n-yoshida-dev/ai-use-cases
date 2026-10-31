@@ -71,9 +71,10 @@ fk.centered(CX, CY + HH / 2 + 10, '常駐のハブ', 25)
 fk.clock(CX, CY - 250, 44, fk.BLUE)
 fk.centered(CX, CY - 194, '30分ごと', 24, fk.BLUE)
 fk.arrow([(CX, CY - 148), (CX, CY - HH / 2 - 12)], fk.BLUE, 5)
-fk.arrow([(312, 395), (CX - HW / 2 - 12, CY + 8)])
+# ハブが各リポジトリの集計スクリプトを呼び、GitHub の PR・CI を取りに行く（pull：細い線が向かい、太い線が持ち帰る）
+fk.pull([(CX - HW / 2 - 12, CY + 12), (312, 398)])
 fk.centered(405, 350, '集める', 22, fk.TEAL)
-fk.arrow([(326, 150), (CX - HW / 2 - 12, CY - 25)])
+fk.pull([(CX - HW / 2 - 12, CY - 34), (326, 150)])
 fk.centered(455, 200, 'CI', 22, fk.GRAY)
 
 # 左下：Claude Code は、リポジトリごとの集計スクリプトと画面を作る（集めるのはハブ）

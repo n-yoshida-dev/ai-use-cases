@@ -31,8 +31,8 @@ fk.service('claude', CX, CY, 'Claude Code', tile=160)
 # 上：ネタ帳から題材を選ぶ
 fk.folder(CX - 53, 65)
 fk.centered(CX - 110, 92, 'ネタ帳', 24)
-fk.arrow([(CX, 165), (CX, CY - 90)])
-fk.text(CX + 16, 185, '題材', 22, fk.TEAL)
+fk.pull([(CX, CY - 90), (CX, 165)])
+fk.text(CX + 22, 185, '題材', 22, fk.TEAL)
 
 # 上右：Notion の購入判断ノートを材料にする構想（点線）
 fk.service('notion', 1020, 120, '購入判断ノート', tile=120)
@@ -62,8 +62,8 @@ fk.checklist(LX, LY)
 fk.centered(LX + 52, LY + 128, '文章の原則', 24, fk.TEAL)
 fk.arrow([(DX + 150, DY + 80), (LX - 10, DY + 80)], fk.TEAL, 5)
 fk.centered((DX + 150 + LX - 10) / 2, DY + 45, '直しを足す', 20, fk.TEAL)
-fk.arrow([(LX + 52, LY - 10), (LX + 52, CY + 112)], fk.TEAL, 5)
-fk.text(LX + 66, CY + 130, '次に読む', 20, fk.TEAL)
+fk.pull([(LX + 52, CY + 112), (LX + 52, LY - 10)], fk.TEAL, 5)
+fk.text(LX + 76, CY + 130, '次に読む', 20, fk.TEAL)
 
 # 右：Qiita へ限定共有で投稿（本人が画像を貼って公開）。note は下書き保存がまだ（点線）
 QX, QY = 1270, 200

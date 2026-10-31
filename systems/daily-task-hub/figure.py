@@ -55,14 +55,14 @@ fk.service('openai', cgx, cgy, 'ChatGPT', tile=CGT)
 fk.clock(cgr, cgt, 30)
 fk.text(cgr + 40, cgt - 16, '毎朝6:00', 26, fk.BLUE)
 
-# Gmail → ChatGPT（読む）：左の上段に入る
-fk.arrow([(GM[0] + 66, GM[1]), (404, GM[1]), (404, cgy - 50), (cgl - 6, cgy - 50)])
+# ChatGPT が Gmail の未読を読みに行く（Gmail が押し込むのではない）ので pull()。左の上段
+fk.pull([(cgl - 6, cgy - 50), (410, cgy - 50), (410, GM[1]), (GM[0] + 66, GM[1])])
 fk.centered(334, GM[1] - 42, '読む', 23, fk.TEAL)
-# ブックマーク ⇢ ChatGPT（頼んだ時だけ）：左の中段に入る
-fk.dashed_arrow([(bx + 30, by), (344, by), (344, cgy), (cgl - 6, cgy)])
-fk.centered(284, by - 40, '頼んだ時', 23, fk.AMBER)
-# iPhone 音声 → ChatGPT（音声モードで頼む）：左の下段に入り、ChatGPT → Todoist に合流する
-fk.arrow([(vx + 48, vy), (384, vy), (384, cgy + 50), (cgl - 6, cgy + 50)], fk.BLUE)
+# ChatGPT がブックマークを読みに行く（頼んだ時だけなので薄い色）。左の中段
+fk.pull([(cgl - 6, cgy), (344, cgy), (344, by), (bx + 30, by)], fk.FAINT)
+fk.centered(284, by - 48, '頼んだ時', 23, fk.AMBER)
+# iPhone 音声 → ChatGPT（本人が音声モードで頼む）：左の下段に入り、ChatGPT → Todoist に合流する
+fk.arrow([(vx + 48, vy), (372, vy), (372, cgy + 50), (cgl - 6, cgy + 50)], fk.BLUE)
 fk.centered(293, vy - 40, 'その場で', 23, fk.BLUE)
 
 # ── Todoist（タスクの集まる場所） ──────────────────────────
@@ -75,12 +75,12 @@ fk.service('todoist', tdx, tdy, 'Todoist', tile=TDT)
 # ChatGPT → Todoist（登録・整理）
 fk.arrow([(cgr + 6, cgy - 25), (tdx - 40, cgy - 25), (tdx - 40, tdt - 6)])
 fk.text(tdx - 28, 330, '登録・整理', 23, fk.TEAL)
-# Todoist → ChatGPT（読む）
-fk.arrow([(tdl - 6, tdy - 30), (774, tdy - 30), (774, cgy + 35), (cgr + 6, cgy + 35)])
-fk.text(786, 392, '読む', 23, fk.TEAL)
+# ChatGPT が Todoist の Inbox を読みに行く（pull()。登録・整理の書き込みとは別の線）
+fk.pull([(cgr + 6, cgy + 35), (774, cgy + 35), (774, tdy - 30), (tdl - 6, tdy - 30)])
+fk.text(796, 392, '読む', 23, fk.TEAL)
 
 # 手入力 → Todoist（直接入る）。音声の横線（y=490）より 100px 下を通し、別の線と分かるようにする。
-# 曲がる位置は図の下中央が空かないよう右寄り（x=700）。「読む」の縦線（x=774）とは交わらない
+# 曲がる位置は図の下中央が空かないよう右寄り（x=700）。「読む」の 2 本線（x=765〜783）とは交わらない
 JX = 700
 fk.arrow([(mx + 84, my), (JX, my), (JX, tdy + 50), (tdl - 6, tdy + 50)], fk.BLUE)
 

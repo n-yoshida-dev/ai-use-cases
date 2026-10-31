@@ -28,12 +28,12 @@ f.centered(205, 515, '本人', 29)
 f.arrow([(354, 430), (600, 430)], f.AMBER)
 f.centered(477, 388, '相談', 24, f.AMBER)
 
-# 中：ChatGPT が会話と既存の記録を照合して整理する。
+# 中：ChatGPT が既存の記録を取りに行って読み、会話と照合して書く。
 f.service('openai', 695, 420, 'ChatGPT')
-f.arrow([(780, 392), (915, 392)])
-f.centered(848, 350, '書く', 24, f.TEAL)
-f.arrow([(915, 452), (780, 452)], f.BLUE)
-f.centered(848, 466, '読む', 24, f.BLUE)
+f.arrow([(762, 388), (933, 388)])
+f.centered(848, 346, '書く', 24, f.TEAL)
+f.pull([(762, 452), (933, 452)], f.BLUE)
+f.centered(848, 470, '読む', 24, f.BLUE)
 
 # 右：Notion の中で、商品メモと購入判断ノートを分ける。
 f.rr((935, 150, 1370, 600), 'white', f.BLUE, 3, 18)

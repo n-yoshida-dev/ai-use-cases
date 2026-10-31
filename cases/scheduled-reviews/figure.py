@@ -39,12 +39,12 @@ fk.text(732, 130, '20:30・22:00', 22, fk.BLUE)
 # 中央：ChatGPT のスケジュールが記録と会話を確認・分析する
 fk.service('openai', 680, 300, 'ChatGPT')
 
-# 左：記録（GitHub のリポジトリ）。読んで、結果を保存する
+# 左：記録（GitHub のリポジトリ）。ChatGPT が取りに行って読み（pull）、結果を保存する（arrow）
 fk.service('github', 210, 300, 'GitHub')
-fk.arrow([(280, 272), (610, 272)])
-fk.centered(445, 230, '読む', 24, fk.TEAL)
-fk.arrow([(610, 328), (280, 328)])
-fk.centered(445, 338, '保存', 24, fk.TEAL)
+fk.pull([(614, 268), (276, 268)])
+fk.centered(445, 222, '読む', 24, fk.TEAL)
+fk.arrow([(614, 330), (276, 330)])
+fk.centered(445, 340, '保存', 24, fk.TEAL)
 
 # 左上：もう 1 つの入力。会話（コンテキスト更新）は別の定期処理なので、記録の矢印とはつながない
 bubble(400, 92, 140, 80, '会話')
@@ -59,12 +59,12 @@ fk.person(1250, 290, .72)
 fk.centered(1250, 390, '本人', 26)
 fk.arrow([(1110, 300), (1175, 300)], fk.BLUE, 5)
 
-# 下：本人が目的・周期・判断基準を決めて ChatGPT へ渡す
+# 下：本人が目的・周期・判断基準を決める（arrow）。ChatGPT はそれを取りに行って読む（pull）
 fk.rr((460, 585, 900, 655), fk.NOTE, '#e7ca7c', 2, 12)
 fk.centered(680, 600, '目的・周期・判断基準', 24)
 fk.arrow([(1250, 446), (1250, 620), (910, 620)], fk.AMBER, 5)
-fk.arrow([(680, 580), (680, 424)], fk.AMBER, 5)
-fk.text(698, 486, '設定', 24, fk.AMBER)
+fk.pull([(680, 424), (680, 580)], fk.AMBER, 5)
+fk.text(706, 486, '設定', 24, fk.AMBER)
 
 fk.save(HERE / 'cover.png')
 

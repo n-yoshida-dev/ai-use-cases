@@ -14,10 +14,10 @@ p = argparse.ArgumentParser(); p.add_argument('--font', required=True)
 f.init(p.parse_args().font)
 f.begin()
 
-# 入口：X の一時保存
+# 入口：X の一時保存。ChatGPT が読みに行く（X が押し込むのではない）ので pull()
 f.service('x', 250, 450, 'X')
-f.arrow([(322, 450), (552, 450)])
-f.centered(437, 402, '一時保存', 26, f.GRAY)
+f.pull([(564, 450), (316, 450)])
+f.centered(440, 392, '一時保存', 26, f.GRAY)
 
 # 振り分け役：ChatGPT。上に本人（依頼する・迷うものを判断する）
 f.service('openai', 630, 450, 'ChatGPT')

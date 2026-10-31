@@ -36,8 +36,8 @@ fk.centered(250, 540, '増えたマイリスト', 30)
 # 中央：ChatGPT（Computer Use）が棚卸しして整理する
 fk.centered(720, 262, '棚卸し・整理', 28, fk.TEAL)
 fk.service('openai', 720, 400, 'ChatGPT', tile=150)
-fk.arrow([(460, 400), (632, 400)])
-fk.arrow([(808, 400), (1035, 400)])
+fk.pull([(645, 400), (460, 400)])      # 画面のマイリストを読みに行く（Computer Use）
+fk.arrow([(808, 400), (1035, 400)])    # 名前変更・統合・削除の操作（書き込み）
 
 # 右：整理後のマイリスト（左のまとまりと余白を揃えるため、中心を 1185 に置く）
 fk.service('youtube', 1185, 165, 'YouTube', tile=110)
@@ -51,7 +51,7 @@ fk.centered(490, 756, '本人', 26)
 fk.arrow([(534, 688), (572, 688)], fk.AMBER, 5)
 fk.rr((584, 652, 856, 724), fk.NOTE, '#e7ca7c', 2, 12)
 fk.centered(720, 669, '残す・まとめる基準', 26)
-fk.arrow([(720, 646), (720, 536)], fk.AMBER, 5)
+fk.pull([(720, 536), (720, 646)], fk.AMBER, 5)   # 基準は ChatGPT が読みに行く
 
 fk.save(HERE / 'cover.png')
 

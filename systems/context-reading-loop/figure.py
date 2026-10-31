@@ -41,17 +41,17 @@ fk.text(GPT + 158, TY - HALF - 47, '毎週', 25, fk.BLUE)
 fk.service('github', LOG, TY)
 fk.centered(LOG, TY - HALF - 46, 'reading-log', 25)
 
-# personal-ai-context ⇄ ChatGPT
-fk.arrow([(CTX + HALF + 16, TY - 20), (GPT - HALF - 16, TY - 20)], fk.BLUE)
-fk.centered((CTX + GPT) / 2, TY - 56, '読む', 24, fk.BLUE)
-fk.arrow([(GPT - HALF - 16, TY + 20), (CTX + HALF + 16, TY + 20)], fk.TEAL)
-fk.centered((CTX + GPT) / 2, TY + 32, '会話の差分を更新', 24, fk.TEAL)   # 元は会話。読書レビューは書き戻さない
+# personal-ai-context ⇄ ChatGPT：読むのは ChatGPT が取りに行く（pull）、更新は書き込む（arrow）
+fk.pull([(GPT - HALF, TY - 16), (CTX + HALF, TY - 16)], fk.BLUE)
+fk.centered((CTX + GPT) / 2, TY - 60, '読む', 24, fk.BLUE)
+fk.arrow([(GPT - HALF, TY + 26), (CTX + HALF, TY + 26)], fk.TEAL)
+fk.centered((CTX + GPT) / 2, TY + 38, '会話の差分を更新', 24, fk.TEAL)   # 元は会話。読書レビューは書き戻さない
 
-# reading-log ⇄ ChatGPT
-fk.arrow([(LOG - HALF - 16, TY - 20), (GPT + HALF + 16, TY - 20)], fk.BLUE)
-fk.centered((GPT + LOG) / 2, TY - 56, '読む', 24, fk.BLUE)
-fk.arrow([(GPT + HALF + 16, TY + 20), (LOG - HALF - 16, TY + 20)], fk.TEAL)
-fk.centered((GPT + LOG) / 2, TY + 32, '順位・感想を記録', 24, fk.TEAL)   # 本人の感想も会話経由で reading-log へ
+# reading-log ⇄ ChatGPT：同じく読むは pull、記録は arrow（gap を負にして細い線を内側に揃える）
+fk.pull([(GPT + HALF, TY - 16), (LOG - HALF, TY - 16)], fk.BLUE, gap=-9)
+fk.centered((GPT + LOG) / 2, TY - 60, '読む', 24, fk.BLUE)
+fk.arrow([(GPT + HALF, TY + 26), (LOG - HALF, TY + 26)], fk.TEAL)
+fk.centered((GPT + LOG) / 2, TY + 38, '順位・感想を記録', 24, fk.TEAL)   # 本人の感想も会話経由で reading-log へ
 
 # 本人：reading-log を見て読み、感想を ChatGPT に話す（ChatGPT が reading-log へ記録する往復）
 PY = 580

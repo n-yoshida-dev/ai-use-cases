@@ -58,8 +58,9 @@ for cy, label in rows:
     f.text(240, cy - 17, label, 25)
     f.d.line((458, cy, 484, cy), fill=f.TEAL, width=5)
 f.d.line((484, rows[0][0], 484, rows[-1][0]), fill=f.TEAL, width=5)
-f.arrow([(484, 430), (570, 430)])
-f.centered(527, 390, '読む', 22, f.TEAL)
+# Claude Code が左の 5 つを読みに行く（押し込まれるのではない）ので、幹線から札までは pull()
+f.pull([(576, 430), (487, 430)])
+f.centered(527, 380, '読む', 22, f.TEAL)
 
 # 中央：PCのClaude Code
 f.service('claude', 660, 430, 'Claude Code', tile=160)
