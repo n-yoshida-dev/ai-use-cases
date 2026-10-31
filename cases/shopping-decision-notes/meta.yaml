@@ -1,0 +1,50 @@
+schema_version: 1
+id: shopping-decision-notes
+title: 商品比較の判断をNotionに残す
+status: validated
+publication: published
+category: decision-support
+tags: [chatgpt, notion, comparison, decision-history]
+summary: 商品固有のメモと比較テーマの購入判断ノートを分け、本人が重視した条件と判断の変化をNotionへ残す。
+platforms: [ChatGPT]
+modes: [work]
+human_roles:
+- 困りごと・用途・好み・判断基準の説明
+- AIによる解釈や評価の訂正
+- 購入判断と使用後の評価
+ai_roles:
+- 商品の調査・比較と会話中の判断の整理
+- 既存のNotionを確認し、商品メモと購入判断ノートへ不足分を追記
+- 本人発言・AIの解釈・確認済み事実の区別
+- 過去の判断を残し、現在の結論と未決事項を整理
+verification:
+  checked_on: '2026-10-31'
+  confirmed:
+  - Notionの複数の購入判断ノートを読み、比較のきっかけ・判断の変遷・現在の結論・未決事項の保存を確認
+  - 比較テーマのページ上部から独立した判断ノートを開くリンクを確認
+  - 商品ページに仕様・出典・注意点と、過去の評価から最新判断への追記がある
+  - 参照した記録では、本人の明示的判断、AIの候補評価、未確認の購入・使用体験を区別している
+  user_reported:
+  - 商品メモと購入判断ノートを分け、一覧に長文を置かない
+  - 既存ノートと履歴を優先し、他の会話で生じた新しい判断を古い記録で上書きしない
+  - Claude Codeが記事執筆時に読む資料として活用したい
+  unconfirmed:
+  - 全テーマの記録と元の会話全量との完全な照合
+  - Claude Codeが判断ノートを読んで記事を執筆した結果
+  - 判断の再利用による時間短縮・購入満足度・継続運用の効果
+evidence:
+- type: user-confirmed-conversation
+  description: 2026-10-31の運用決定と各チャットのNotion反映報告を、参照可能な会話コンテキストで確認。元の会話全量を読めたとは扱わない。
+- type: saved-content-readback
+  description: 2026-10-31にNotionの判断ノート・比較ページ・商品ページを取得して保存内容と導線を確認。記載された商品仕様や評価を今回独立検証したものではない。
+outcomes:
+  measured: false
+  notes: 保存内容と導線を確認。記事執筆での再利用と継続効果は未検証。
+visual:
+  cover: cover.png
+  kind: conceptual-diagram
+  language: ja
+  explanation: null
+  source: cases/shopping-decision-notes/figure.py
+links:
+  related_case: ../allowance-shopping-plan/

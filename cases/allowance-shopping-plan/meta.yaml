@@ -15,12 +15,13 @@ human_roles:
 - 買う順と保留の線の最終判断
 - 計画画面を見て、隣のチャットで順番を相談
 ai_roles:
+- ChatGPTによる候補調査・比較とNotionの商品メモへの整理
 - Notionの欲しいものデータベースの読み取り（claude.aiのNotionコネクタ）
 - 買う順と買える月の計算
 - 計画画面（アーティファクト）の作成と更新
 - 決まったことの画面とNotionへの反映（Notionは本人の了承後）
 verification:
-  checked_on: '2026-10-27'
+  checked_on: '2026-10-31'
   confirmed:
   - 非公開の手順書・作業メモ・計画画面の元ファイルがある
   - 2026-10-22に、Notionの読み取りと初回の計画画面の公開を作業メモで確認
@@ -28,11 +29,13 @@ verification:
   - 2026-10-23に、大型セールまで待つ判定とNotionの点数の列を追加したことを作業メモと画面の元ファイルで確認
   - 2026-10-25に、商品ごとの値段の履歴（Keepa）でセール待ちを決める形にしたことを、作業メモ・画面の元ファイル・スクリプトの回帰テストで確認
   - 2026-10-27に、完成形のまとまり（デスク）と比較のタブを追加したことを作業メモと画面の元ファイルで確認
+  - 2026-10-31にNotionの商品ページを取得し、メルカリの複数出品の状態・新品との比較・注意点を整理した保存記録を確認
   user_reported:
   - 欲しいものの正本はNotionのまま、表示だけアーティファクトにする（本人の決定）
   - 順番の相談は計画画面を見ながら隣のチャットで行う（本人の決定）
   - 以前、Notionから別の置き場へ移す仕組みを作ったが使いづらく、Notionに戻った
   unconfirmed:
+  - ChatGPTの元のメルカリ検索操作ログ、出品の現在の在庫・実物状態・購入成果
   - 保留の線と買う順の確定（初回は積立を2つに分けたが、のちにひとつに戻した）
   - 相談で決まったことのNotionへの反映
   - 2回目以降の更新と月ごとの継続
@@ -43,6 +46,8 @@ evidence:
   description: 非公開の手順書と作業メモを読み、仕組みを一般化して記載。金額・商品名・価格・合計・残高・NotionのURLやID・画面のURLは掲載しない。
 - type: artifact-metadata
   description: 2026-10-22にアーティファクトの一覧で計画画面の存在と更新日を確認。画面の中身は掲載しない。
+- type: saved-content-readback
+  description: 2026-10-31にNotionの商品メモで出品比較の保存記録を確認。検索操作そのものや出品内容の独立検証とは区別する。商品名・金額・出品URL・IDは転載しない。
 outcomes:
   measured: false
   notes: 試作段階。効果は未測定
@@ -52,8 +57,10 @@ visual:
   language: ja
   explanation: null
   source: cases/allowance-shopping-plan/figure.py
-links: {}
+links:
+  related_case: ../shopping-decision-notes/
 platforms:
 - Claude Code
+- ChatGPT
 modes:
 - work
