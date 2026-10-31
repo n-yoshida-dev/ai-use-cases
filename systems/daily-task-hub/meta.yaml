@@ -21,7 +21,7 @@ related_systems:
 - cross-task-board
 nodes:
 - id: bookmarks
-  role: 週次のブックマーク振り分けから近々の買い物を登録
+  role: ブックマーク振り分け（2026-10-30から本人が頼んだときだけ）から近々の買い物を登録
   source: cases/bookmark-to-action
   privacy: private
 - id: gmail
@@ -57,7 +57,7 @@ edges:
   target: todoist
   operation: write-shopping-project
   flow: information
-  evidence: initial-run-confirmed; weekly-schedule-configured
+  evidence: initial-run-confirmed; on-demand-since-2026-10-30（本人の判断）
 - source: gmail
   target: claude
   operation: read
@@ -99,21 +99,24 @@ edges:
   flow: information
   evidence: user-reported
 verification:
-  checked_on: '2026-10-29'
+  checked_on: '2026-10-31'
   confirmed:
   - メール仕分けケースの設定・出力記録（移行後のラベル付与を含む）
   - メール仕分けの旧実行環境（Claude Codeのルーティン）の停止
   - Todoist整理の初回実行・日次設定
-  - ブックマーク整理から買い物プロジェクトへの初回登録と週次設定
+  - ブックマーク整理から買い物プロジェクトへの初回登録
   user_reported:
   - メールからの登録は最大5件（移行前の説明。移行後の手順書に上限は無い）
   - メール仕分けとInbox整理を同じ毎朝の処理で順に実行し、2026-10-29朝の初回で報告が届いた
   - iPhoneの音声とアプリ・ブラウザからの入力
+  - 音声はアクションボタンからChatGPTの音声モードで頼み、ChatGPTのTodoist連携で入る
+  - 2026-10-30〜31に、ChatGPTの会話に散らばっていたやりたいことをTodoistへ移し、受け皿を1つにした
+  - 2026-10-30から、ブックマーク振り分けは定期ではなく気づいたときに頼む形にした
+  - 2026-10-31から、今日やるべきことは毎朝の整理、PCで作業するときの細かい順番は横断タスクボードが決める
   unconfirmed:
-  - 音声登録の中継手段
+  - 音声登録の端末の設定（本人の説明だけ）
   - 確認メールの登録条件
   - 日次整理の次回実行成功
-  - ブックマーク整理の週次自動実行成功
 constraints:
 - 繰り返しプロジェクトは参照・変更・報告から除外
 - 日次Inbox整理の書き込みはInboxのみ
