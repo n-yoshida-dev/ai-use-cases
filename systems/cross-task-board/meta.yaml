@@ -16,6 +16,7 @@ summary: Todoist・予定・各リポジトリの作業・人間待ち（各リ�
 related_cases:
 - daily-cross-task-board
 - daily-todoist-triage
+- handoff-and-todo-files
 related_systems:
 - daily-task-hub
 nodes:

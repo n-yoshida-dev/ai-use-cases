@@ -27,21 +27,22 @@ ChatGPT・Claude.aiのチャット／Work／スケジュール（Claude Codeの�
 | AIがInboxの分類・期限・順序を整理。人間が優先度と除外範囲を決める。 | AIが分類・移行。人間が保存先・例外・使う情報を決める。 | AIが欲しいものを読み、積立を分けた計画を画面に。人間が入力と順番を決める。 |
 | 現行設定・直近の完了記録と更新検証の報告を確認／結果の独立検証・効果測定は未実施 | 初回整理を確認／定期は停止中・気づいたときに依頼 | 試作・改善中。初回の画面を確認／効果は未測定 |
 
-| 横断のスケジュール |
-| --- |
-| [![横断タスクボードで1日を組む仕組み](cases/daily-cross-task-board/cover.png)](cases/daily-cross-task-board/) |
-| **[横断タスクボードで今日と明日を組む](cases/daily-cross-task-board/)** |
-| AIがタスク・予定・各リポジトリを読み、時刻と配分の予定をボードに。人間が型を決め、見て実行する。 |
-| 8日分の作業記録で更新と検算を確認／効果は未測定 |
+| 横断のスケジュール | 商品比較の記録 | 記事の執筆と投稿 |
+| --- | --- | --- |
+| [![横断タスクボードで1日を組む仕組み](cases/daily-cross-task-board/cover.png)](cases/daily-cross-task-board/) | [![会話から商品メモと購入判断ノートを整理する仕組み](cases/shopping-decision-notes/cover.png)](cases/shopping-decision-notes/) | [![聞き取りから記事を書いて投稿する仕組み](cases/article-drafting-workflow/cover.png)](cases/article-drafting-workflow/) |
+| **[横断タスクボードで今日と明日を組む](cases/daily-cross-task-board/)** | **[商品比較の判断をNotionに残す](cases/shopping-decision-notes/)** | **[聞き取りから記事を書き、投稿まで](cases/article-drafting-workflow/)** |
+| AIがタスク・予定・各リポジトリを読み、時刻と配分の予定をボードに。人間が型を決め、見て実行する。 | AIが比較の経緯を整理。人間が判断基準を伝え、解釈を訂正する。 | AIが資料を読んで質問し、下書き・校正・限定共有の投稿。人間が声で答え、直し、公開する。 |
+| 8日分の作業記録で更新と検算を確認／効果は未測定 | 判断ノートの保存内容と導線を確認／記事での再利用・継続効果は未検証 | Qiitaの記事1本の公開と書き直しを確認／noteの自動下書き・効果は未検証 |
 
-| 商品比較の記録 |
-| --- |
-| [![会話から商品メモと購入判断ノートを整理する仕組み](cases/shopping-decision-notes/cover.png)](cases/shopping-decision-notes/) |
-| **[商品比較の判断をNotionに残す](cases/shopping-decision-notes/)** |
-| AIが比較の経緯を整理。人間が判断基準を伝え、解釈を訂正する。 |
-| 判断ノートの保存内容と導線を確認／記事での再利用・継続効果は未検証 |
+| 会話の引き継ぎ | 開発の観測画面 |
+| --- | --- |
+| [![引き継ぎと確認待ちのファイルを会話がまたぐ仕組み](cases/handoff-and-todo-files/cover.png)](cases/handoff-and-todo-files/) | [![開発の状態を1画面に集める常駐のハブ](cases/dev-dashboard-hub/cover.png)](cases/dev-dashboard-hub/) |
+| **[会話をまたぐ引き継ぎと、本人待ちの置き場](cases/handoff-and-todo-files/)** | **[開発の状態を1画面に集めて常駐させる](cases/dev-dashboard-hub/)** |
+| AIが区切りごとに引き継ぎと確認待ちを書き、答えを記録。人間が会話で答える。 | AIが正本を読んで描く画面を各リポジトリに作る。人間が足す先と指標を決め、見るだけ。 |
+| 決まり・点検スクリプト・フック・TODO.mdへ移したコミットを確認／古くならずに続くか・効果は未検証 | 常駐と4リポジトリが1画面に並ぶことを確認／見る頻度と効果は未測定 |
 
 図は仕組みの概念図です。実画面や実績の証拠ではありません。
+図のサービスのロゴは各社の商標で、サービスを指すためにだけ使っています（出どころは [scripts/logos/README.md](scripts/logos/README.md)）。
 
 Claude Code製の独立アプリ・プロジェクトは、各リポジトリとポートフォリオで紹介します。
 

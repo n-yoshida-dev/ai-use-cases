@@ -1,44 +1,64 @@
-"""全体概念図。python figure.py /path/to/NotoSansJP.ttf"""
+"""全体概念図（会話の文脈から次に読む本へ）。
+
+再生成：リポジトリの root で
+    PYTHONPATH=<Pillow の場所> python3 systems/context-reading-loop/figure.py --font /usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc
+（フォントは任意の日本語フォント。部品は scripts/figkit.py、ロゴは scripts/logos/）
+"""
+import argparse
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'scripts'))
-import figkit as f
 
-f.init(sys.argv[1])
-f.begin('会話の文脈を、次に読む本へ', '非公開のコンテキストと公開の読書記録を、週次レビューでつなぐ')
-# 三つの正本・処理を上段、会話と本人を下段に配置。
-f.rr((155, 264, 335, 416), '#edf1f7', f.BLUE, 4)
-f.d.arc((218, 287, 272, 350), 180, 360, fill=f.BLUE, width=6)
-f.rr((208, 319, 283, 376), 'white', f.BLUE, 3, 8)
-f.d.ellipse((241, 336, 251, 347), fill=f.BLUE)
-f.centered(245, 437, 'personal-ai-context', 25)
-f.centered(245, 477, '非公開の判断材料', 24, f.BLUE)
-f.laptop(635, 264)
-f.centered(745, 473, 'ChatGPTの週次レビュー', 26)
-f.arrow([(360, 335), (600, 335)], f.BLUE)
-f.centered(480, 289, '文脈を参照', 23, f.BLUE)
-f.rr((1080, 264, 1300, 431), 'white', f.TEAL, 4)
-f.d.line((1190, 275, 1190, 420), fill=f.TEAL, width=3)
-for yy in (303, 331, 359, 387):
-    f.d.line((1100, yy, 1170, yy), fill=f.LINE, width=5)
-    f.d.line((1210, yy, 1280, yy), fill=f.LINE, width=5)
-f.centered(1190, 452, 'reading-log', 29)
-f.centered(1190, 493, '公開の読書記録', 24, f.TEAL)
-f.arrow([(1060, 310), (885, 310)], f.BLUE)
-f.centered(973, 263, '記録を参照', 23, f.BLUE)
-f.arrow([(889, 401), (1060, 401)])
-f.centered(975, 426, '順位・レビュー', 22, f.TEAL)
-f.laptop(75, 582)
-f.centered(185, 777, 'ChatGPT', 23)
-f.arrow([(185, 562), (185, 521)])
-f.text(330, 600, 'ChatGPTが自分の会話から', 22, f.TEAL)
-f.text(330, 636, '毎週、文脈を更新', 22, f.TEAL)
-f.person(1190, 653, .62)
-f.centered(1190, 752, '本人が読む・感想を話す', 23)
-f.arrow([(1190, 532), (1190, 593)], f.GRAY)
-f.text(940, 554, 'Pagesで確認', 22, f.GRAY)
-f.arrow([(1250, 664), (1350, 664), (1350, 355), (1318, 355)], f.AMBER, 4)
-f.text(776, 638, '進捗・感想は', 23, f.AMBER)
-f.text(776, 675, '会話経由で記録', 23, f.AMBER)
-f.footer('文脈と読書記録を合わせて判断。非公開情報は公開へ転記しない。各定期処理は独立。')
-f.im.quantize(colors=96).save(Path(__file__).with_name('cover.png'), optimize=True)
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'scripts'))
+import figkit as fk
+
+ap = argparse.ArgumentParser()
+ap.add_argument('--font', required=True)
+fk.init(ap.parse_args().font)
+fk.begin()
+
+CTX, GPT, LOG = 260, 720, 1180   # 左：personal-ai-context、中：ChatGPT、右：reading-log
+TY = 250                          # 札の中心 y（札は 184〜316）
+HALF = 66
+
+
+def lock(lx, ly, c=fk.BLUE):
+    """非公開の印。札の角に付ける小さな錠。"""
+    fk.d.arc((lx - 11, ly - 26, lx + 11, ly - 2), 180, 360, fill=c, width=5)
+    fk.rr((lx - 16, ly - 10, lx + 16, ly + 16), 'white', c, 3, 6)
+    fk.d.ellipse((lx - 4, ly - 1, lx + 4, ly + 7), fill=c)
+
+
+# 三つの札。名前は札の上に置く（下から矢印を入れるため）
+fk.service('github', CTX, TY)
+fk.centered(CTX, TY - HALF - 46, 'personal-ai-context', 25)
+lock(CTX - HALF + 2, TY + HALF - 12)   # 左下の角（右下だと矢じりに近い）
+
+fk.service('openai', GPT, TY)
+fk.centered(GPT, TY - HALF - 46, 'ChatGPT', 25)
+fk.clock(GPT + 120, TY - HALF - 30, 26)
+fk.text(GPT + 158, TY - HALF - 47, '毎週', 25, fk.BLUE)
+
+fk.service('github', LOG, TY)
+fk.centered(LOG, TY - HALF - 46, 'reading-log', 25)
+
+# personal-ai-context ⇄ ChatGPT
+fk.arrow([(CTX + HALF + 16, TY - 20), (GPT - HALF - 16, TY - 20)], fk.BLUE)
+fk.centered((CTX + GPT) / 2, TY - 56, '読む', 24, fk.BLUE)
+fk.arrow([(GPT - HALF - 16, TY + 20), (CTX + HALF + 16, TY + 20)], fk.TEAL)
+fk.centered((CTX + GPT) / 2, TY + 32, '会話の差分を更新', 24, fk.TEAL)   # 元は会話。読書レビューは書き戻さない
+
+# reading-log ⇄ ChatGPT
+fk.arrow([(LOG - HALF - 16, TY - 20), (GPT + HALF + 16, TY - 20)], fk.BLUE)
+fk.centered((GPT + LOG) / 2, TY - 56, '読む', 24, fk.BLUE)
+fk.arrow([(GPT + HALF + 16, TY + 20), (LOG - HALF - 16, TY + 20)], fk.TEAL)
+fk.centered((GPT + LOG) / 2, TY + 32, '順位・感想を記録', 24, fk.TEAL)   # 本人の感想も会話経由で reading-log へ
+
+# 本人：reading-log を見て読み、感想を ChatGPT に話す（ChatGPT が reading-log へ記録する往復）
+PY = 580
+fk.person(GPT, PY, .8)
+fk.arrow([(LOG, TY + HALF + 14), (LOG, PY), (GPT + 68, PY)], fk.GRAY)
+fk.text(LOG + 22, (TY + HALF + PY) / 2 - 16, '見る', 24, fk.GRAY)
+fk.arrow([(GPT, PY - 80), (GPT, TY + HALF + 14)], fk.AMBER)
+fk.text(GPT + 22, (TY + HALF + PY - 80) / 2 - 16, '感想を話す', 24, fk.AMBER)
+
+fk.save(Path(__file__).with_name('cover.png'))

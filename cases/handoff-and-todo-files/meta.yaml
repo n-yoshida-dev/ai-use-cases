@@ -1,0 +1,64 @@
+schema_version: 1
+id: handoff-and-todo-files
+title: 会話をまたぐ引き継ぎと、本人待ちの置き場
+status: captured
+publication: published
+category: information-organization
+tags:
+- claude
+- handoff
+- todo-md
+- hooks
+- markdown
+summary: 各リポジトリの直下にHANDOFF.md（今どこまで・再開の手順）とTODO.md（タスク・確認待ち・保留）を置き、会話の区切りごとにClaude Codeが聞かずに書く。人間待ちはTODO.mdだけに置き、本人は会話で答え、点検スクリプトとフックが古さを見つける。
+human_roles:
+- 会話の中で判断・レビュー・作業の答えを返す
+- 人間待ちの置き場を1つにする（別の箱への写しをやめる）と決める
+- 一覧は横断タスクボードで見る
+ai_roles:
+- 会話の区切りごとにHANDOFF.md（現在地・再開の手順）とTODO.md（タスク・確認待ち・保留）を聞かずに更新する
+- 確認待ちを種類（判断・レビュー・作業）・頼んだ日・「やってほしいこと」つきで登録し、答えを本人の言葉で記録する
+- 会話の始めにHANDOFF.mdを読んで続きから始める
+- 本人への頼みは番号ではなく、会話の中で中身を書いて聞く
+verification:
+  checked_on: '2026-10-31'
+  confirmed:
+  - 共通の決まり（「セッションの終わり方」と「TODO.md」の節）が手元の指示ファイルにある
+  - 点検スクリプト（書式・古さ・期限の過ぎた保留・長く残る確認待ち・番号だけの行を点検）と回帰テストがコミットされている
+  - 会話の始めとコミットの直後に点検を呼ぶフックが設定ファイルに登録されている
+  - 2026-10-29に複数のリポジトリが確認待ちをTODO.mdへ移したコミットがある
+  - 実物のHANDOFF.md・TODO.mdが決まりの形（確認待ちの番号・種類・頼んだ日・「やってほしいこと」・答え）で書かれている
+  user_reported:
+  - 引き継ぎは頼まなくても区切りごとに書き、続けられるならそのまま続けてほしい（2026-10-04。区切りごとに聞かずに書く決まりのきっかけ）
+  - 番号だけで頼まれると、どこを見ればよいか分からない（2026-10-06。中身を書いて聞く決まりのきっかけ）
+  - 別の箱に写した人間待ちは古くなるので要らない（2026-10-29。写しをやめた判断）
+  - 引き継ぎと確認待ちのファイルの置き方を、AI活用の仕組みの1つとして非公開の台帳に載せたい（2026-10-29）
+  - この公開カタログに入れてもよい。細かい所なので微妙、との言葉つき（2026-10-31）
+  unconfirmed:
+  - TODO.mdの形で古くならずに続くか（点検の数字は2週間後に見直す予定）
+  - 点検スクリプトとフックの運用の記録（指摘の件数・誤検知はまだ記録が無い）
+  - 旧の箱の後片付け（各リポジトリの参照の削除など）
+  - 時間の節約などの効果
+evidence:
+- type: procedure-document
+  description: 共通の決まり、点検スクリプトの先頭の説明、実物のHANDOFF.md・TODO.mdを読み、仕組みを一般化して記載。リポジトリ名・タスクの中身・本人への問いの中身・ローカルのパスは掲載しない。
+- type: configuration
+  description: 会話の始めとコミットの直後に点検を呼ぶフックの設定を確認（2026-10-31）。
+- type: commit-history
+  description: 点検スクリプトと回帰テストのコミット、2026-10-29に複数のリポジトリが確認待ちをTODO.mdへ移したコミット。
+outcomes:
+  measured: false
+  notes: 効果は未測定
+visual:
+  cover: cover.png
+  kind: conceptual-diagram
+  language: ja
+  explanation: null
+  source: cases/handoff-and-todo-files/figure.py
+links:
+  related_case: ../daily-cross-task-board/
+  related_system: ../../systems/cross-task-board/
+platforms:
+- Claude Code
+modes:
+- work

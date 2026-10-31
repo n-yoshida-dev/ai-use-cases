@@ -1,26 +1,76 @@
 """このケースの概念図だけを再生成。Python 3 / Pillow / 日本語フォント。
 python cases/daily-todoist-triage/figure.py --font /path/to/JapaneseFont.ttf
+例：python3 cases/daily-todoist-triage/figure.py --font /usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc
 部品は scripts/figkit.py。他ケースの画像には触れない。
+
+構図：左が Todoist の Inbox（たまった札）、中央が毎朝 6:00 に動く ChatGPT、右が整理されたあとの Todoist。
+下は本人が基準（優先度・例外・期限）を決めて ChatGPT へ渡す流れ。
 """
 import argparse, sys
 from pathlib import Path
-from PIL import Image, ImageDraw
-import json
 HERE = Path(__file__).resolve().parent
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(HERE.parents[1] / "scripts"))
 import figkit as fk
+
 parser = argparse.ArgumentParser()
 parser.add_argument("--font", required=True)
 fk.init(parser.parse_args().font)
-fk.im = Image.new("RGB", fk.SIZE, fk.PAPER)
-fk.d = ImageDraw.Draw(fk.im)
-SCENE = json.loads(r'''[["text",64,40,"AI活用の仕組み",24,"#237b72"],["text",64,90,"毎朝のタスク整理をAIへ",48],["text",64,165,"本人が基準を決める",24,"#6f7479"],["rr",[86,280,246,392],"white","#5679a8",3,12],["line",[[116,310],[212,310]],"#cbd4d8",6],["line",[[116,337],[194,337]],"#cbd4d8",6],["line",[[116,364],[206,364]],"#cbd4d8",6],["rr",[214,398,374,510],"white","#bb7833",3,12],["line",[[244,428],[340,428]],"#cbd4d8",6],["line",[[244,455],[322,455]],"#cbd4d8",6],["line",[[244,482],[334,482]],"#cbd4d8",6],["centered",230,545,"Inbox",32,"#5679a8"],["centered",230,590,"音声・外部入力",24],["arrow",[[405,403],[567,403]]],["clock",645,270,42],["text",706,250,"毎朝6時",32,"#5679a8"],["laptop",610,330,220,160],["centered",720,545,"ChatGPT",32,"#237b72"],["centered",720,590,"分類・期限見直し",24],["arrow",[[870,403],[981,403]]],["rr",[1010,252,1370,520],"white","#237b72",3,16],["text",1034,270,"Todoist",24,"#237b72"],["rr",[1034,318,1060,344],"white","#237b72",3,4],["line",[[1078,331],[1293,331]],"#cbd4d8",6],["rr",[1060,366,1086,392],"white","#5679a8",3,4],["line",[[1104,379],[1304,379]],"#cbd4d8",6],["line",[[1047,344],[1047,379],[1058,379]],"#5679a8",3],["rr",[1034,414,1114,453],"#fff4d2","#bb7833",2,8],["text",1042,421,"2分",24,"#bb7833"],["rr",[1130,414,1234,453],"#eaf3f1","#237b72",2,8],["text",1138,421,"10分",24,"#237b72"],["poly",[[1270,414],[1270,458],[1275,440],[1312,440],[1312,414]],"#bb7833"],["centered",1190,545,"整理結果",32],["centered",1190,590,"直近の完了報告あり",24,"#6f7479"],["person",218,711,0.48],["centered",218,780,"本人の判断",24],["rr",[372,680,814,750],"#fff4d2","#e7ca7c",2,12],["centered",593,695,"優先度・例外・期限",24],["arrow",[[281,720],[354,720]],"#bb7833",5],["arrow",[[720,675],[720,630]],"#bb7833",5],["centered",1095,700,"繰り返しは除外",24,"#6f7479"],["rr",[64,820,1376,865],"#f1ede5","#f1ede5",1,12],["text",88,830,"現行設定・直近の完了報告を確認／結果の独立検証・効果測定は未実施",24,"#795527"],["text",64,878,"実画面ではない概念図",16,"#6f7479"]]''')
-for op, *args in SCENE:
-    if op == "line":
-        fk.d.line([tuple(p) for p in args[0]], fill=args[1], width=args[2], joint="curve")
-    elif op == "poly":
-        fk.d.polygon([tuple(p) for p in args[0]], fill=args[1])
-    else:
-        getattr(fk, op)(*args)
+fk.begin()
+d = fk.d
+
+CY = 300  # 横の流れの中心の高さ
+
+
+def task_card(x, y, c):
+    """ばらばらに書かれたタスクの札（160×112）。"""
+    fk.rr((x, y, x + 160, y + 112), 'white', c, 3, 12)
+    for k, w in enumerate((96, 78, 90)):
+        d.line((x + 30, y + 30 + k * 27, x + 30 + w, y + 30 + k * 27), fill=fk.LINE, width=6)
+
+
+# 左：Todoist の中の Inbox。小さな Todoist のロゴと「Inbox」を頭に付けた枠の中に札を重ねる
+fk.rr((60, 150, 350, 420), '#f1f3f1', fk.LINE, 3, 20)
+fk.logo('todoist', 100, 184, 36)
+fk.text(126, 166, 'Inbox', 26, fk.INK)
+task_card(96, 214, fk.BLUE)      # 214–326
+task_card(160, 274, fk.AMBER)    # 274–386 → 束の中心は y=300
+
+# 中央：ChatGPT（毎朝 6:00 に動く）
+fk.clock(640, 150, 36)
+fk.text(690, 130, '毎朝6:00', 30, fk.BLUE)
+fk.service('openai', 720, CY, 'ChatGPT')
+
+# Inbox → ChatGPT（読む） → Todoist（更新）
+fk.arrow([(362, CY), (640, CY)])
+fk.centered(501, CY - 42, '読む', 24, fk.TEAL)
+fk.arrow([(800, CY), (1110, CY)])
+fk.centered(955, CY - 42, '更新', 24, fk.TEAL)
+
+# 右：Todoist と、整理されたあとの姿（親子・所要時間・優先度）
+fk.service('todoist', 1190, CY, 'Todoist')
+fk.arrow([(1190, 424), (1190, 462)], fk.TEAL, 5)
+px, py = 1010, 470
+fk.rr((px, py, px + 360, py + 190), 'white', fk.TEAL, 3, 16)
+fk.rr((px + 24, py + 30, px + 50, py + 56), 'white', fk.TEAL, 3, 4)
+d.line((px + 68, py + 43, px + 283, py + 43), fill=fk.LINE, width=6)
+fk.rr((px + 50, py + 78, px + 76, py + 104), 'white', fk.BLUE, 3, 4)
+d.line((px + 94, py + 91, px + 294, py + 91), fill=fk.LINE, width=6)
+d.line([(px + 37, py + 56), (px + 37, py + 91), (px + 48, py + 91)], fill=fk.BLUE, width=3)
+fk.rr((px + 24, py + 126, px + 104, py + 165), fk.NOTE, fk.AMBER, 2, 8)
+fk.text(px + 32, py + 133, '2分', 24, fk.AMBER)
+fk.rr((px + 120, py + 126, px + 224, py + 165), '#eaf3f1', fk.TEAL, 2, 8)
+fk.text(px + 128, py + 133, '10分', 24, fk.TEAL)
+d.polygon([(px + 260, py + 126), (px + 260, py + 170), (px + 265, py + 152), (px + 302, py + 152), (px + 302, py + 126)],
+          fill=fk.AMBER)
+
+# 下：本人が基準（優先度・例外・期限）を決めて ChatGPT へ指示する
+fk.person(218, 620, 0.48)
+fk.centered(218, 690, '本人', 24)
+fk.rr((372, 585, 814, 655), fk.NOTE, '#e7ca7c', 2, 12)
+fk.centered(593, 600, '優先度・例外・期限', 24)
+fk.arrow([(281, 620), (354, 620)], fk.AMBER, 5)
+fk.arrow([(720, 580), (720, 424)], fk.AMBER, 5)
+fk.text(738, 486, '指示', 24, fk.AMBER)
+
 fk.save(HERE / "cover.png")

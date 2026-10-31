@@ -25,6 +25,6 @@ Todoistだけでは、学習計画・アプリ開発・執筆などリポジト�
 作業記録とコミット履歴で、ボードの作成、書き込み件数とデータベースの件数の一致、Todoistへの反映後の確認、開発状況の取り込み成功を確認。記録は8日分（2026-10-21〜29）で、毎日の継続と効果は未確認。
 
 関連する全体構成：[日々のタスク管理](../daily-task-hub/)  
-関連する個別ケース：[横断タスクボードで今日と明日を組む](../../cases/daily-cross-task-board/) ／ [Todoist整理](../../cases/daily-todoist-triage/)
+関連する個別ケース：[横断タスクボードで今日と明日を組む](../../cases/daily-cross-task-board/) ／ [Todoist整理](../../cases/daily-todoist-triage/) ／ [会話をまたぐ引き継ぎと、本人待ちの置き場](../../cases/handoff-and-todo-files/)
 
 [全体構成一覧](../README.md) ／ [トップ](../../README.md)

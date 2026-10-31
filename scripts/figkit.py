@@ -1,18 +1,24 @@
 """ケース単位で図を描くための共通部品。Python 3 / Pillow / 日本語フォント。
 
-使い方（各ケースの cases/<id>/figure.py から）:
+使い方（各ケースの cases/<id>/figure.py・systems/<id>/figure.py から）:
     import figkit as fk
     fk.init(font_path)
-    fk.begin('題名', '副題'); ...; fk.footer('確認状況'); fk.save(path)
+    fk.begin(); ...; fk.save(path)
 
-色・余白・部品の形は scripts/render_covers.py（初期2件の編集元）に合わせている。
+決まり（AGENTS.md「見せ方と図」）:
+- 図の中に題名・副題・説明の帯・注記を入れない。絵・矢印・短いラベル（原則 12 字以内）だけで伝える
+- サービスは service()（ロゴ＋名前）で示す。ロゴは scripts/logos/（Simple Icons、CC0）。無いサービスは名前の文字だけ
+- 横幅は 1440px。縦は save() が中身に合わせて切り詰める（最大 900px）
 """
 import math
-from PIL import Image, ImageDraw, ImageFont
+from pathlib import Path
+from PIL import Image, ImageChops, ImageDraw, ImageFont
 
 INK = '#243342'; TEAL = '#237b72'; BLUE = '#5679a8'; AMBER = '#bb7833'
 PAPER = '#faf9f5'; LINE = '#cbd4d8'; GRAY = '#6f7479'; NOTE = '#fff4d2'; FAINT = '#d3b48f'
 SIZE = (1440, 900)
+MARGIN = 56
+LOGOS = Path(__file__).resolve().parent / 'logos'
 
 _font = None
 im = None
@@ -33,13 +39,11 @@ def jpfont(size):
     return font
 
 
-def begin(title, sub):
+def begin(*_ignored):
+    """まっさらな画布。引数（旧：題名・副題）は受け取っても描かない。"""
     global im, d
     im = Image.new('RGB', SIZE, PAPER)
     d = ImageDraw.Draw(im)
-    text(64, 38, 'AI活用の仕組み', 24, TEAL)
-    text(64, 83, title, 46)
-    text(64, 155, sub, 23, GRAY)
 
 
 def text(x, y, s, size=28, color=INK):
@@ -84,6 +88,32 @@ def dashed_arrow(points, color=FAINT, width=4, dash=14, gap=10):
                (x - 19 * math.cos(a + .5), y - 19 * math.sin(a + .5))], fill=color)
 
 
+def logo(name, cx, cy, size=72):
+    """scripts/logos/<name>.png を中心 (cx, cy) に size 四方で貼る。無ければ何も描かず False を返す。"""
+    path = LOGOS / f'{name}.png'
+    if not path.exists():
+        return False
+    mark = Image.open(path).convert('RGBA').resize((size, size), Image.LANCZOS)
+    im.paste(mark, (int(cx - size / 2), int(cy - size / 2)), mark)
+    return True
+
+
+def service(name, cx, cy, label=None, tile=132, c=LINE):
+    """サービスの札：白い角丸の板にロゴ、下に名前。ロゴが無いサービスは板の中に名前を書く。
+
+    name は scripts/logos のファイル名（openai・claude・gmail・todoist・notion・googlecalendar・googlemaps・youtube・x・github・qiita・note）。
+    label を省くと名前の文字を出さない。板の大きさは tile（既定 132px）。
+    """
+    half = tile / 2
+    rr((cx - half, cy - half, cx + half, cy + half), 'white', c, 3, 22)
+    if logo(name, cx, cy, int(tile * .56)):
+        if label:
+            centered(cx, cy + half + 12, label, 25)
+    else:
+        centered(cx, cy - 15, label or name, 26)
+    return cy + half
+
+
 def person(x, y, s=1):
     d.ellipse((x - 30 * s, y - 80 * s, x + 30 * s, y - 20 * s), fill='#e9cdb6', outline=INK, width=3)
     d.arc((x - 36 * s, y - 91 * s, x + 36 * s, y - 23 * s), 180, 350, fill=INK, width=9)
@@ -93,6 +123,7 @@ def person(x, y, s=1):
 
 
 def laptop(x, y, w=220, h=150):
+    """画面の絵（サービスを指さない「画面」そのもの）。ChatGPT・Claude を示すときは service() を使う。"""
     rr((x, y, x + w, y + h), '#eaf3f1', TEAL, 4)
     d.polygon([(x - 18, y + h + 20), (x + w + 18, y + h + 20), (x + w + 34, y + h + 37), (x - 34, y + h + 37)],
               fill='#d0dcd9', outline=TEAL)
@@ -144,23 +175,53 @@ def phone(x, y, w=84, h=144):
     d.line((x + 38, y + 39, x + w - 20, y + 39), fill=AMBER, width=5)
 
 
-def footer(status):
-    rr((64, 808, 1376, 865), '#f1ede5', '#f1ede5', 1, 12)
-    text(88, 822, status, 23, '#795527')
-    text(64, 876, '実画面ではなく、役割と関係を示す概念図', 16, GRAY)
+def video(x, y, w=150, h=88, c=BLUE):
+    rr((x, y, x + w, y + h), 'white', c, 3, 9)
+    d.polygon([(x + w * .43, y + h * .25), (x + w * .43, y + h * .75), (x + w * .68, y + h * .5)], fill=c)
 
 
-def cards(title, status, items):
-    """説明図（flow.png）。items は (見出し, [行, 行]) を4つ。"""
-    begin(title, '作業・判断・検証状況の補足')
+def folder(x, y, w=106, h=90, c=BLUE):
+    d.polygon([(x, y + 14), (x + 38, y + 14), (x + 50, y), (x + w, y), (x + w, y + h), (x, y + h)],
+              fill='white', outline=c)
+    d.line([(x, y + 14), (x + 38, y + 14), (x + 50, y), (x + w, y), (x + w, y + h), (x, y + h), (x, y + 14)],
+           fill=c, width=3, joint='curve')
+
+
+def calendar(x, y, w=172, h=142, c=BLUE):
+    rr((x, y, x + w, y + h), 'white', c, 3, 12)
+    d.rectangle((x, y, x + w, y + 34), fill=c)
+    for r in range(3):
+        for k in range(5):
+            d.rectangle((x + 16 + k * 30, y + 50 + r * 28, x + 34 + k * 30, y + 68 + r * 28), outline=LINE, width=2)
+
+
+def doc(x, y, w=140, h=158, c=BLUE):
+    d.polygon([(x, y), (x + w - 34, y), (x + w, y + 34), (x + w, y + h), (x, y + h)], fill='white', outline=c)
+    d.line([(x, y), (x + w - 34, y), (x + w, y + 34), (x + w, y + h), (x, y + h), (x, y)], fill=c, width=3, joint='curve')
+    for k in range(4):
+        d.line((x + 20, y + 50 + k * 26, x + w - 20, y + 50 + k * 26), fill=LINE, width=5)
+
+
+def cards(title, items):
+    """説明図（flow.png）。見出しと、(小見出し, [行, 行]) を 4 つ。文章で補う図なので題名を持つ。"""
+    begin()
+    text(64, 56, title, 40)
     for i, (label, lines) in enumerate(items):
-        x = 64 + (i % 2) * 670; y = 226 + (i // 2) * 278
-        rr((x, y, x + 638, y + 246))
+        x = 64 + (i % 2) * 670; y = 150 + (i // 2) * 290
+        rr((x, y, x + 638, y + 258))
         text(x + 28, y + 24, label, 28, TEAL)
         for k, line in enumerate(lines):
             text(x + 28, y + 93 + k * 46, line, 28)
-    footer(status)
 
 
 def save(path):
-    im.save(path, optimize=True)
+    """中身の上下の余白を MARGIN に切り詰めて保存する（横幅は 1440 のまま）。"""
+    bg = Image.new('RGB', im.size, PAPER)
+    box = ImageChops.difference(im, bg).getbbox()
+    if box:
+        top = max(0, box[1] - MARGIN)
+        bottom = min(im.size[1], box[3] + MARGIN)
+        out = im.crop((0, top, im.size[0], bottom))
+    else:
+        out = im
+    out.quantize(colors=128).save(path, optimize=True)

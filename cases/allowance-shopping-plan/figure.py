@@ -2,7 +2,8 @@
 
     python cases/allowance-shopping-plan/figure.py --font /absolute/path/日本語フォント
 
-Python 3 / Pillow。部品は scripts/figkit.py。生成後は欠字・はみ出し・重なりを目視確認する。
+Python 3 / Pillow。部品は scripts/figkit.py（サービスはロゴの札 fk.service で示す）。
+生成後は欠字・はみ出し・重なり・ロゴの欠けを目視確認する。
 """
 import argparse
 import sys
@@ -18,15 +19,15 @@ parser.add_argument('--font', required=True, help='Noto Sans JP / Noto Sans CJK 
 fk.init(parser.parse_args().font)
 
 
-def wish_db(x, y, w=240, h=220):
-    """画像つきの欲しいものの一覧（Notionのデータベース）。"""
+def wish_db(x, y, w=200, h=132):
+    """画像つきの欲しいものの一覧（Notion のデータベース）。"""
     fk.rr((x, y, x + w, y + h), 'white', fk.INK, 3, 12)
-    for k, c in enumerate([fk.AMBER, fk.BLUE, fk.TEAL, fk.AMBER]):
-        ry = y + 20 + k * 49
-        fk.rr((x + 18, ry, x + 58, ry + 36), c, c, 1, 6)
-        fk.d.ellipse((x + 26, ry + 8, x + 36, ry + 18), fill='white')
-        fk.d.line((x + 72, ry + 11, x + w - 30 - (k % 2) * 40, ry + 11), fill=fk.LINE, width=6)
-        fk.d.line((x + 72, ry + 27, x + 140, ry + 27), fill=fk.LINE, width=5)
+    for k, c in enumerate([fk.AMBER, fk.BLUE, fk.TEAL]):
+        ry = y + 14 + k * 38
+        fk.rr((x + 16, ry, x + 52, ry + 32), c, c, 1, 6)
+        fk.d.ellipse((x + 23, ry + 7, x + 32, ry + 16), fill='white')
+        fk.d.line((x + 66, ry + 9, x + w - 24 - (k % 2) * 34, ry + 9), fill=fk.LINE, width=6)
+        fk.d.line((x + 66, ry + 24, x + 124, ry + 24), fill=fk.LINE, width=5)
 
 
 def jar(x, y, level, c):
@@ -42,49 +43,54 @@ def jar(x, y, level, c):
         fk.d.ellipse((cx - 11, cy - 11, cx + 11, cy + 11), fill=fk.AMBER, outline='#8f5a22', width=2)
 
 
-fk.begin('お小遣いの買い物計画をAIと組む', '欲しいものの入力はNotionのまま → AIが点数で並べた計画を画面にする')
+fk.begin()
 
-# 左：本人が画像つきで入れる欲しいもの（正本）
-wish_db(90, 262)
-fk.centered(210, 498, '欲しいもの', 28)
-fk.centered(210, 536, 'Notion（正本）', 23, fk.GRAY)
+# 左上：ChatGPT が候補を調べ、Notion の商品メモに書く
+fk.service('openai', 210, 150, 'ChatGPT')
+fk.arrow([(210, 268), (210, 342)], fk.TEAL, 5)
+fk.text(232, 288, '調べてメモ', 22, fk.TEAL)
 
-# 中央：Claude Code が読んで計算する
-fk.arrow([(345, 352), (585, 352)])
-fk.centered(465, 306, 'コネクタで読む', 22, fk.TEAL)
-fk.laptop(610, 290)
-fk.centered(720, 486, 'Claude Code', 30, fk.TEAL)
-fk.centered(720, 526, '読む・計算する', 24, fk.GRAY)
-fk.dashed_arrow([(585, 412), (345, 412)], fk.FAINT, 4)
-fk.centered(465, 422, '決めたら反映', 22, fk.GRAY)
+# 左：欲しいもの（Notion が正本）
+fk.service('notion', 210, 420, 'Notion')
+wish_db(300, 354)
 
-# 右：計画を見る画面（積立はひとつ。高すぎる物は保留）
-fk.arrow([(860, 365), (945, 365)])
-fk.centered(898, 320, '画面を作る', 21, fk.TEAL)
-fk.rr((960, 236, 1370, 600), 'white', fk.BLUE, 3, 14)
-fk.d.rounded_rectangle((962, 238, 1368, 276), radius=12, fill='#e7eef6')
-fk.text(984, 242, '買う順番の計画', 22, fk.BLUE)
-jar(1010, 316, .55, fk.TEAL)
-fk.centered(1065, 458, '積立はひとつ', 23)
-fk.rr((1200, 330, 1310, 448), 'white', fk.FAINT, 3, 18)
-fk.centered(1255, 372, '保留', 26, fk.GRAY)
-fk.centered(1255, 458, '高すぎる物', 23, fk.GRAY)
+# 中央：Claude Code が読んで計算し、画面を作る
+fk.arrow([(515, 400), (638, 400)])
+fk.centered(576, 362, '読む', 22, fk.TEAL)
+fk.dashed_arrow([(638, 445), (515, 445)], fk.FAINT, 4)
+fk.centered(576, 456, '反映', 22, fk.GRAY)
+fk.service('claude', 720, 420, 'Claude Code', tile=150)
+
+# 上：Amazon の値段の履歴（Keepa）を Claude が読む
+fk.service('amazon', 660, 150, 'Amazon', tile=118)
+fk.service('keepa', 792, 150, 'Keepa', tile=118)
+fk.arrow([(660, 215), (660, 338)], fk.BLUE, 5)
+fk.arrow([(790, 215), (790, 338)], fk.BLUE, 5)
+fk.centered(725, 258, '値段の履歴', 20, fk.BLUE)
+
+# 右：計画の画面（積立はひとつ。高すぎる物は保留）
+fk.arrow([(800, 420), (945, 420)])
+fk.centered(872, 380, '画面を作る', 22, fk.TEAL)
+fk.rr((960, 250, 1370, 610), 'white', fk.BLUE, 3, 14)
+fk.d.rounded_rectangle((962, 252, 1368, 290), radius=12, fill='#e7eef6')
+fk.text(984, 256, '買う順番の計画', 22, fk.BLUE)
+jar(1010, 330, .55, fk.TEAL)
+fk.centered(1065, 470, '積立', 24)
+fk.rr((1200, 342, 1310, 460), 'white', fk.FAINT, 3, 18)
+fk.centered(1255, 384, '保留', 26, fk.GRAY)
 for k in range(3):
-    ry = 506 + k * 30
+    ry = 526 + k * 30
     fk.d.ellipse((1000, ry - 10, 1020, ry + 10), fill=fk.TEAL)
     fk.d.line((1034, ry, 1300 - k * 40, ry), fill=fk.LINE, width=6)
-fk.centered(1165, 614, '計画の画面', 27, fk.BLUE)
-fk.centered(1165, 652, 'アーティファクト', 21, fk.GRAY)
 
-# 下：本人。入力は Notion、見るのは画面だけ、相談は隣のチャット
-fk.person(720, 690, .6)
-fk.centered(720, 770, '本人が決める', 24)
-fk.arrow([(645, 700), (210, 700), (210, 575)], fk.AMBER, 5)
-fk.centered(425, 660, '画像つきで入力', 22, fk.AMBER)
-fk.arrow([(795, 700), (1000, 700), (1000, 612)], fk.BLUE, 5)
-fk.centered(895, 712, '画面だけ見る', 22, fk.BLUE)
-fk.arrow([(720, 626), (720, 566)], fk.AMBER, 5)
-fk.text(738, 580, '順番を相談', 22, fk.AMBER)
+# 下：本人。入力は Notion、見るのは画面、相談は Claude
+fk.person(720, 700, .6)
+fk.centered(720, 782, '本人', 24)
+fk.arrow([(645, 710), (210, 710), (210, 545)], fk.AMBER, 5)
+fk.centered(430, 672, '画像つきで入力', 22, fk.AMBER)
+fk.arrow([(795, 710), (1010, 710), (1010, 625)], fk.BLUE, 5)
+fk.centered(900, 720, '見る', 22, fk.BLUE)
+fk.arrow([(720, 638), (720, 556)], fk.AMBER, 5)
+fk.text(738, 585, '相談', 22, fk.AMBER)
 
-fk.footer('試作・改善中（2026-10-22開始）／ 初回の画面を作成 ／ 効果は未測定')
 fk.save(HERE / 'cover.png')

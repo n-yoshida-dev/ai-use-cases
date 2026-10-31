@@ -1,0 +1,58 @@
+schema_version: 1
+id: dev-dashboard-hub
+title: 開発の状態を1画面に集めて常駐させる
+status: captured
+publication: published
+category: continuous-operation
+tags:
+- claude
+- github
+- dashboard
+- todo-md
+- handoff
+- ci
+summary: Claude Codeが各リポジトリに「正本を読んで描くだけ」の開発ダッシュボードを作り、1本の常駐ハブが全リポジトリの画面を1つの入口にまとめて30分ごとに集め直す。本人はブラウザで見るだけ。
+human_roles:
+- ダッシュボードを足すリポジトリと、そのリポジトリ固有の指標を決める
+- 1画面で進捗・あなた待ち・CIを見て、次に何をするか決める（画面には書き込まない）
+ai_roles:
+- 手順書（スキル）に沿って、TODO.md・引き継ぎメモ・git・GitHub（PR・CI）を読んで描く集計スクリプトと画面を、そのリポジトリ用に作る・直す
+- 固有の指標（人が今見る価値のある数字1〜2個）をそのリポジトリ向けに書く
+verification:
+  checked_on: '2026-10-31'
+  confirmed:
+  - 非公開の手順書（スキル）・ハブ本体・起動スクリプト・常駐の設定ファイルを読み、仕組みを一般化して記載
+  - 2026-09-27にダッシュボードを作る手順書（スキル）を追加、2026-10-08から常駐、2026-10-28に画面を作り直したことを、手順書の先頭・起動スクリプトの注記・バージョン履歴で確認
+  - 2026-10-29に、常駐サービスが動いていて、ハブがHTTP 200を返すことを確認（公開文の作成時2026-11-01にも再確認）
+  - 2026-10-31にハブの画面で、4リポジトリの進捗・あなた待ちの件数・CI・作業ツリー・今のタスクと、優先度の高いあなた待ち3件が1画面に並ぶことを確認
+  - ハブは設定ファイルを持たず、集計スクリプトのあるフォルダを毎回探して子プロセスで呼ぶこと、開いたときは手元のデータをすぐ返して古ければ裏で作り直すこと、30分ごとの集め直しは常駐の設定で渡していることを、ハブ本体のコードと常駐の設定ファイルで確認
+  user_reported:
+  - 作ったものだから載せてよい。中身は開発の話だが、こういうふうにダッシュボードを作っている、と。見た目がかっこいい（2026-10-31、要旨）
+  unconfirmed:
+  - 本人がどのくらいの頻度で画面を見ているか（使用の記録が無い）
+  - 時間の節約などの効果
+  - 保管に回した（アーカイブ済みの）リポジトリの画面がハブに残っている
+  - 一部のリポジトリの集計は、人間待ちの置き場を変えたあとの切替が途中
+evidence:
+- type: procedure-document
+  description: 非公開の手順書（スキル）とハブ本体・起動スクリプト・常駐の設定ファイル。リポジトリ名・ローカルのパス・画面の中身は掲載しない。
+- type: runtime-check
+  description: 常駐サービスの状態とハブのHTTP応答（2026-10-29。公開文の作成時2026-11-01に再確認）。
+- type: screenshot
+  description: 2026-10-31にハブの画面を撮って内容を確認（非公開。公開物には載せず概念図で示す）。
+outcomes:
+  measured: false
+  notes: 効果は未測定
+visual:
+  cover: cover.png
+  kind: conceptual-diagram
+  language: ja
+  explanation: null
+  source: cases/dev-dashboard-hub/figure.py
+links:
+  related_system: ../../systems/cross-task-board/
+  related_case: ../daily-cross-task-board/
+platforms:
+- Claude Code
+modes:
+- work

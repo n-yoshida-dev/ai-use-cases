@@ -1,6 +1,6 @@
 # YouTubeマイリスト整理をAIへ委譲
 
-![課題・AI・人間・本人申告による完了の関係](cover.png)
+![増えたYouTubeマイリストをChatGPTが整理する流れ（本人が残す基準を渡す）](cover.png)
 
 増えたマイリストを手作業で確認する負担を、ChatGPT WorkのComputer Useへ委譲する事例。
 AIに現状確認・分類・整理操作を任せ、人間は残す基準と整理方針を決める。

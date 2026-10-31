@@ -9,7 +9,7 @@ visual:
   kind: conceptual-diagram
   language: ja
   explanation: flow.png
-  source: scripts/render_covers.py
+  source: figure.py
 links: {}
 id: youtube-playlist-cleanup
 title: YouTubeマイリスト整理をAIへ委譲
