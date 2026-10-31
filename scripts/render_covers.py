@@ -6,7 +6,9 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser()
 parser.add_argument('--font', required=True, help='Noto Sans JP等の日本語フォント')
-FONT = parser.parse_args().font
+parser.add_argument('--case', choices=['youtube-playlist-cleanup', 'scheduled-reviews'], help='指定したケースだけ保存する')
+args = parser.parse_args()
+FONT = args.font
 INK='#243342'; TEAL='#237b72'; BLUE='#5679a8'; AMBER='#bb7833'
 PAPER='#faf9f5'; LINE='#cbd4d8'
 im=None; d=None
@@ -89,7 +91,8 @@ def footer(status):
     text(64,876,'実画面ではなく、役割と関係を示す概念図',16,'#6f7479')
 
 def save(case,name):
-    im.save(ROOT/'cases'/case/name,optimize=True)
+    if args.case is None or args.case == case:
+        im.save(ROOT/'cases'/case/name,optimize=True)
 
 begin('YouTubeの整理をAIへ任せる','人が基準を決める → AIが確認・整理する')
 # disorder is visible without reading paragraphs
@@ -110,7 +113,7 @@ rr((510,658,762,729),'#fff4d2','#e7ca7c',2,12)
 centered(636,674,'残す・まとめる基準',26)
 arrow([(768,690),(916,690),(916,555),(850,555)],AMBER,5)
 arrow([(446,677),(493,677)],AMBER,5)
-footer('依頼・方針を記録済み ／ 整理の完了結果は未確認')
+footer('本人申告で完了 ／ 変更件数・変更前後・操作ログは未確認')
 save('youtube-playlist-cleanup','cover.png')
 
 begin('定期レビューをAIに任せる','毎回の依頼を、周期と判断基準の設定へ')
@@ -145,11 +148,11 @@ def details(case,title,status,items):
     footer(status)
     save(case,'flow.png')
 
-details('youtube-playlist-cleanup','YouTube整理：作業と判断の分担','依頼を記録済み ／ 実際の変更・完了結果は未確認',[
+details('youtube-playlist-cleanup','YouTube整理：作業と判断の分担','本人申告で完了 ／ 変更件数・変更前後・操作ログは未確認',[
     ('課題',['増えたマイリストの確認と整理を','人間が一つずつ行う負担がある']),
     ('AIの作業',['棚卸し・分類・統合候補の抽出','許可された範囲で画面を操作する']),
     ('人間の判断',['残す基準、統合・削除の方針','必要な例外を判断する']),
-    ('確認すること',['実際の変更件数と整理結果','時間削減は測定後に記録する']),
+    ('確認状況',['本人申告で整理完了','件数・変更前後・効果は未確認']),
 ])
 details('scheduled-reviews','定期レビュー：作業と判断の分担','設定・実行日時を確認 ／ 各成果物の成功を示すものではない',[
     ('課題',['定期確認や情報収集のたびに','人間が依頼・確認を繰り返す']),

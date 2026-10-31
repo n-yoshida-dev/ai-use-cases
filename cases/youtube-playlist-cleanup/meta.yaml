@@ -3,7 +3,7 @@ status: captured
 publication: draft
 outcomes:
   measured: false
-  notes: 削減時間・成功率は未測定
+  notes: 本人申告で完了。変更件数・変更前後は未確認。削減時間・成功率は未測定
 visual:
   cover: cover.png
   kind: conceptual-diagram
@@ -27,17 +27,19 @@ ai_roles:
 - 分類・統合候補抽出
 - 許可範囲のGUI操作
 verification:
-  checked_on: '2026-10-06'
+  checked_on: '2026-10-31'
   confirmed:
   - 本人が整理操作をWorkへ依頼したこと
   - 作成・削除・統合も依頼範囲に含むこと
+  user_reported:
+  - 2026-10-30に、ChatGPT Computer Useで本人のアカウントのマイリスト整理を完了したと確認
   unconfirmed:
   - 実際の変更件数
-  - 完了結果
+  - 完了操作のログによる独立検証
   - 変更前後の比較
 evidence:
 - type: user-confirmed-conversation
-  description: 2026-10-06の本人発言と本チャットに提示された文脈。完了した作業ログは未取得。
+  description: 依頼・方針の既存記録と、2026-10-30の本人による完了申告。今回参照できた会話では変更件数・変更前後・操作ログは確認できない。
 platforms:
 - ChatGPT
 modes:

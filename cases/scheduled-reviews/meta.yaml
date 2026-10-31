@@ -10,7 +10,8 @@ visual:
   language: ja
   explanation: flow.png
   source: scripts/render_covers.py
-links: {}
+links:
+  related_system: ../../systems/context-reading-loop/
 id: scheduled-reviews
 title: スケジュールによる定期レビュー
 category: scheduled-automation
@@ -28,17 +29,29 @@ ai_roles:
 - 許可範囲の保存・更新
 - 報告
 verification:
-  checked_on: '2026-10-06'
+  checked_on: '2026-10-31'
   confirmed:
-  - 既存の週次処理が有効
-  - 週次読書レビューとコンテキスト更新に2026-10-04の実行日時記録がある
+  - 週次読書レビューは有効。毎週日曜20:30 Asia/Tokyoを基準とするflexible_schedule
+  - 週次コンテキスト更新は有効。毎週日曜22:00 Asia/Tokyoのexact_schedule
+  - 読書レビューの現行指示は読書記録・取得可能な文脈を参照し、採点・順位・週次レビューを更新する形
+  - コンテキスト更新の現行指示はChatGPTの会話差分を対象とし、意味のある変更だけを保存する形
+  - 両処理の直近実行は2026-10-25。記録上completedで、同じ実行の完了報告に保存・更新の記載がある
+  - 両報告は対応する実行の開始後に作成され、途中省略・失敗メッセージの表示はない
+  user_reported:
+  - Claude.aiの会話からの週次更新は2026-10-30に停止し、週次更新はChatGPTだけにした（関連する全体構成の記録とも一致）
   unconfirmed:
   - 各実行の成果物の正確性
-  - 保存・更新の成功
+  - 今回は保存先を再取得して成果物を独立検証していない
+  - 直近実行後に変更された現行指示での次回実行結果
+  - 各週の継続的な成功と報告の配信到達
   - 本人の削減時間
 evidence:
 - type: automation-metadata
-  description: 2026-10-06に既存タスクの有効状態・指示・実行日時を読み取り確認。実行日時だけで成功とは判定しない。
+  description: 2026-10-31に両タスクの有効状態・指示・周期を確認。予定や非公開参照先のURL・ID・本文は転載しない。
+- type: automation-run-record
+  description: 2026-10-25の両処理の実行記録と同一実行の完了報告を照合。記録上の完了と保存報告を確認し、成果物検証や効果測定とは区別する。
+- type: user-confirmed-conversation
+  description: 2026-10-30のClaude.ai週次更新停止を本人が説明。関連する全体構成の現行記録とも照合し、Claude側の設定を直接取得したとは扱わない。
 platforms:
 - ChatGPT
 modes:
