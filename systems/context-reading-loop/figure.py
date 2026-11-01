@@ -16,9 +16,18 @@ ap.add_argument('--font', required=True)
 fk.init(ap.parse_args().font)
 fk.begin()
 
-CTX, GPT, LOG = 260, 720, 1180   # 左：personal-ai-context、中：ChatGPT、右：reading-log
-TY = 250                          # 札の中心 y（札は 184〜316）
+# 矢印 1 本＝データが動く向き（根元が出どころ、先端が行き先）。線は fk.flow() だけ。
+# 読まれる側（入力）を左、ChatGPT を中央、書かれる側（出力）を右。読み書き両方の正本は左右に 2 回置く。
+# ChatGPT の札は 3 枚：上が毎週の読書レビュー、中が本人の会話での記録（定期実行ではないので時計なし）、
+# 下が毎週のコンテキスト更新。読書レビューは personal-ai-context へ書き戻さない（右の personal-ai-context へは下の札からだけ）。
+# 本人は下の中央寄り。reading-log から「次に読む本」を受け取り、右の 3 枚へ会話を渡す。
+LX, GX, RX = 220, 820, 1260      # 左：読まれる側、中：ChatGPT、右：書かれる正本
+AY, BY, UY = 165, 405, 712       # 読書レビュー・会話で記録・コンテキスト更新の段
+CY, RY = 130, 345                # 左の personal-ai-context・reading-log
+PX, PY = 430, 650                # 本人
 HALF = 66
+GL, GR = GX - HALF, GX + HALF    # ChatGPT の札の左右の端
+PR = PX + 54 + 14                # 本人の右（線の根元）
 
 
 def lock(lx, ly, c=fk.BLUE):
@@ -28,37 +37,51 @@ def lock(lx, ly, c=fk.BLUE):
     fk.d.ellipse((lx - 4, ly - 1, lx + 4, ly + 7), fill=c)
 
 
-# 三つの札。名前は札の上に置く（下から矢印を入れるため）
-fk.service('github', CTX, TY)
-fk.centered(CTX, TY - HALF - 46, 'personal-ai-context', 25)
-lock(CTX - HALF + 2, TY + HALF - 12)   # 左下の角（右下だと矢じりに近い）
+def store(name, x, y, private=False, lock_side=-1):
+    """正本の札（GitHub のロゴ）。名前は札の上。錠は lock_side（-1 左下・1 右下）の角。"""
+    fk.service('github', x, y)
+    fk.centered(x, y - HALF - 46, name, 25)
+    if private:
+        lock(x + lock_side * (HALF - 2), y + HALF - 12)
 
-fk.service('openai', GPT, TY)
-fk.centered(GPT, TY - HALF - 46, 'ChatGPT', 25)
-fk.clock(GPT + 120, TY - HALF - 30, 26)
-fk.text(GPT + 158, TY - HALF - 47, '毎週', 25, fk.BLUE)
 
-fk.service('github', LOG, TY)
-fk.centered(LOG, TY - HALF - 46, 'reading-log', 25)
+def chatgpt(y, verb, when=None):
+    """ChatGPT の札。きっかけ（定期実行のときだけ）は真上、名前と動詞は下。"""
+    fk.service('openai', GX, y, 'ChatGPT')
+    if when:
+        fk.trigger(GX, y - HALF, when)
+    fk.centered(GX, y + HALF + 52, verb, 24, fk.GRAY)
 
-# personal-ai-context ⇄ ChatGPT：読むのは ChatGPT が取りに行く（pull）、更新は書き込む（arrow）
-fk.pull([(GPT - HALF, TY - 16), (CTX + HALF, TY - 16)], fk.BLUE)
-fk.centered((CTX + GPT) / 2, TY - 60, '読む', 24, fk.BLUE)
-fk.arrow([(GPT - HALF, TY + 26), (CTX + HALF, TY + 26)], fk.TEAL)
-fk.centered((CTX + GPT) / 2, TY + 38, '会話の差分を更新', 24, fk.TEAL)   # 元は会話。読書レビューは書き戻さない
 
-# reading-log ⇄ ChatGPT：同じく読むは pull、記録は arrow（gap を負にして細い線を内側に揃える）
-fk.pull([(GPT + HALF, TY - 16), (LOG - HALF, TY - 16)], fk.BLUE, gap=-9)
-fk.centered((GPT + LOG) / 2, TY - 60, '読む', 24, fk.BLUE)
-fk.arrow([(GPT + HALF, TY + 26), (LOG - HALF, TY + 26)], fk.TEAL)
-fk.centered((GPT + LOG) / 2, TY + 38, '順位・感想を記録', 24, fk.TEAL)   # 本人の感想も会話経由で reading-log へ
+store('personal-ai-context', LX, CY, True)
+store('reading-log', LX, RY)
+store('reading-log', RX, AY)
+store('personal-ai-context', RX, UY, True, 1)
 
-# 本人：reading-log を見て読み、感想を ChatGPT に話す（ChatGPT が reading-log へ記録する往復）
-PY = 580
-fk.person(GPT, PY, .8)
-fk.arrow([(LOG, TY + HALF + 14), (LOG, PY), (GPT + 68, PY)], fk.GRAY)
-fk.text(LOG + 22, (TY + HALF + PY) / 2 - 16, '見る', 24, fk.GRAY)
-fk.arrow([(GPT, PY - 80), (GPT, TY + HALF + 14)], fk.AMBER)
-fk.text(GPT + 22, (TY + HALF + PY - 80) / 2 - 16, '感想を話す', 24, fk.AMBER)
+chatgpt(AY, '読んで順位付け', '毎週')
+chatgpt(BY, '会話で記録')
+chatgpt(UY, '差分を整理', '毎週')
+
+# 読書レビュー：入力（左・本人 → 上の ChatGPT）
+fk.flow([(LX + HALF, AY - 40), (GL, AY - 40)], '長期の文脈', color=fk.BLUE)
+fk.flow([(LX + HALF, RY), (470, RY), (470, AY), (GL, AY)], '読書記録', at=(378, RY - 37), color=fk.BLUE)
+fk.flow([(PR, 590), (560, 590), (560, AY + 40), (GL, AY + 40)], '今週の会話', at=(632, 300), color=fk.AMBER)
+
+# 読書レビュー：出力（上の ChatGPT → 右の reading-log）。1 本 1 データ
+fk.flow([(GR, AY - 30), (RX - HALF, AY - 30)], '読む順位')
+fk.flow([(GR, AY + 30), (RX - HALF, AY + 30)], '週次レビュー', at=((GR + RX - HALF) / 2, AY + 42))
+
+# 会話で記録：本人の進捗・感想 → 中の ChatGPT → 右の reading-log（下から入る）
+fk.flow([(PR, 632), (660, 632), (660, BY), (GL, BY)], '進捗・感想', at=(579, 644), color=fk.AMBER)
+fk.flow([(GR, BY), (RX, BY), (RX, AY + HALF + 14)], '進捗・感想')
+
+# コンテキスト更新：本人の会話 → 下の ChatGPT → 右の personal-ai-context
+fk.flow([(PR, UY), (GL, UY)], '会話', at=((PR + GL) / 2, UY + 12), color=fk.AMBER)
+fk.flow([(GR, UY), (RX - HALF, UY)], '会話の差分')
+
+# 本人：reading-log の本棚を見て読む
+fk.person(PX, PY, .8)
+fk.centered(PX, PY + 94 + 10, '本人', 25)
+fk.flow([(LX, RY + HALF + 14), (LX, PY), (PX - 54 - 14, PY)], '次に読む本', at=(292, 520), color=fk.GRAY)
 
 fk.save(Path(__file__).with_name('cover.png'))

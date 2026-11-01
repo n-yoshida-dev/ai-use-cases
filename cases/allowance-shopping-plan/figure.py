@@ -3,6 +3,9 @@
     python cases/allowance-shopping-plan/figure.py --font /absolute/path/日本語フォント
 
 Python 3 / Pillow。部品は scripts/figkit.py（サービスはロゴの札 fk.service で示す）。
+矢印 1 本＝データが動く向き（根元が出どころ、先端が行き先）。線は fk.flow()、ラベルは動くデータの名詞。
+左＝読まれる側（ChatGPT・Notion・Amazon と Keepa）、中央＝Claude Code、右＝書かれる側（計画画面・Notion）。
+本人は読み書き両方なので上に置く。棚卸しの結果の Notion への反映は README で動いている仕組みなので実線。
 生成後は欠字・はみ出し・重なり・ロゴの欠けを目視確認する。
 """
 import argparse
@@ -45,52 +48,58 @@ def jar(x, y, level, c):
 
 fk.begin()
 
-# 左上：ChatGPT が候補を調べ、Notion の商品メモに書く
-fk.service('openai', 210, 150, 'ChatGPT')
-fk.arrow([(210, 268), (210, 342)], fk.TEAL, 5)
-fk.text(232, 288, '調べてメモ', 22, fk.TEAL)
+CX, CY, HALF = 810, 400, 75          # Claude Code の札
+L, R, T, B = CX - HALF, CX + HALF, CY - HALF, CY + HALF
+ROW = 380                            # 左の主な流れの高さ
 
-# 左：欲しいもの（Notion が正本）
-fk.service('notion', 210, 420, 'Notion')
-wish_db(300, 354)
+# 左：ChatGPT が調べた商品メモ → Notion（欲しいものの正本）
+NLX = 345                            # 左の Notion の中心
+fk.service('openai', 90, ROW, 'ChatGPT', tile=110)
+fk.flow([(145, ROW), (NLX - 64, ROW)], '商品メモ', at=(202, ROW - 36), size=22)
+fk.service('notion', NLX, ROW, 'Notion', tile=120)
+wish_db(NLX + 74, ROW - 66, w=155)
+fk.flow([(NLX + 229, ROW), (L - 4, ROW)], '欲しいもの一覧', at=(653, ROW - 34), size=20)
 
-# 中央：Claude Code が取りに行って読み、計算し、画面を作る（書き戻しは必要なときだけ）
-fk.pull([(643, 404), (505, 404)])
-fk.centered(576, 356, '読む', 22, fk.TEAL)
-fk.dashed_arrow([(643, 452), (505, 452)], fk.FAINT, 4)
-fk.centered(576, 462, '反映', 22, fk.GRAY)
-fk.service('claude', 720, 420, 'Claude Code', tile=150)
+# 左下：Amazon の値段の履歴（Keepa）→ Claude Code
+fk.rr((300, 560, 600, 710), 'white', fk.BLUE, 3, 18)
+fk.service('amazon', 385, 635, 'Amazon', tile=110)
+fk.service('keepa', 515, 635, 'Keepa', tile=110)
+fk.flow([(600, 635), (690, 635), (690, CY + 45), (L - 4, CY + 45)], '値段の履歴', at=(618, 494), size=22)
 
-# 上：Amazon の値段の履歴（Keepa）を Claude が取りに行って読む（2 つの札を 1 つの枠にまとめ、pull は 1 本）
-fk.rr((580, 70, 872, 232), 'white', fk.BLUE, 3, 18)
-fk.service('amazon', 660, 150, 'Amazon', tile=118)
-fk.service('keepa', 792, 150, 'Keepa', tile=118)
-fk.pull([(720, 343), (720, 234)], fk.BLUE, 5)
-fk.text(744, 275, '値段の履歴', 20, fk.BLUE)
+# 中央：Claude Code
+fk.service('claude', CX, CY, 'Claude Code', tile=150)
+fk.centered(CX, B + 48, '計算して画面に', 25)
 
 # 右：計画の画面（積立はひとつ。高すぎる物は保留）
-fk.arrow([(800, 420), (945, 420)])
-fk.centered(872, 380, '画面を作る', 22, fk.TEAL)
-fk.rr((960, 250, 1370, 610), 'white', fk.BLUE, 3, 14)
-fk.d.rounded_rectangle((962, 252, 1368, 290), radius=12, fill='#e7eef6')
-fk.text(984, 256, '買う順番の計画', 22, fk.BLUE)
-jar(1010, 330, .55, fk.TEAL)
-fk.centered(1065, 470, '積立', 24)
-fk.rr((1200, 342, 1310, 460), 'white', fk.FAINT, 3, 18)
-fk.centered(1255, 384, '保留', 26, fk.GRAY)
+SX0, SY0, SX1, SY1 = 1035, 250, 1385, 560
+fk.flow([(R, ROW), (SX0 - 4, ROW)], '買う順と月', at=(948, ROW - 36), size=22)
+fk.rr((SX0, SY0, SX1, SY1), 'white', fk.BLUE, 3, 14)
+fk.d.rounded_rectangle((SX0 + 2, SY0 + 2, SX1 - 2, SY0 + 34), radius=12, fill='#e7eef6')
+jar(1070, 300, .55, fk.TEAL)
+fk.centered(1125, 440, '積立', 24)
+fk.rr((1245, 312, 1345, 430), 'white', fk.FAINT, 3, 18)
+fk.centered(1295, 354, '保留', 26, fk.GRAY)
 for k in range(3):
-    ry = 526 + k * 30
-    fk.d.ellipse((1000, ry - 10, 1020, ry + 10), fill=fk.TEAL)
-    fk.d.line((1034, ry, 1300 - k * 40, ry), fill=fk.LINE, width=6)
+    ry = 484 + k * 26
+    fk.d.ellipse((1066, ry - 9, 1084, ry + 9), fill=fk.TEAL)
+    fk.d.line((1098, ry, 1345 - k * 40, ry), fill=fk.LINE, width=6)
 
-# 下：本人。入力は Notion、見るのは画面、相談は Claude
-fk.person(720, 700, .6)
-fk.centered(720, 782, '本人', 24)
-fk.arrow([(645, 710), (210, 710), (210, 545)], fk.AMBER, 5)
-fk.centered(430, 672, '画像つきで入力', 22, fk.AMBER)
-fk.arrow([(795, 710), (1010, 710), (1010, 625)], fk.BLUE, 5)
-fk.centered(900, 720, '見る', 22, fk.BLUE)
-fk.arrow([(720, 638), (720, 556)], fk.AMBER, 5)
-fk.text(738, 585, '相談', 22, fk.AMBER)
+# 右下：棚卸しの結果を Notion へ（README「Claudeがまとめて Notion に反映する」）
+NX, NY = 1210, 720
+fk.flow([(R, CY + 40), (960, CY + 40), (960, NY), (NX - 64, NY)], '棚卸しの結果', at=(1045, NY - 36), size=22)
+fk.service('notion', NX, NY, 'Notion', tile=120)
+
+# 上：本人。入力は Notion、相談と棚卸しの答えは Claude Code、見るのは計画画面。本人にかかわる線は琥珀色にそろえる
+PX, PY, PS = CX, 150, .6
+fk.person(PX, PY, PS)
+fk.centered(PX, PY + 118 * PS + 6, '本人', 24)
+SIDE = 185
+fk.flow([(PX - 68 * PS - 8, SIDE), (NLX, SIDE), (NLX, ROW - 64)], '欲しいもの', size=22, color=fk.AMBER)
+DOWN0 = PY + 118 * PS + 50           # 本人から Claude Code の上辺へ下りる 2 本の始まり（間隔 50px）
+fk.flow([(PX - 25, DOWN0), (PX - 25, T - 4)], color=fk.AMBER)
+fk.text(PX - 25 - 14 - fk.width('順番の相談', 22), (DOWN0 + T) / 2 - 15, '順番の相談', 22, fk.AMBER)
+# README「本人が「いる／いらない」と質問の答えを押すと保存され、Claudeがまとめて Notion に反映する」
+fk.flow([(PX + 25, DOWN0), (PX + 25, T - 4)], '棚卸しの答え', size=22, color=fk.AMBER)
+fk.flow([(SX0 + 50, SY0 - 4), (SX0 + 50, SIDE), (PX + 68 * PS + 8, SIDE)], '計画画面', size=22, color=fk.AMBER)
 
 fk.save(HERE / 'cover.png')

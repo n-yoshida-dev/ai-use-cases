@@ -25,65 +25,77 @@ fk.init(args.font)
 
 fk.begin()
 
+# 矢印 1 本＝データが動く向き（根元が出どころ、先端が行き先）。ラベルは動くデータの名詞。線はすべて TEAL。
+# 左＝会話の区切りで書く Claude Code、中央左＝2 つのファイル（読まれる側）、中央右＝次の会話の Claude Code、
+# 右＝答えを書かれる TODO（読み書き両方の相手なので TODO を左右に 2 回置く）。
+# 古さの点検は左の TODO を読み、指摘を次の会話の Claude Code へ渡す（会話の始めのフック）ので、TODO の真下に置く。
+# 本人は問いを受け取り答えを返すので、次の会話の Claude Code の右上に置く（問い＝札の右の辺から上向き、答え＝札の上の辺へ下向き）。
+# 横断タスクボードは右の TODO を読むので、その下に置く。定期実行はしないので時計は付けない。
+OX = 45                              # 全体を右へ寄せて左右の余白をそろえる
+
+# 中央右：次の会話の Claude Code（ほかの位置の基準）
+CX, CY = 930 + OX, 470
+
 # 左：会話の区切りで書く Claude Code
-LX, RY = 200, 330
-fk.centered(LX, 212, '会話の区切り', 24, fk.GRAY)
-fk.service('claude', LX, RY, 'Claude Code', tile=150)
+AX, AY = 150 + OX, CY - 140
+fk.service('claude', AX, AY, 'Claude Code', tile=150)
+fk.centered(AX, AY + 75 + 46, '会話の区切りで書く', 22, fk.GRAY)
 
-# 右：次の会話で読む Claude Code
-RX = 1230
-fk.centered(RX, 212, '次の会話', 24, fk.GRAY)
-fk.service('claude', RX, RY, 'Claude Code', tile=150)
+# 中央左：2 つのファイル
+DX, HY, TY = 470 + OX, AY, CY + 120  # 書類の左端、HANDOFF と TODO の中心
+fk.centered(DX + 70, HY - 79 - 42, 'HANDOFF', 28, fk.BLUE)
+fk.doc(DX, HY - 79, c=fk.BLUE)
+fk.centered(DX + 70, TY - 79 - 42, 'TODO', 28, fk.AMBER)
+fk.doc(DX, TY - 79, c=fk.AMBER)
 
-# 中央：2 つのファイル
-DX = 650
-fk.centered(DX + 70, 62, 'HANDOFF', 28, fk.BLUE)
-fk.centered(DX + 70, 98, '今どこまで', 22, fk.BLUE)
-fk.doc(DX, 132, c=fk.BLUE)
-fk.centered(DX + 70, 326, 'TODO', 28, fk.AMBER)
-fk.centered(DX + 70, 362, '確認待ち（本人）', 22, fk.AMBER)
-fk.doc(DX, 398, c=fk.AMBER)
+fk.flow([(AX + 79, HY), (DX - 4, HY)], '現在地')
+VX = 290 + OX
+fk.flow([(AX + 79, AY + 55), (VX, AY + 55), (VX, TY), (DX - 4, TY)], '確認待ち・保留',
+        at=((VX + DX - 4) / 2, TY - 37))
 
-# 書く（左の Claude → 2 つのファイル）
-fk.arrow([(LX + 85, 300), (DX - 10, 212)])
-fk.centered(455, 222, '書く', 22, fk.TEAL)
-fk.arrow([(LX + 85, 360), (DX - 10, 470)])
-fk.centered(455, 428, '問いを書く', 22, fk.TEAL)
+# 次の会話の Claude Code：左の辺に 3 本（現在地・確認待ち・古さの指摘）を 50px 間隔で受ける
+fk.service('claude', CX, CY, 'Claude Code', tile=160)
+fk.centered(CX, CY + 80 + 46, '読んで聞いて書く', 22, fk.GRAY)
+IN = CX - 84
+E1, E2, E3 = 690 + OX, 730 + OX, 780 + OX
+fk.flow([(DX + 144, HY), (E1, HY), (E1, CY - 50), (IN, CY - 50)], '現在地', at=((E1 + IN) / 2, CY - 50 - 37))
+fk.flow([(DX + 144, TY), (E2, TY), (E2, CY), (IN, CY)], '確認待ち', at=((DX + 144 + E2) / 2, TY - 37))
 
-# 読む（右の Claude が 2 つのファイルを読みに行く）
-fk.pull([(RX - 85, 300), (DX + 150, 212)])
-fk.centered(975, 206, '読む', 22, fk.TEAL)
-fk.pull([(RX - 85, 360), (DX + 150, 470)])
-fk.centered(960, 362, '読む', 22, fk.TEAL)
+# TODO の真下：古さの点検。TODO を読み、指摘を次の会話の Claude Code へ渡す
+KX, KY = DX + 70 - 52, TY + 79 + 46  # 点検の左端と上端
+fk.flow([(DX + 70, TY + 83), (DX + 70, KY - 6)], '確認待ち・保留')
+fk.checklist(KX, KY)
+fk.centered(KX + 52, KY + 126, '古さの点検', 24, fk.TEAL)
+KM = KY + 58
+fk.flow([(KX + 108, KM), (E3, KM), (E3, CY + 50), (IN, CY + 50)], '古さの指摘',
+        at=((KX + 108 + E3) / 2, KM - 37))
 
-# 答えを書く（右の Claude → TODO。本人の答えを本人の言葉で残す）
-fk.arrow([(RX - 85, 410), (DX + 152, 530)], fk.AMBER, 5)
-fk.centered(1000, 480, '答えを書く', 22, fk.AMBER)
+# 右上：本人。問いを受け取り、答えを返す
+PS = .8
+PX, PY = CX + 80, CY - 260
+fk.person(PX, PY, PS)
+fk.centered(PX, PY + 118 * PS + 10, '本人', 24)
+QX, AX2 = PX + 46, PX - 48           # 問いが入る x、答えが出る x
+fk.flow([(CX + 84, CY - 40), (QX, CY - 40), (QX, PY + 118 * PS + 4)], '問い',
+        at=(QX + 14 + 23, (CY - 40 + PY + 118 * PS) / 2 - 16))
+fk.flow([(AX2, PY + 118 * PS + 4), (AX2, CY - 84)], '答え',
+        at=(AX2 - 14 - 23, (CY - 84 + PY + 118 * PS) / 2 - 16))
 
-# 右下：本人。Claude が会話で中身を聞き、本人が答える
-PX, PY = RX, 700
-fk.person(PX, PY, .8)
-fk.centered(PX, 806, '本人', 24)
-fk.arrow([(PX - 22, RY + 125), (PX - 22, PY - 85)], fk.AMBER, 5)
-fk.text(PX - 118, 520, '聞く', 22, fk.AMBER)
-fk.arrow([(PX + 22, PY - 85), (PX + 22, RY + 125)], fk.AMBER, 5)
-fk.text(PX + 40, 520, '答える', 22, fk.AMBER)
+# 右：答えを書かれる TODO
+RX, RY = 1130 + OX, CY + 30          # 書類の左端と中心
+fk.centered(RX + 70, RY - 79 - 42, 'TODO', 28, fk.AMBER)
+fk.doc(RX, RY - 79, c=fk.AMBER)
+fk.flow([(CX + 84, RY), (RX - 4, RY)], '答え')
 
-# 左下：点検（古さ・書式）が TODO を見る
-fk.checklist(320, 640)
-fk.centered(372, 766, '点検', 24, fk.TEAL)
-fk.arrow([(424, 650), (DX + 18, 568)], fk.TEAL, 5)
-fk.centered(600, 642, '古さを見つける', 22, fk.TEAL)
-
-# 右下中央：横断タスクボードが TODO を読みに行く
-BX0, BY0, BX1, BY1 = 830, 640, 1090, 790
-fk.rr((BX0, BY0, BX1, BY1), 'white', fk.BLUE, 3, 14)
-for k, w in enumerate([150, 110, 130]):
-    ry = BY0 + 26 + k * 40
-    fk.rr((BX0 + 22, ry, BX0 + 70, ry + 26), '#eef3f8', fk.BLUE, 2, 7)
-    fk.d.line((BX0 + 86, ry + 13, BX0 + 86 + w, ry + 13), fill=fk.LINE, width=6)
-fk.centered((BX0 + BX1) / 2, 800, '横断タスクボード', 24, fk.BLUE)
-fk.pull([(BX0 + 30, BY0 - 8), (DX + 122, 568)], fk.BLUE, 5)
-fk.centered(872, 574, '読む', 22, fk.BLUE)
+# 右下：TODO を読む横断タスクボード
+BOT = RY + 79 + 92
+BX0, BX1 = RX + 70 - 85, RX + 70 + 85
+fk.flow([(RX + 70, RY + 83), (RX + 70, BOT - 6)], '確認待ち')
+fk.rr((BX0, BOT, BX1, BOT + 116), 'white', fk.BLUE, 3, 14)
+for k, w in enumerate([80, 56, 70]):
+    ry = BOT + 16 + k * 32
+    fk.rr((BX0 + 18, ry, BX0 + 58, ry + 22), '#eef3f8', fk.BLUE, 2, 6)
+    fk.d.line((BX0 + 72, ry + 11, BX0 + 72 + w, ry + 11), fill=fk.LINE, width=6)
+fk.centered((BX0 + BX1) / 2, BOT + 126, '横断タスクボード', 24, fk.BLUE)
 
 fk.save(Path(args.out))

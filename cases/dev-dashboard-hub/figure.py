@@ -7,6 +7,10 @@
 
 Python 3 / Pillow。部品は scripts/figkit.py（サービスのロゴは scripts/logos/）。
 生成後は欠字・はみ出し・重なり・ロゴの欠けを目視確認する。
+
+矢印 1 本＝データが動く向き（根元が出どころ、先端が行き先）。線は fk.flow() だけで、ラベルは動くデータの名詞。
+読まれる側（リポジトリ・GitHub）を左、常駐のハブを中央、書かれる側（1 枚の画面と本人）を右に置く。
+Claude Code がリポジトリに集計スクリプトと画面を書く流れは、主な流れと直角（下から上）に逃がす。
 """
 import argparse
 import sys
@@ -25,21 +29,21 @@ fk.init(parser.parse_args().font)
 def card(x, y, w, h, fill_ratio, waiting, c=fk.TEAL):
     """ハブの 1 枚のカード（1 リポジトリ）：題名の線、進捗バー、あなた待ちの件数、CI の印。"""
     fk.rr((x, y, x + w, y + h), 'white', fk.LINE, 2, 10)
-    fk.d.line((x + 14, y + 20, x + w * .55, y + 20), fill=fk.LINE, width=6)
+    fk.d.line((x + 12, y + 16, x + w * .55, y + 16), fill=fk.LINE, width=6)
     # 進捗バー
-    bx0, bx1, by = x + 14, x + w - 14, y + 44
-    fk.d.rounded_rectangle((bx0, by, bx1, by + 14), radius=7, fill='#e6ecee')
-    fk.d.rounded_rectangle((bx0, by, bx0 + (bx1 - bx0) * fill_ratio, by + 14), radius=7, fill=c)
-    # あなた待ちの件数（色は件数の数字にだけ）
-    fk.d.ellipse((x + 14, y + h - 44, x + 48, y + h - 10), fill=fk.NOTE, outline=fk.AMBER, width=3)
-    fk.centered(x + 31, y + h - 43, str(waiting), 24, fk.AMBER)
+    bx0, bx1, by = x + 12, x + w - 12, y + 32
+    fk.d.rounded_rectangle((bx0, by, bx1, by + 12), radius=6, fill='#e6ecee')
+    fk.d.rounded_rectangle((bx0, by, bx0 + (bx1 - bx0) * fill_ratio, by + 12), radius=6, fill=c)
+    # あなた待ちの件数（色は件数の数字にだけ。番号の丸と紛れないよう角丸の札にする）
+    fk.d.rounded_rectangle((x + 10, y + h - 40, x + 50, y + h - 8), radius=7, fill=fk.NOTE, outline=fk.AMBER, width=3)
+    fk.centered(x + 30, y + h - 40, str(waiting), 22, fk.AMBER)
     # CI の印（正常は灰色のチェック）
-    cx, cy = x + w - 30, y + h - 27
-    fk.d.ellipse((cx - 14, cy - 14, cx + 14, cy + 14), fill='#eef1f2')
+    cx, cy = x + w - 26, y + h - 24
+    fk.d.ellipse((cx - 13, cy - 13, cx + 13, cy + 13), fill='#eef1f2')
     fk.d.line([(cx - 7, cy), (cx - 2, cy + 6), (cx + 8, cy - 6)], fill=fk.GRAY, width=4, joint='curve')
 
 
-def hub(cx, cy, w=180, h=140, c=fk.TEAL):
+def hub(cx, cy, w=170, h=140, c=fk.TEAL):
     """常駐のハブ（Node のプロセス）：箱の中に 2 段のサーバーの板と、点いている印。"""
     fk.rr((cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2), 'white', c, 3, 18)
     for k in range(2):
@@ -51,58 +55,56 @@ def hub(cx, cy, w=180, h=140, c=fk.TEAL):
 
 fk.begin()
 
-# 中心線（ハブ・画面・本人を同じ高さに置き、左の列の上下と釣り合わせる）
-CY = 380
+CY = 370                       # 主な流れの高さ
+CX, HW, HH = 640, 170, 140     # 中央：常駐のハブ
+HL = CX - HW / 2 - 12          # ハブの左の辺（入る線の先端）
 
-# 左上：GitHub（PR・CI）も集める元
-fk.service('github', 250, 130, 'GitHub')
+# 左上：GitHub（CI）
+GX, GY = 150, CY - 160
+fk.service('github', GX, GY, 'GitHub')
 
 # 左：各リポジトリ（TODO・引き継ぎメモ・git）
-fk.folder(70, 250, 130, 100, fk.TEAL)
-fk.folder(120, 300, 130, 100, fk.BLUE)
-fk.folder(170, 350, 130, 100, fk.TEAL)
-fk.centered(130, 466, 'リポジトリ', 25)
+FW, FH = 120, 96
+fk.folder(140, CY - 10, FW, FH, fk.TEAL)
+fk.folder(90, CY + 38, FW, FH, fk.BLUE)
+fk.folder(40, CY + 86, FW, FH, fk.TEAL)
+fk.centered(100, CY + 194, 'リポジトリ', 25)
 
-# 中央：常駐のハブが 30 分ごとに集める
-CX = 600
-HW, HH = 180, 140
+# 中央：常駐のハブが 30 分ごとに集めて 1 枚にする
 hub(CX, CY, HW, HH)
+fk.trigger(CX, CY - HH / 2, '30分ごと')
 fk.centered(CX, CY + HH / 2 + 10, '常駐のハブ', 25)
-fk.clock(CX, CY - 250, 44, fk.BLUE)
-fk.centered(CX, CY - 194, '30分ごと', 24, fk.BLUE)
-fk.arrow([(CX, CY - 148), (CX, CY - HH / 2 - 12)], fk.BLUE, 5)
-# ハブが各リポジトリの集計スクリプトを呼び、GitHub の PR・CI を取りに行く（pull：細い線が向かい、太い線が持ち帰る）
-fk.pull([(CX - HW / 2 - 12, CY + 12), (312, 398)])
-fk.centered(405, 350, '集める', 22, fk.TEAL)
-fk.pull([(CX - HW / 2 - 12, CY - 34), (326, 150)])
-fk.centered(455, 200, 'CI', 22, fk.GRAY)
+fk.centered(CX, CY + HH / 2 + 44, '集めて1枚に', 22, fk.GRAY)
 
-# 左下：Claude Code は、リポジトリごとの集計スクリプトと画面を作る（集めるのはハブ）
-fk.service('claude', 250, 651, 'Claude Code')
-fk.arrow([(250, 651 - 66 - 10), (250, 462)], fk.AMBER, 5)
-fk.text(266, 505, '作る', 22, fk.AMBER)
+# 入る線（ハブの左の辺に 60px あけて 2 本）
+# CI の縦の区間はハブの上の時計「30分ごと」から離すため、左（x=440）に寄せる
+fk.flow([(GX + 66 + 12, GY), (440, GY), (440, CY - 30), (HL, CY - 30)], 'CI')
+# 2 本の線の間を空けておくため、ラベルは自分の線の真下に置く（矢じりから離すため少し左に寄せる）
+fk.flow([(140 + FW + 14, CY + 30), (HL, CY + 30)], 'TODO・引継ぎ・git', at=((140 + FW + 14 + HL) / 2 - 12, CY + 30 + 12))
+
+# 左下：Claude Code がリポジトリごとの集計スクリプトと画面を書く（主な流れと直角に、下から上へ）
+AX, AY = 226, CY + 330
+fk.service('claude', AX, AY, 'Claude Code')
+fk.centered(AX, AY + 66 + 46, '作る', 22, fk.GRAY)
+fk.flow([(AX, AY - 66 - 12), (AX, CY - 10 + FH + 12)], '集計スクリプト・画面')
 
 # 右：1 枚の画面（進捗・あなた待ち・CI が並ぶ）
-SX, SW, SH = 790, 380, 270
+SX, SW, SH = 1020, 280, 240
 SY = CY - SH / 2
-fk.arrow([(CX + HW / 2 + 10, CY), (SX - 14, CY)])
-fk.centered((CX + HW / 2 + 10 + SX - 14) / 2, CY - 42, '1枚に', 22, fk.TEAL)
+fk.flow([(CX + HW / 2 + 12, CY), (SX - 14, CY)], '進捗・あなた待ち・CI', at=((CX + HW / 2 + 12 + SX - 14) / 2 - 14, CY - 37))
 fk.laptop(SX, SY, SW, SH)
 fk.d.rectangle((SX + 6, SY + 6, SX + SW - 6, SY + SH - 6), fill='#eaf3f1')
-GW, GH, GAP = 160, 100, 18
+GW, GH, GAP = 116, 92, 16
 gx0 = SX + (SW - 2 * GW - GAP) / 2
 gy0 = SY + (SH - 2 * GH - GAP) / 2
 card(gx0, gy0, GW, GH, .72, 2)
 card(gx0 + GW + GAP, gy0, GW, GH, .45, 1, fk.BLUE)
 card(gx0, gy0 + GH + GAP, GW, GH, .9, 0, fk.BLUE)
 card(gx0 + GW + GAP, gy0 + GH + GAP, GW, GH, .3, 3)
-fk.centered(SX + SW / 2, SY + SH + 50, '進捗・あなた待ち・CI', 24, fk.TEAL)
 
-# 右端：本人は見るだけ
-PX, PY = 1330, CY + 10
-fk.person(PX, PY, .85)
-fk.centered(PX, PY + 112, '本人', 24)
-fk.arrow([(SX + SW + 40, CY), (PX - 70, CY)], fk.BLUE, 5)
-fk.centered((SX + SW + 40 + PX - 70) / 2, CY - 42, '見るだけ', 22, fk.BLUE)
+# 右端：本人は画面を見るだけ（書き込む線は無い）
+PX, PY = 1374, CY - 10
+fk.person(PX, PY, .8)
+fk.centered(PX, PY + 118 * .8 + 14, '本人', 24)
 
 fk.save(HERE / 'cover.png')

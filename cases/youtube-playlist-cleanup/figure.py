@@ -18,40 +18,42 @@ parser.add_argument('--font', required=True, help='Noto Sans JP / Noto Sans CJK 
 fk.init(parser.parse_args().font)
 
 
-def playlist_folder(x, y, c):
-    """中に動画の印が入ったフォルダ（整理後のマイリスト）。"""
-    fk.folder(x, y, 105, 88, c)
-    fk.video(x + 20, y + 32, 65, 40, c)
+def playlist_folder(x, y, c, w=105, h=88):
+    """中に動画の印が入ったフォルダ（マイリスト 1 つ）。"""
+    fk.folder(x, y, w, h, c)
+    fk.video(x + w * .19, y + h * .36, w * .62, h * .45, c)
 
 
 # ---- cover.png：一目で分かる入口 ----
+# 矢印 1 本＝データが動く向き（根元が出どころ、先端が行き先）。左＝読まれる側、中央＝AI、右＝書かれる側。
+# YouTube は読まれる側（増えたマイリスト）と書かれる側（整理後）の両方なので、左右に 2 回置く。
 fk.begin()
 
-# 左：YouTube に増えたマイリスト（散らばった動画）
-fk.service('youtube', 250, 165, 'YouTube', tile=110)
-for x, y, c in [(97, 320, fk.BLUE), (254, 282, fk.AMBER), (157, 425, fk.TEAL), (310, 386, fk.BLUE)]:
-    fk.video(x, y, 140, 86, c)
-fk.centered(250, 540, '増えたマイリスト', 30)
+# 左上：YouTube に増えたマイリスト（小さなフォルダがたくさん散らばる。右の整理後の 3 つと対比）
+fk.service('youtube', 250, 150, 'YouTube', tile=110)
+for x, y, c in [
+        (74, 276, fk.BLUE), (178, 264, fk.AMBER), (290, 282, fk.TEAL),
+        (110, 364, fk.TEAL), (224, 354, fk.BLUE), (338, 370, fk.AMBER),
+        (70, 452, fk.AMBER), (178, 442, fk.TEAL), (288, 458, fk.BLUE)]:
+    playlist_folder(x, y, c, 76, 64)
 
-# 中央：ChatGPT（Computer Use）が棚卸しして整理する
-fk.centered(720, 262, '棚卸し・整理', 28, fk.TEAL)
-fk.service('openai', 720, 400, 'ChatGPT', tile=150)
-fk.pull([(645, 400), (460, 400)])      # 画面のマイリストを読みに行く（Computer Use）
-fk.arrow([(808, 400), (1035, 400)])    # 名前変更・統合・削除の操作（書き込み）
+# 左下：本人（残す基準を渡すだけなので入力側）
+fk.person(230, 640, .65)
+fk.centered(230, 726, '本人', 26)
 
-# 右：整理後のマイリスト（左のまとまりと余白を揃えるため、中心を 1185 に置く）
-fk.service('youtube', 1185, 165, 'YouTube', tile=110)
-for x, y, c in [(1065, 300, fk.BLUE), (1197, 300, fk.TEAL), (1131, 434, fk.AMBER)]:
+# 中央：ChatGPT
+fk.service('openai', 740, 400, 'ChatGPT', tile=150)
+fk.centered(740, 532, '棚卸し・作成・統合・削除', 26, fk.TEAL)
+
+# 右：整理後の YouTube のマイリスト
+fk.service('youtube', 1185, 150, 'YouTube', tile=110)
+for x, y, c in [(1065, 300, fk.BLUE), (1197, 300, fk.TEAL), (1131, 422, fk.AMBER)]:
     playlist_folder(x, y, c)
-fk.centered(1185, 540, '整理後', 30)
 
-# 下：本人が残す基準を決めて渡す
-fk.person(490, 672, .65)
-fk.centered(490, 756, '本人', 26)
-fk.arrow([(534, 688), (572, 688)], fk.AMBER, 5)
-fk.rr((584, 652, 856, 724), fk.NOTE, '#e7ca7c', 2, 12)
-fk.centered(720, 669, '残す・まとめる基準', 26)
-fk.pull([(720, 536), (720, 646)], fk.AMBER, 5)   # 基準は ChatGPT が読みに行く
+# 流れ（出どころ → 行き先）
+fk.flow([(445, 372), (661, 372)], '増えたマイリスト', at=(543, 326))
+fk.flow([(300, 650), (545, 650), (545, 432), (661, 432)], '残す・まとめる基準', at=(422, 604), color=fk.AMBER)
+fk.flow([(819, 400), (1040, 400)], '整理後のマイリスト', at=(925, 354))
 
 fk.save(HERE / 'cover.png')
 

@@ -20,51 +20,48 @@ fk.init(parser.parse_args().font)
 
 
 def bubble(x, y, w, h, label, c=fk.TEAL):
-    """吹き出し（会話）。右下に小さな尾を出す。"""
+    """吹き出し（会話）。尾は上の辺の左から、何も無い左上へ出す（ほかの札を指さない）。"""
     fk.rr((x, y, x + w, y + h), 'white', c, 3, 18)
-    fk.d.polygon([(x + w - 44, y + h - 3), (x + w - 14, y + h - 3), (x + w - 6, y + h + 22)], fill='white')
-    fk.d.line((x + w - 42, y + h - 1, x + w - 16, y + h - 1), fill='white', width=5)
-    fk.d.line([(x + w - 44, y + h - 1), (x + w - 6, y + h + 22), (x + w - 14, y + h - 1)], fill=c, width=3, joint='curve')
-    fk.centered(x + w / 2, y + h / 2 - 15, label, 24, c)
+    tail = [(x + 42, y + 2), (x + 10, y - 16), (x + 18, y + 2)]
+    fk.d.polygon(tail, fill='white')
+    fk.d.line(tail, fill=c, width=3, joint='curve')
+    fk.d.line((x + 21, y + 1, x + 39, y + 1), fill='white', width=4)
+    fk.centered(x + w / 2, y + h / 2 - 17, label, 24, c)
 
 
 # ---- cover.png：一目で分かる入口 ----
+# 矢印 1 本＝データが動く向き（根元が出どころ、先端が行き先）。左＝読まれる側、中央＝ChatGPT、右＝書かれる側。
+# 本人は読まれる（レビューの指示）と受け取る（レビュー結果）の両方なので札の真下に置き、
+# 入る線を札の左の辺、出る線を札の右の辺に付ける。
 fk.begin()
 
-# 上：決めた周期で動く（時計と 2 つの時刻）
-fk.clock(680, 112, 36)
-fk.text(730, 88, '毎週日曜', 30, fk.BLUE)
-fk.text(732, 130, '20:30・22:00', 22, fk.BLUE)
+AX, AY, T = 720, 380, 200          # ChatGPT の札の中心と大きさ
+L, R = AX - T // 2, AX + T // 2    # 札の左右の辺
 
-# 中央：ChatGPT のスケジュールが記録と会話を確認・分析する
-fk.service('openai', 680, 300, 'ChatGPT')
+# 上：きっかけ（毎週日曜の 2 つの定期処理）
+fk.trigger(AX, AY - T // 2, '毎週日曜 20:30・22:00')
 
-# 左：記録（GitHub のリポジトリ）。ChatGPT が取りに行って読み（pull）、結果を保存する（arrow）
-fk.service('github', 210, 300, 'GitHub')
-fk.pull([(614, 268), (276, 268)])
-fk.centered(445, 222, '読む', 24, fk.TEAL)
-fk.arrow([(614, 330), (276, 330)])
-fk.centered(445, 340, '保存', 24, fk.TEAL)
+# 中央：ChatGPT（動詞は札の下に 1 行）
+bottom = fk.service('openai', AX, AY, 'ChatGPT', tile=T)
+fk.centered(AX, bottom + 52, '確認して分析', 24, fk.GRAY)
 
-# 左上：もう 1 つの入力。会話（コンテキスト更新）は別の定期処理なので、記録の矢印とはつながない
-bubble(400, 92, 140, 80, '会話')
-fk.arrow([(548, 196), (606, 232)])
+# 左：読まれる側。会話（コンテキスト更新）と GitHub の記録は別の定期処理なので、線は別々に引く
+bubble(300, 277, 140, 76, '会話')
+fk.flow([(440, 315), (L, 315)], '会話の差分')
+fk.service('github', 200, 395, 'GitHub')
+fk.flow([(266, 395), (L, 395)], '記録', at=(500, 358))
 
-# 右：レビュー結果を本人へ報告し、本人が判断する
-fk.doc(960, 221, 140, 158, fk.TEAL)
-fk.centered(1030, 410, 'レビュー結果', 26)
-fk.arrow([(750, 300), (950, 300)])
-fk.centered(850, 258, '報告', 24, fk.TEAL)
-fk.person(1250, 290, .72)
-fk.centered(1250, 390, '本人', 26)
-fk.arrow([(1110, 300), (1175, 300)], fk.BLUE, 5)
+# 右：書かれる側。GitHub に保存する
+fk.service('github', 1210, 315, 'GitHub')
+fk.flow([(R, 315), (1144, 315)], '更新した記録')
 
-# 下：本人が目的・周期・判断基準を決める（arrow）。ChatGPT はそれを取りに行って読む（pull）
-fk.rr((460, 585, 900, 655), fk.NOTE, '#e7ca7c', 2, 12)
-fk.centered(680, 600, '目的・周期・判断基準', 24)
-fk.arrow([(1250, 446), (1250, 620), (910, 620)], fk.AMBER, 5)
-fk.pull([(680, 424), (680, 580)], fk.AMBER, 5)
-fk.text(706, 486, '設定', 24, fk.AMBER)
+# 下：本人（札の真下）。レビュー結果を受け取り、レビューの指示（目的・周期・判断基準）を決める
+PX, PY, PS = 720, 720, .8
+fk.person(PX, PY, PS)
+fk.centered(PX, PY + 118 * PS + 12, '本人', 26)
+fk.flow([(R, 455), (880, 455), (880, 700), (PX + 68 * PS + 10, 700)], 'レビュー結果', at=(966, 566))
+fk.flow([(PX - 68 * PS - 10, 750), (560, 750), (560, 455), (L, 455)], 'レビューの指示', at=(462, 590),
+        color=fk.AMBER)
 
 fk.save(HERE / 'cover.png')
 

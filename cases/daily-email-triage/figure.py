@@ -19,67 +19,55 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--font', required=True, help='Noto Sans JP / Noto Sans CJK JP 等の日本語フォント')
 fk.init(parser.parse_args().font)
 
-# ---- cover.png：一目で分かる入口（題名・注記は入れない。要素は y=60〜840 に置く） ----
+# ---- cover.png：一目で分かる入口（題名・注記は入れない） ----
+# 矢印 1 本＝データが動く向き（根元が出どころ、先端が行き先）。左＝読まれる側、中央＝AI、右＝書かれる側。
+# Gmail は読む相手（左）とラベルを付ける相手（右）の 2 回置く。本人は読む・受け取るの両方なので下に 1 回だけ置く。
 fk.begin()
 
-CY = 470          # 左の列（Gmail → ルールで除外 → ChatGPT）の中心。図全体の上下の中心に合わせる
-GPT = 624         # ChatGPT の中心 x
-LABEL_Y = CY + 66 + 12   # service() が名前を書く高さ。同じ列の名前はここに揃える
+CY = 300                 # 主な流れ（Gmail → ルールで除外 → ChatGPT）の高さ
+GPT = 760                # ChatGPT の中心 x
+HALF = 66                # service() の札の半分
+LABEL_Y = CY + HALF + 12  # service() が名前を書く高さ。同じ列の名前はここに揃える
 
-# 左：Gmail の新着 → ルールで先に除外（AIを使わない層）。残りは ChatGPT が取りに行って読む（pull）
-fk.service('gmail', 172, CY, 'Gmail')
-fk.arrow([(254, CY), (314, CY)])
-fk.funnel(326, CY - 65, 120, 130)
-fk.centered(386, LABEL_Y, 'ルールで除外', 25)
-fk.pull([(GPT - 66, CY), (426, CY)])
+# 左：Gmail の新着 → ルールで先に除外（AI を使わない層）→ 残りを ChatGPT が読む
+fk.service('gmail', 130, CY, 'Gmail')
+FX, FW, FH = 340, 120, 130
+fk.funnel(FX, CY - FH / 2, FW, FH)
+fk.centered(FX + FW / 2, LABEL_Y, 'ルールで除外', 25)
+SLOPE = FW * .38 * (FH / 2) / (FH * .55)   # 中心の高さでの、漏斗の縁の内側への入り込み
+fk.flow([(130 + HALF, CY), (FX + SLOPE - 4, CY)], '新着メール')
+fk.flow([(FX + FW - SLOPE + 4, CY), (GPT - HALF, CY)], '残ったメール')
 
-# 中央：毎朝動く ChatGPT（2026-10-28 に Claude Code のルーティンから移した）
-fk.clock(GPT - 60, CY - 150)
-fk.text(GPT - 16, CY - 166, '毎朝6時', 26, fk.BLUE)
+# 中央：毎朝 6 時に動く ChatGPT（2026-10-28 に Claude Code のルーティンから移した）
+fk.trigger(GPT, CY - HALF, '毎朝6時')
 fk.service('openai', GPT, CY, 'ChatGPT')
 fk.centered(GPT, LABEL_Y + 36, '読んで仕分け', 25)
 
-# 右：仕分け結果の 3 つ（枠＝この結果をもとに通知する）
-ROWS = (140, 300, 460)                 # 封筒の上端。行の中心は +43。名前と次の行の札が重ならない間隔
-fk.rr((820, 100, 1340, 610), None, fk.LINE, 2, 18)
+# 右：要対応は Todoist のタスクに、仕分けのラベルは Gmail に書く
+TX, TY = 1290, 140       # Todoist
+GX, GY = 1290, 440       # Gmail（書かれる側）
+fk.service('todoist', TX, TY, 'Todoist')
+fk.service('gmail', GX, GY, 'Gmail')
+fk.flow([(GPT + HALF, CY - 44), (980, CY - 44), (980, TY), (TX - HALF, TY)], 'タスク')
+fk.flow([(GPT + HALF, CY), (1040, CY), (1040, GY), (GX - HALF, GY)], '仕分けラベル',
+        at=((1040 + GX - HALF) / 2, GY - 37))
 
-fk.envelope(860, ROWS[0], 130, 86, fk.AMBER, tag=fk.AMBER)
-fk.centered(925, ROWS[0] + 96, '要対応', 28)
-fk.arrow([(1002, ROWS[0] + 43), (1070, ROWS[0] + 43)], fk.AMBER, 5)
-fk.service('todoist', 1160, ROWS[0] + 43, 'Todoist')
+# 下：本人。判定基準を手順書に書き、ChatGPT が毎朝それを読む。朝の報告は本人のスマホへ（0 件の日も）
+PX, PY, PS = 740, 724, .8                # 人の中心。外形は x±68s、y-84s〜y+118s
+DOC = (600, 520, 770, 580)               # 手順書の札
+fk.rr(DOC, fk.NOTE, '#e7ca7c', 2, 12)
+fk.centered((DOC[0] + DOC[2]) / 2, DOC[1] + 12, '手順書', 26)
+fk.person(PX, PY, PS)
+fk.centered(PX, PY + 118 * PS + 12, '本人', 25)
+fk.flow([(PX, PY - 84 * PS - 8), (PX, DOC[3] + 4)], '判定基準',
+        at=(PX - 74, (PY - 84 * PS + DOC[3]) / 2 - 16))
+fk.flow([(640, DOC[1]), (640, CY + 44), (GPT - HALF, CY + 44)], '判定基準',
+        at=(578, (DOC[1] + CY + 44) / 2 + 20))
 
-fk.envelope(860, ROWS[1], 130, 86, fk.BLUE, tag=fk.BLUE)
-fk.centered(925, ROWS[1] + 96, '要確認', 28)
-
-fk.envelope(860, ROWS[2], 130, 86, fk.GRAY, tag=fk.GRAY)
-fk.centered(925, ROWS[2] + 96, '不要', 28)
-
-# 要確認・不要の 2 行は Gmail のラベルを付けるだけ（括弧で 2 行をまとめ、右に書く）
-BR = 1030
-fk.d.line([(BR, ROWS[1] + 43), (BR + 22, ROWS[1] + 43), (BR + 22, ROWS[2] + 43), (BR, ROWS[2] + 43)],
-          fill=fk.GRAY, width=3, joint='curve')
-fk.centered(1140, (ROWS[1] + ROWS[2]) / 2 + 43 - 15, 'ラベルのみ', 26, fk.GRAY)
-
-# ChatGPT から 3 本に分かれる（幹 1 本 → 縦に分岐）
-TRUNK = 760
-fk.arrow([(GPT + 66, CY), (TRUNK, CY), (TRUNK, ROWS[0] + 43), (848, ROWS[0] + 43)])
-fk.arrow([(TRUNK, CY), (TRUNK, ROWS[1] + 43), (848, ROWS[1] + 43)])
-fk.arrow([(TRUNK, CY), (TRUNK, ROWS[2] + 43), (848, ROWS[2] + 43)])
-
-# 右下：毎朝通知（0件の日も） → 本人が対応
-fk.arrow([(1160, 616), (1160, 648)], fk.TEAL, 5)
-fk.phone(1120, 654, 80, 140)
-fk.centered(1160, 804, '通知', 26)
-fk.person(985, 724, .62)
-fk.centered(985, 810, '本人が対応', 26)
-fk.arrow([(1112, 724), (1035, 724)], fk.BLUE, 5)
-
-# 下：判定基準は毎朝 ChatGPT が読みに行く入力（pull）。直すのは必要なときだけ（薄い点線）
-fk.rr((GPT - 160, 700, GPT + 160, 770), fk.NOTE, '#e7ca7c', 2, 12)
-fk.centered(GPT, 717, '判定基準（手順書）', 26)
-fk.pull([(GPT, 628), (GPT, 694)], fk.AMBER, 5)
-fk.dashed_arrow([(937, 735), (GPT + 174, 735)], fk.FAINT, 4)
-fk.centered(862, 696, '必要なら直す', 22, fk.GRAY)
+PHX, PHY = 840, 640                      # スマホ（本人の手元）
+fk.phone(PHX, PHY, 84, 144)
+fk.flow([(GPT + HALF, CY + 44), (PHX + 42, CY + 44), (PHX + 42, PHY - 6)], '朝の報告',
+        at=(PHX + 42 + 64, (CY + 44 + PHY) / 2 - 10))
 
 fk.save(HERE / 'cover.png')
 

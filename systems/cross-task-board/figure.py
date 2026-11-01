@@ -3,6 +3,12 @@
 再生成（リポジトリの根から）:
     python3 systems/cross-task-board/figure.py --font /usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc
 （フォントの道は位置引数でも受け付ける）
+
+矢印 1 本＝データが動く向き（根元が出どころ、先端が行き先）。線は flow() の 1 種類。
+左＝Claude Code が読む 5 つ、中央＝Claude Code、右＝書く先（ボードと Todoist）。
+Todoist は読む相手でも書く相手でもあるので、左と右に 2 回置く。
+本人はボードを見て、声で Claude Code に指示するので、AI の札の上に置く。
+自動実行はしない（本人の依頼で作る）ので、時計は付けない。
 """
 import argparse
 import sys
@@ -44,56 +50,68 @@ def bars(x, y, w=78, h=64):
                       fill=[f.TEAL, f.BLUE, f.AMBER][k])
 
 
+def board(x, y, w=380, h=290):
+    """横断タスクボード：タブ（予定・分野別・開発状況）と、朝・夜の時刻つきの行"""
+    f.rr((x, y, x + w, y + h), 'white', f.BLUE, 3, 14)
+    for k, name in enumerate(['予定', '分野別', '開発状況']):
+        fill = '#e7eef6' if k else f.BLUE
+        f.rr((x + 18 + k * 118, y + 16, x + 124 + k * 118, y + 52), fill, f.BLUE, 2, 9)
+        f.centered(x + 71 + k * 118, y + 18, name, 20, 'white' if k == 0 else f.BLUE)
+    for k, (t, c) in enumerate([('朝', f.TEAL), ('朝', f.TEAL), ('夜', f.BLUE), ('夜', f.BLUE)]):
+        ry = y + 76 + k * 52
+        f.rr((x + 18, ry, x + 100, ry + 36), '#eef3f3', c, 2, 8)
+        f.centered(x + 59, ry + 3, t, 20, c)
+        f.d.line((x + 118, ry + 18, x + w - 80 - (k % 2) * 60, ry + 18), fill=f.LINE, width=6)
+        f.d.rectangle((x + w - 52, ry + 6, x + w - 28, ry + 30), outline=f.TEAL, width=3)
+        if k < 2:
+            f.d.line([(x + w - 48, ry + 18), (x + w - 41, ry + 25), (x + w - 30, ry + 9)],
+                     fill=f.AMBER, width=4, joint='curve')
+    f.d.line((x + 18, y + h - 20, x + w - 18, y + h - 20), fill=f.LINE, width=2)
+
+
 f.begin()
 
-# 左：入力（読むだけ）。サービスはロゴ、リポジトリ側の物は絵
-CX = 150
-rows = [(150, 'Todoist'), (290, 'カレンダー'), (430, '各リポジトリ'), (570, '人間待ちのTODO'), (710, 'アプリの開発状況')]
-f.service('todoist', CX, rows[0][0], tile=110)
-f.service('googlecalendar', CX, rows[1][0], tile=110)
-folder(CX - 39, rows[2][0] - 36)
-todo_page(CX - 34, rows[3][0] - 34)
-bars(CX - 39, rows[4][0] - 32)
-for cy, label in rows:
-    f.text(240, cy - 17, label, 25)
-    f.d.line((458, cy, 484, cy), fill=f.TEAL, width=5)
-f.d.line((484, rows[0][0], 484, rows[-1][0]), fill=f.TEAL, width=5)
-# Claude Code が左の 5 つを読みに行く（押し込まれるのではない）ので、幹線から札までは pull()
-f.pull([(576, 430), (487, 430)])
-f.centered(527, 380, '読む', 22, f.TEAL)
+# 中央：PCのClaude Code（本人の依頼で動く。時計は付けない）
+AX, AY, AT = 680, 450, 200
+AL, AR, ATOP = AX - AT / 2, AX + AT / 2, AY - AT / 2
+f.service('claude', AX, AY, 'Claude Code', tile=AT)
+f.centered(AX, AY + AT / 2 + 50, '集めて時刻で組む', 22, f.TEAL)
 
-# 中央：PCのClaude Code
-f.service('claude', 660, 430, 'Claude Code', tile=160)
+# 左：Claude Code が読む 5 つ。各行から札の左辺へ 40px 間隔で入る
+IX, X0 = 120, 190
+rows = [210, 330, 450, 570, 690]
+f.service('todoist', IX, rows[0], tile=96)
+f.service('googlecalendar', IX, rows[1], tile=96)
+folder(IX - 39, rows[2] - 36)
+todo_page(IX - 34, rows[3] - 34)
+bars(IX - 39, rows[4] - 32)
+entry = [AY - 80, AY - 40, AY, AY + 40, AY + 80]
+bend = [500, 460, None, 460, 500]
+labels = ['タスク', '今日・明日の予定', '計画と引き継ぎ', '人間待ち', '開発状況']
+for ry, ey, bx, label in zip(rows, entry, bend, labels):
+    if bx is None:
+        pts = [(X0, ry), (AL - 4, ry)]
+    else:
+        pts = [(X0, ry), (bx, ry), (bx, ey), (AL - 4, ey)]
+    f.flow(pts, label, at=((X0 + (bx or AL)) / 2, ry - 37))
 
-# 右：横断タスクボード（アーティファクト＋データベース）
-BY = 275
-f.centered(1135, BY - 44, '横断タスクボード', 27, f.BLUE)
-f.rr((900, BY, 1370, BY + 314), 'white', f.BLUE, 3, 14)
-for k, name in enumerate(['予定', '分野別', '開発状況']):
-    fill = '#e7eef6' if k else f.BLUE
-    f.rr((920 + k * 130, BY + 16, 1036 + k * 130, BY + 52), fill, f.BLUE, 2, 9)
-    f.centered(978 + k * 130, BY + 18, name, 20, 'white' if k == 0 else f.BLUE)
-for k, (t, c) in enumerate([('朝', f.TEAL), ('朝', f.TEAL), ('夜', f.BLUE), ('夜', f.BLUE)]):
-    ry = BY + 80 + k * 54
-    f.rr((920, ry, 1006, ry + 36), '#eef3f3', c, 2, 8)
-    f.centered(963, ry + 3, t, 20, c)
-    f.d.line((1024, ry + 18, 1290 - (k % 2) * 60, ry + 18), fill=f.LINE, width=6)
-    f.d.rectangle((1318, ry + 6, 1342, ry + 30), outline=f.TEAL, width=3)
-    if k < 2:
-        f.d.line([(1322, ry + 18), (1329, ry + 25), (1340, ry + 9)], fill=f.AMBER, width=4, joint='curve')
-f.d.line((920, BY + 294, 1350, BY + 294), fill=f.LINE, width=2)
-f.arrow([(752, 430), (885, 430)])
-f.centered(818, 390, '書き込む', 22, f.TEAL)
+# 右：横断タスクボード（アーティファクトとデータベース）
+BX, BY = 1010, 290
+f.centered(BX + 160, BY - 44, '横断タスクボード', 27, f.BLUE)
+board(BX, BY)
+f.flow([(AR + 4, AY - 50), (BX - 6, AY - 50)], 'タスクと時間枠')
 
-# 下：本人が見て実行し、声で指示する
-f.arrow([(1135, BY + 320), (1135, 650)], f.BLUE, 5)
-f.person(1135, 712, .55)
-f.text(1205, 695, '見て実行する', 25)
-f.arrow([(1068, 712), (660, 712), (660, 575)], f.AMBER, 5)
-f.centered(860, 722, '声で指示', 22, f.AMBER)
+# 右下：Todoist への反映（本人が指示した分）
+TX, TY = 1195, 720
+f.service('todoist', TX, TY, tile=110)
+f.flow([(AR + 4, AY + 30), (890, AY + 30), (890, TY), (TX - 61, TY)], '完了・リスケ')
 
-# Todoistへの書き戻しは、本人が指示したときだけ（点線）
-f.dashed_arrow([(620, 346), (620, 70), (CX, 70), (CX, 93)], f.FAINT, 4)
-f.centered(385, 80, '指示分だけ反映', 21, f.GRAY)
+# 上：本人がボードを見て実行し、声で指示する
+PY = 150
+f.person(AX, PY, .7)
+f.text(AX - 140, PY - 4, '本人', 26)
+f.flow([(BX + 340, BY - 6), (BX + 340, PY), (AX + 58, PY)], '時刻つきの予定',
+       at=((AX + 58 + BX + 340) / 2, PY - 37))
+f.flow([(AX, PY + 96), (AX, ATOP - 6)], '声の指示')
 
 f.save(Path(__file__).with_name('cover.png'))
