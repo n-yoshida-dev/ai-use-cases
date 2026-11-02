@@ -16,3 +16,16 @@ visual:
   cover: cover.png
   language: ja
   source: figure.py
+  explanation: null   # 手順の流れ図を足したら flow.png
+  explanation_source: null   # flow.png を flow.html から描いたら flow.html（同じフォルダに残す）
+  extra: []           # そのほかの図：- image: <名前>.png / source: systems/<id>/<名前>.py
+# 紹介資料に載せるときだけ書く（任意。形の正本は AGENTS.md「紹介資料に載せる中身（deck）」）
+# deck:
+#   - area: shopping          # overview / tasks / board / reading / shopping / article / dev / browser
+#     role: whole             # whole（節の全体像。1節に1つ）/ part（中で動く仕組み）/ overview（資料の頭の全体図）
+#     order: 10
+#     figure: cover.png       # このフォルダの図。図なしは null
+#     alt: 図の説明（1文）
+#     heading: 節の小見出し   # 必須。whole だけ
+#     text: 説明の段落         # whole だけ（任意）
+#     more:                   # 任意：折りたたみ（summary・open・items）。タグの見た目は [[要対応]]

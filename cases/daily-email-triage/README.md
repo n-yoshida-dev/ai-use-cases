@@ -25,9 +25,9 @@
 - 0件の日も毎朝通知を送る。通知が来なければ、止まったと気づける。
 
 <details>
-<summary>作業と判断の説明図を見る</summary>
+<summary>仕分けの手順の流れ図を見る</summary>
 
-![課題・AIの作業・人間の判断・確認状況](flow.png)
+![新着メールをGmailのフィルタとChatGPTの2層で仕分け、要対応をTodoistに入れて毎朝スマホに知らせる流れ](flow.png)
 
 </details>
 

@@ -65,3 +65,13 @@ platforms:
 - Claude Code
 modes:
 - work
+deck:
+- area: board
+  role: part
+  order: 10
+  figure: cover.png
+  alt: 横断タスクボードで今日と明日を組む図
+  title: 今日と明日の時間割
+  when: 頼んだとき
+  ai: 時刻の枠に割り付け、書いた件数と時刻の重なりを検算。遅れた日は日課ごと後ろへずらす
+  me: 時間割の型。ボードを見て実行する

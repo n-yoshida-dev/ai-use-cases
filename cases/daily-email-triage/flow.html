@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>メールトリアージの流れ</title>
+<!-- アイコンは Simple Icons（CC0。https://simpleicons.org ）の Gmail・Todoist・OpenAI。各社の商標 -->
+<!--
+  このケースの flow.png（手順の流れ図。README の折りたたみに出す）の編集元。note の記事の図と同じ中身。
+  cover.png は figure.py が描く。
+
+  再生成（このフォルダで。Chrome / Chromium のヘッドレス版を使う。幅 1000・高さ 1170 を 2 倍の解像度で撮る）：
+    chrome-headless-shell --headless --disable-gpu --no-sandbox --hide-scrollbars --force-device-scale-factor=2 \
+      --window-size=1000,1170 --screenshot="$PWD/flow.png" "file://$PWD/flow.html"
+  chrome-headless-shell は Playwright が入れる物でよい。
+  日本語フォントは Noto Sans CJK JP を入れておく。書き出したら欠字・はみ出し・切れを目視で確かめる。
+-->
+<style>
+  html, body { margin: 0; background: #ffffff; }
+  svg { display: block; font-family: "Noto Sans CJK JP", "Noto Sans JP", sans-serif; }
+  .t-xl { font-size: 28px; font-weight: 700; }
+  .t-l  { font-size: 25px; font-weight: 700; }
+  .t-m  { font-size: 22px; }
+  .t-s  { font-size: 20px; }
+  .ink   { fill: #24292f; }
+  .muted { fill: #5d6b7a; }
+  .line  { stroke: #6b7682; stroke-width: 3; fill: none; }
+</style>
+</head>
+<body>
+<svg width="1000" height="1170" viewBox="0 0 1000 1170" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6b7682"/>
+    </marker>
+  </defs>
+
+  <!-- 新着メール -->
+  <rect x="150" y="24" width="300" height="72" rx="36" fill="#24292f"/>
+  <rect x="174" y="38" width="44" height="44" rx="10" fill="#ffffff"/>
+  <svg x="180" y="44" width="32" height="32" viewBox="0 0 24 24"><path fill="#EA4335" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg>
+  <text x="322" y="70" text-anchor="middle" class="t-xl" fill="#ffffff">新着メール</text>
+  <line x1="300" y1="96" x2="300" y2="156" class="line" marker-end="url(#arrow)"/>
+
+  <!-- Gmail のフィルタ -->
+  <rect x="30" y="160" width="940" height="220" rx="16" fill="#eef4fb" stroke="#c4d6ec" stroke-width="2"/>
+  <svg x="54" y="176" width="30" height="30" viewBox="0 0 24 24"><path fill="#EA4335" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg>
+  <text x="96" y="200" class="t-l" fill="#2c5a8a">Gmail のフィルタ</text>
+  <rect x="150" y="224" width="300" height="110" rx="10" fill="#ffffff" stroke="#8fb0d6" stroke-width="2"/>
+  <text x="300" y="270" text-anchor="middle" class="t-m ink">決まったルールで</text>
+  <text x="300" y="304" text-anchor="middle" class="t-m ink">機械的に判定</text>
+  <line x1="450" y1="279" x2="532" y2="279" class="line" marker-end="url(#arrow)"/>
+  <rect x="540" y="200" width="410" height="158" rx="10" fill="#f1f3f5" stroke="#aab2bb" stroke-width="2"/>
+  <text x="564" y="240" class="t-m ink" font-weight="700">不要と分かるメール</text>
+  <text x="564" y="272" class="t-s muted">（広告・配達完了の連絡など）</text>
+  <text x="564" y="308" class="t-s ink">受信トレイから外し、既読にして</text>
+  <text x="564" y="338" class="t-s ink">ラベルを付ける</text>
+
+  <!-- 残ったメール -->
+  <line x1="300" y1="334" x2="300" y2="446" class="line" marker-end="url(#arrow)"/>
+  <rect x="316" y="392" width="150" height="34" rx="6" fill="#ffffff"/>
+  <text x="326" y="417" class="t-s ink" font-weight="700">残ったメール</text>
+
+  <!-- AI -->
+  <rect x="30" y="450" width="940" height="490" rx="16" fill="#edf6f0" stroke="#bcdcc8" stroke-width="2"/>
+  <svg x="54" y="466" width="30" height="30" viewBox="0 0 24 24"><path fill="#24292f" d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z"/></svg>
+  <text x="96" y="490" class="t-l" fill="#2f6b4a">ChatGPT のスケジュール（毎朝6時に自動で動く）</text>
+  <rect x="150" y="510" width="300" height="96" rx="10" fill="#ffffff" stroke="#8cc3a2" stroke-width="2"/>
+  <text x="300" y="550" text-anchor="middle" class="t-m ink">中身を読んで</text>
+  <text x="300" y="584" text-anchor="middle" class="t-m ink">3つに仕分ける</text>
+  <polyline points="300,606 300,630" class="line"/>
+  <polyline points="190,630 810,630" class="line"/>
+  <line x1="190" y1="630" x2="190" y2="654" class="line" marker-end="url(#arrow)"/>
+  <line x1="500" y1="630" x2="500" y2="654" class="line" marker-end="url(#arrow)"/>
+  <line x1="810" y1="630" x2="810" y2="654" class="line" marker-end="url(#arrow)"/>
+
+  <rect x="60"  y="658" width="260" height="64" rx="10" fill="#fde8e4" stroke="#d9534f" stroke-width="2"/>
+  <text x="190" y="699" text-anchor="middle" class="t-l" fill="#b03a2e">要対応</text>
+  <rect x="370" y="658" width="260" height="64" rx="10" fill="#fff3d6" stroke="#e0a106" stroke-width="2"/>
+  <text x="500" y="699" text-anchor="middle" class="t-l" fill="#8a5f00">要確認</text>
+  <rect x="680" y="658" width="260" height="64" rx="10" fill="#eef0f2" stroke="#aab2bb" stroke-width="2"/>
+  <text x="810" y="699" text-anchor="middle" class="t-l" fill="#5d6b7a">不要</text>
+
+  <text x="190" y="760" text-anchor="middle" class="t-s ink">Todoist の Inbox にタスク</text>
+  <text x="190" y="790" text-anchor="middle" class="t-s ink">＋ラベルを付ける</text>
+  <text x="500" y="760" text-anchor="middle" class="t-s ink">ラベルだけ付ける</text>
+  <text x="810" y="760" text-anchor="middle" class="t-s ink">何もしない</text>
+  <text x="810" y="790" text-anchor="middle" class="t-s muted">（受信トレイに残す）</text>
+
+  <!-- Todoist の整理 -->
+  <line x1="190" y1="804" x2="190" y2="826" class="line" marker-end="url(#arrow)"/>
+  <rect x="60" y="830" width="380" height="90" rx="10" fill="#ffffff" stroke="#8cc3a2" stroke-width="2"/>
+  <svg x="78" y="851" width="40" height="40" viewBox="0 0 24 24"><path fill="#E44332" d="M21 0H3C1.35 0 0 1.35 0 3v3.858s3.854 2.24 4.098 2.38c.31.18.694.177 1.004 0 .26-.147 8.02-4.608 8.136-4.675.279-.161.58-.107.748-.01.164.097.606.348.84.48.232.134.221.502.013.622l-9.712 5.59c-.346.2-.69.204-1.048.002C3.478 10.907.998 9.463 0 8.882v2.02l4.098 2.38c.31.18.694.177 1.004 0 .26-.147 8.02-4.609 8.136-4.676.279-.16.58-.106.748-.008.164.096.606.347.84.48.232.133.221.5.013.62-.208.121-9.288 5.346-9.712 5.59-.346.2-.69.205-1.048.002C3.478 14.951.998 13.506 0 12.926v2.02l4.098 2.38c.31.18.694.177 1.004 0 .26-.147 8.02-4.609 8.136-4.676.279-.16.58-.106.748-.009.164.097.606.348.84.48.232.133.221.502.013.622l-9.712 5.59c-.346.199-.69.204-1.048.001C3.478 18.994.998 17.55 0 16.97V21c0 1.65 1.35 3 3 3h18c1.65 0 3-1.35 3-3V3c0-1.65-1.35-3-3-3z"/></svg>
+  <text x="270" y="868" text-anchor="middle" class="t-s ink" font-weight="700">続けて Todoist の Inbox を整理</text>
+  <text x="270" y="900" text-anchor="middle" class="t-s muted">メールのタスクも今日の候補に</text>
+
+  <!-- 通知 -->
+  <polyline points="250,920 250,960 500,960" class="line"/>
+  <line x1="500" y1="804" x2="500" y2="986" class="line" marker-end="url(#arrow)"/>
+  <rect x="250" y="990" width="500" height="160" rx="14" fill="#f6f8fa" stroke="#d0d7de" stroke-width="2"/>
+  <rect x="280" y="1002" width="80" height="136" rx="14" fill="#ffffff" stroke="#24292f" stroke-width="4"/>
+  <rect x="306" y="1010" width="28" height="5" rx="2.5" fill="#24292f"/>
+  <rect x="289" y="1026" width="62" height="34" rx="6" fill="#e3e7eb"/>
+  <svg x="293" y="1031" width="14" height="14" viewBox="0 0 24 24"><path fill="#24292f" d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z"/></svg>
+  <rect x="311" y="1034" width="34" height="5" rx="2.5" fill="#6b7682"/>
+  <rect x="311" y="1045" width="24" height="5" rx="2.5" fill="#aab2bb"/>
+  <text x="390" y="1052" class="t-l ink">毎朝スマホに通知</text>
+  <text x="390" y="1088" class="t-s muted">報告の1行目がメールの件数</text>
+  <text x="390" y="1118" class="t-s muted">（0件の日も）</text>
+</svg>
+</body>
+</html>

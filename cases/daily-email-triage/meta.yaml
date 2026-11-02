@@ -62,6 +62,7 @@ visual:
   language: ja
   explanation: flow.png
   source: cases/daily-email-triage/figure.py
+  explanation_source: cases/daily-email-triage/flow.html
 links:
   related_case: ../daily-todoist-triage/
 platforms:
@@ -69,3 +70,23 @@ platforms:
 - ChatGPT
 modes:
 - scheduled
+deck:
+- area: tasks
+  role: part
+  order: 10
+  figure: cover.png
+  alt: 毎朝のメール仕分けの図
+  title: メールの仕分け
+  when: 毎朝 6:00
+  ai: フィルタを通った残りを読み、要対応と要確認に分けて通知。削除と返信はしない
+  me: 判定の基準を最初に決めて、ChatGPT の定期実行に登録。あとは報告を見て返事と対応
+  flow: flow.png
+  flow_alt: 新着メールを Gmail のフィルタと ChatGPT の 2 層で仕分け、要対応を Todoist に入れて毎朝スマホに知らせる流れ
+  more:
+    summary: 2 層で仕分ける
+    items:
+    - 層 1：Gmail のフィルタ（AI なし）が、読む必要のない物を先にアーカイブ
+    - 層 2：ChatGPT が直近 1 日の未読を [[要対応]][[要確認]][[不要]] に分ける
+    - 要対応は Todoist に「[メール] 何をするか — 差出人」の形で 1 件ずつ登録
+    - 報告の 1 行目は件数。0 件の日も書く（止まっていないかの生存確認）
+    - 判定の基準は GitHub の README 1 つ。読めなかった日はメールに触らず「未実行」と報告

@@ -102,7 +102,7 @@ card(gx0, gy0, GW, GH, .72, 2)
 card(gx0 + GW + GAP, gy0, GW, GH, .45, 1, fk.BLUE)
 card(gx0, gy0 + GH + GAP, GW, GH, .9, 0, fk.BLUE)
 card(gx0 + GW + GAP, gy0 + GH + GAP, GW, GH, .3, 3)
-fk.centered(SX + SW / 2, SY + SH + 37 + 12, '開発ダッシュボード', 25)   # 全体図・部内資料と同じ呼び名（台の下に置く）
+fk.centered(SX + SW / 2, SY + SH + 37 + 12, '開発ダッシュボード', 25)   # 全体図・紹介資料と同じ呼び名（台の下に置く）
 
 # 右端：本人は画面を見るだけ（書き込む線は無い）
 PX, PY = 1387, CY - 10

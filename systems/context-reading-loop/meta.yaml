@@ -10,6 +10,10 @@ visual:
   - Pillow
   - scripts/figkit.py
   - 日本語フォント
+  extra:  # README の折りたたみの図（2026-11-02 追加。中で動く 3 つの仕組みを 1 枚ずつ）
+  - {image: part-context.png, source: systems/context-reading-loop/parts.py}
+  - {image: part-record.png, source: systems/context-reading-loop/parts.py}
+  - {image: part-review.png, source: systems/context-reading-loop/parts.py}
 id: context-reading-loop
 title: 会話の文脈から次に読む本へ
 summary: ChatGPTの会話から残す非公開文脈と、公開の読書記録を週次レビューでつなぐ。
@@ -103,3 +107,52 @@ evidence:
 - 'reading-log: README.md・AI_RULES.md'
 - 'personal-ai-context: README.md・meta/update-protocol.md（公開可能な運用関係のみ）'
 - ChatGPTの有効な定期実行設定（確認日の状態）
+deck:
+- area: reading
+  role: whole
+  order: 10
+  figure: null
+  heading: 日々の会話も材料にして、次に読む本を選ぶ
+  text: ふだんの ChatGPT との会話は、ChatGPT のメモリに加えて、GitHub の非公開の置き場（personal-ai-context）にも溜まる。目標・今の状況・判断の経緯をここ 1 か所にまとめ、どの AI も同じ前提で読む。読書のことは ChatGPT に別の会話で話して、公開の読書記録（reading-log）に書く。毎週日曜、ChatGPT がこの 2 つと直近の会話を読み、次に読む本を点数で決める。
+- area: reading
+  role: part
+  order: 10
+  figure: part-context.png
+  alt: 本人と ChatGPT の会話を、毎週日曜に ChatGPT が整理して非公開の置き場に書き足す図
+  title: 会話から自分のメモを更新する
+  when: 毎週日曜 22:00
+  ai: その週の会話を読み、非公開の置き場と比べて変わった所だけを書き足す
+  me: ふだんどおり話す。方針の決定
+  more:
+    summary: どの AI も同じ前提で答える
+    items:
+    - 今の状況・目標・価値観・判断の経緯・まだ決めていないことを、テーマ別のファイルにして 1 か所に置く
+    - どの AI も、答える前に決まった順（今の状況 → 価値観 → 詳細 → 判断の経緯 → まだ決めていないこと）で読む
+    - 事実と AI の提案を分け、基準日を付け、方針を変えたら理由を残す
+- area: reading
+  role: part
+  order: 20
+  figure: part-record.png
+  alt: 本人が話した進捗と感想を ChatGPT が読書記録に書く図
+  title: 読書を記録する
+  when: 話しかけたとき
+  ai: 表紙の写真や「何ページまで読んだ」から、1 冊 1 ファイルに書く。判断がつかない物は仮置きの場所に置く
+  me: iPhone の ChatGPT に進捗と感想を話す
+- area: reading
+  role: part
+  order: 30
+  figure: part-review.png
+  alt: 読書記録・非公開の置き場・今週の会話を ChatGPT が読んで本を採点し、本棚のサイトから次の 1 冊が本人に届く図
+  title: 週 1 回の振り返り
+  when: 毎週日曜 20:30
+  ai: 読書記録・非公開の置き場・直近 1 週間の会話の 3 つを読み、候補の本を 5 項目 100 点で採点して「次の 1 冊」を決める
+  me: 提案を採るかどうか
+  more:
+    summary: 5 項目の点数と、読めなかった物の報告
+    items:
+    - 5 項目：今の課題への貢献 30・今読む緊急性 25・先送りの損 20・実践しやすさ 15・労力に対する効果 10（合計 100 点）
+    - 点数は本ごとに記録へ書き、本棚のサイトで高い順に読める
+    - 3 つの情報源それぞれ、読めたかどうかを毎週の振り返りに書く
+    - 非公開の置き場の中身は、公開の本棚には書かない
+    - 記録を更新するたびに本棚のサイトが自動で作り直され、検査も走る
+    - 振り返り（20:30）は、前の週までのメモを使う。その週の会話の分は、同じ夜の 22:00 にメモへ足す

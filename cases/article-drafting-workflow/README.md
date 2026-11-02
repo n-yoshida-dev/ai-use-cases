@@ -17,6 +17,15 @@ AIに記事を任せると、主語を抜く・繰り返す・凝った言い回
 - 画像はAPIで上げられず「ここに貼る」の印にし、本人が貼って公開する。
 - 構想：買い物の記事はNotionの購入判断ノートを材料にし、使った感想だけを書く（未着手）。
 
-[公開した記事（Qiita）](https://qiita.com/n-yoshida-dev/items/5582e55143ee9bb57934) ／ [購入判断ノートの記録](../shopping-decision-notes/)
+<details>
+<summary>note版に書き直す図、直すほど自分の文体になる図を見る</summary>
+
+![Qiitaに公開した本文からClaude Codeがnote版の下書きを書き、本人が直してnoteに出す図](note.png)
+
+![本人の直しの差分をClaude Codeが文章の原則とNG辞書に足し、次の下書きがそれを読む図](voice.png)
+
+</details>
+
+[公開した記事（Qiita）](https://qiita.com/n-yoshida-dev/items/5582e55143ee9bb57934) ／ [購入判断ノートの記録](../shopping-decision-notes/) ／ [記事のネタから投稿までの全体像](../../systems/article-writing/)
 
 [一覧へ戻る](../../README.md)

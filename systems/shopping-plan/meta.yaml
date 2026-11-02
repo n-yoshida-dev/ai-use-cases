@@ -1,0 +1,100 @@
+schema_version: 1
+kind: system-overview
+id: shopping-plan
+title: 欲しい物は Notion の 1 つ
+summary: Notionの欲しいもの（1商品1行）を正本に、調べて登録する・買う月を決める・お買い得を探す3つの仕組みが同じ一覧を読む。
+related_cases:
+- shopping-decision-notes
+- allowance-shopping-plan
+nodes:
+- id: person
+  role: 用途と条件を話す。棚卸しと5つの質問に答える。計画画面と提案を見て買うかを決める
+  source: 本人
+  privacy: private
+- id: chatgpt-research
+  role: 調べて比べ、決めた物を登録。比べた理由は購入判断ノートへ
+  source: cases/shopping-decision-notes
+  privacy: private
+- id: wishlist
+  role: 欲しい物の正本（1商品1行）。5つの答えから数式の列が点数を出す
+  source: Notionの欲しいもの（非公開）
+  privacy: private
+- id: claude-plan
+  role: 点数順の一覧・値段の履歴・セール日程・今あるお小遣いから買う月を決める
+  source: cases/allowance-shopping-plan
+  privacy: private
+- id: plan-screen
+  role: いつ何を買うかを見せる画面。買う順はここだけに持つ
+  source: 計画画面（アーティファクト。非公開）
+  privacy: private
+- id: mercari-plugin
+  role: 定価つきの一覧を読み、状態と値段を定価と比べてお買い得の候補を提案
+  source: ChatGPTのメルカリプラグイン
+  privacy: private
+edges:
+- source: person
+  target: chatgpt-research
+  operation: tell-needs
+  flow: information
+  evidence: saved-content-readback
+- source: chatgpt-research
+  target: wishlist
+  operation: write-item
+  flow: information
+  evidence: saved-content-readback
+- source: wishlist
+  target: claude-plan
+  operation: read-scored-list
+  flow: information
+  evidence: work-notes-confirmed
+- source: claude-plan
+  target: plan-screen
+  operation: write-plan
+  flow: information
+  evidence: artifact-metadata-confirmed
+- source: wishlist
+  target: mercari-plugin
+  operation: read-list-with-list-price
+  flow: information
+  evidence: user-reported
+- source: mercari-plugin
+  target: person
+  operation: suggest
+  flow: information
+  evidence: user-reported
+verification:
+  checked_on: '2026-11-02'
+  confirmed:
+  - 購入判断ノートと欲しいもの（1商品1行）の保存内容（shopping-decision-notes、2026-10-31）
+  - Notionの読み取りと計画画面の作成、点数の列（allowance-shopping-plan、2026-10-22〜2026-10-27）
+  - Notionの商品ページで、メルカリの複数出品を比べた保存記録（2026-10-31）
+  user_reported:
+  - 欲しい物の正本はNotionのまま、表示だけ計画画面にする
+  - 2026-10-29からChatGPTのメルカリプラグインでNotionの欲しいものをメルカリで探し、お買い得の候補を教えてもらっている
+  - 2026-11-02、メルカリのお買い得探しで、定価の3割ほどでほぼ新品同様の物を買えた
+  unconfirmed:
+  - メルカリのお買い得探しが頼むたびに動くのか、予定で動くのか
+  - メルカリで買えた実績の記録
+  - 3つの仕組みの継続と、計画どおりに買えたかなどの効果
+evidence:
+- cases/shopping-decision-notes/meta.yaml
+- cases/allowance-shopping-plan/meta.yaml
+deck:
+- area: shopping
+  role: whole
+  order: 10
+  figure: cover.png
+  alt: ChatGPT が調べて比べた欲しい物を Notion に登録し、Claude Code が買う月を計画画面に出し、ChatGPT のメルカリプラグインがお買い得を提案する図
+  heading: 欲しい物は Notion の 1 つ
+  text: 欲しい物は ChatGPT に相談して調べて比べ、決めた物を Notion に 1 商品 1 行で登録する。棚卸し（欲しい物の見直し）と 5 つの質問の点数で優先度を決め、Claude Code が値段とセールから買う月を計画画面（Claude Code が作った買い物の計画の Web ページ）に出す。メルカリプラグイン（ChatGPT からメルカリを検索できる追加機能）は、同じ一覧をもとにお買い得を探す。
+visual:
+  cover: cover.png
+  language: ja
+  source: figure.py
+  explanation: null
+  render: python3 systems/shopping-plan/figure.py --font /path/to/NotoSansJP.ttf
+  dependencies:
+  - Python 3
+  - Pillow
+  - scripts/figkit.py
+  - 日本語フォント

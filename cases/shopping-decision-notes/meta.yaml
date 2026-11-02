@@ -47,4 +47,20 @@ visual:
   explanation: null
   source: cases/shopping-decision-notes/figure.py
 links:
+  related_system: ../../systems/shopping-plan/
   related_case: ../allowance-shopping-plan/
+deck:
+- area: shopping
+  role: part
+  order: 10
+  figure: cover.png
+  alt: ChatGPT が調べて比べ、欲しい物と比べた理由を Notion に書く図
+  title: 調べて比べ、決めた物を登録する
+  when: 相談したとき
+  ai: メーカー情報・実勢価格・互換性・レビューを調べて会話の中で比べ、決めた物を Notion に 1 商品 1 行で登録する。候補を変えた理由は購入判断ノート（テーマごとの判断の記録）に残す
+  me: 用途と条件を話す。AI の解釈の訂正
+  more:
+    summary: 商品と判断の経緯を分けて置く
+    items:
+    - 既にある商品と重ねない。「調査だけ」と言ったときは書き込まない
+    - 仕様・価格・出典は商品の行、比べた理由は購入判断ノート。自分の発言と AI の解釈は分けて書く

@@ -44,3 +44,19 @@ platforms:
 - ChatGPT
 modes:
 - work
+deck:
+- area: browser
+  role: part
+  order: 10
+  figure: cover.png
+  alt: YouTube マイリスト整理を AI に任せる図
+  title: YouTube のマイリスト整理
+  when: 一度きり
+  ai: ブラウザの画面を操作して、マイリストを棚卸しし、作成・統合・削除する
+  me: 残す基準と、統合・削除の方針
+  more:
+    summary: 画面を見て動く AI
+    items:
+    - ChatGPT の画面操作の機能（Computer Use）が、自分のアカウントの画面でマイリストを棚卸しし、分類と統合候補を出す
+    - 許した範囲の操作（統合・作成・削除）だけ AI が実行。例外は本人が判断
+    - 同じ形で、ログインの要るブラウザ作業を横断タスクボードから AI に振る

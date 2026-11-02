@@ -1,0 +1,108 @@
+schema_version: 1
+kind: system-overview
+id: article-writing
+title: 記事の種類で、ネタの出どころと出す先が変わる
+summary: 商品紹介は購入判断ノートからnoteへ、AIの活用はネタ帳とこのカタログからQiitaのあとnote版も、技術記事はネタ帳からQiitaへ。どの記事もClaude Codeが書き、投稿は本人。
+related_cases:
+- article-drafting-workflow
+- shopping-decision-notes
+nodes:
+- id: decision-notes
+  role: 商品紹介のネタ（比べたときの判断の記録）
+  source: Notionの購入判断ノート（非公開）
+  privacy: private
+- id: idea-inbox
+  role: AIの活用・技術記事のネタ（記事の候補の置き場）
+  source: GitHubのネタ帳（非公開）
+  privacy: private
+- id: catalog
+  role: AIの活用の記事のネタ（活用事例）
+  source: このカタログ（ai-use-cases）
+  privacy: public
+- id: claude-write
+  role: ネタに本人が声で肉付けした中身から記事を書く
+  source: cases/article-drafting-workflow
+  privacy: private
+- id: qiita
+  role: AIの活用・技術記事の出す先
+  source: Qiita
+  privacy: public
+- id: claude-note
+  role: Qiitaに公開した本文を体験談中心のnote版に直す
+  source: cases/article-drafting-workflow
+  privacy: private
+- id: note
+  role: 商品紹介・AIの活用の記事のnote版の出す先
+  source: note
+  privacy: public
+edges:
+- source: decision-notes
+  target: claude-write
+  operation: read-decision-record
+  flow: information
+  evidence: user-reported
+- source: idea-inbox
+  target: claude-write
+  operation: read-topic
+  flow: information
+  evidence: user-reported
+- source: catalog
+  target: claude-write
+  operation: read-case
+  flow: information
+  evidence: user-reported
+- source: claude-write
+  target: qiita
+  operation: post-limited-share
+  flow: information
+  evidence: commit-history-confirmed
+- source: claude-write
+  target: note
+  operation: draft-article
+  flow: information
+  evidence: user-reported
+- source: qiita
+  target: claude-note
+  operation: read-published-body
+  flow: information
+  evidence: commit-history-confirmed
+- source: claude-note
+  target: note
+  operation: draft-note-version
+  flow: information
+  evidence: commit-history-confirmed
+verification:
+  checked_on: '2026-11-02'
+  confirmed:
+  - AIの活用の記事1本をQiitaに公開し、公開後に書き直した本文で上書きした（cases/article-drafting-workflow、2026-10-23〜2026-10-31）
+  - Qiitaの本文をもとにnote版の下書きを書き、本人のレビュー中（同、2026-10-31）
+  user_reported:
+  - 本人（2026-11-02）：「商品紹介ってノートにしか公開しませんよ。つまり、キータは関係ないです。（略）キータに書いた後、ノート版に文章を直して、まあ、また加筆修正してノートに展開するよね。（略）キータにしか書けない本当の技術記事みたいなのがあるけど、まあ、それは、まあ、ノートは関係なかったりする」
+  - 本人（2026-11-02）：Notionの購入判断ノートとこのカタログも記事のネタになる（要旨）
+  unconfirmed:
+  - 購入判断ノートから書いた商品紹介の記事（まだ1本も無い）
+  - note版を公開した記録
+  - 技術記事を新しい流れで書いた記録と、そのネタの出どころがネタ帳であること
+  - 効果（執筆時間・読まれ方など）
+evidence:
+- cases/article-drafting-workflow/meta.yaml
+- 本人の2026-11-02の説明
+deck:
+- area: article
+  role: whole
+  order: 10
+  figure: cover.png
+  alt: 商品紹介は購入判断ノートから note へ、AI の活用はネタ帳と公開カタログから Qiita のあと note 版を note へ、技術記事はネタ帳から Qiita へ出す図
+  heading: 記事の種類でネタの出どころと出す先が変わる
+  text: 商品紹介は Notion の購入判断ノートをネタに note だけへ。AI の活用はネタ帳（記事の候補の置き場）と、AI の活用事例を公開しているカタログ（ai-use-cases）をネタに Qiita へ書き、そのあと note 向けに書き直して note にも出す。技術記事はネタ帳から Qiita だけへ。どの記事も、ネタに本人が声で肉付けしてから AI が書き、投稿するのは本人。
+visual:
+  cover: cover.png
+  language: ja
+  source: figure.py
+  explanation: null
+  render: python3 systems/article-writing/figure.py --font /path/to/NotoSansJP.ttf
+  dependencies:
+  - Python 3
+  - Pillow
+  - scripts/figkit.py
+  - 日本語フォント

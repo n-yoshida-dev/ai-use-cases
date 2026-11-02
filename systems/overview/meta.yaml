@@ -1,0 +1,107 @@
+schema_version: 1
+kind: system-overview
+id: overview
+title: AIに任せている仕組みの全体図
+summary: AIに任せている仕組みを、入口・ChatGPT・置き場・Claude Code・出す物・本人のデータの流れで1枚にまとめ、各事例と全体構成への入口にする。
+related_cases:
+- daily-email-triage
+- daily-todoist-triage
+- youtube-playlist-cleanup
+- allowance-shopping-plan
+- shopping-decision-notes
+- daily-cross-task-board
+- handoff-and-todo-files
+- dev-dashboard-hub
+- article-drafting-workflow
+related_systems:
+- daily-task-hub
+- context-reading-loop
+- cross-task-board
+nodes:
+- id: person
+  role: ChatGPTに話し、Claude Codeに頼む。朝の報告をスマホで受け取る
+  source: 本人
+  privacy: private
+- id: chatgpt
+  role: 定期実行（毎朝6時・日曜夜）と会話で、メール・タスク・マイリストの仕分けと整理、欲しい物と読書の記録を書く
+  source: ChatGPT
+  privacy: private
+- id: claude-code
+  role: 本人の依頼で、置き場を読んで時間割・買う順番・作業メモ・記事を書く
+  source: Claude Code
+  privacy: private
+- id: stores
+  role: 置き場（Gmail・Todoist・Googleカレンダー・Keepa・Notion・Amazon・YouTube・GitHub）
+  source: 各サービスと本人のリポジトリ（自分のメモ・作業のリポジトリは非公開、reading-logは公開）
+  privacy: mixed
+- id: outputs
+  role: 出す物（横断タスクボード・買い物の計画画面・開発ダッシュボード・読書の本棚・Qiita・note）
+  source: 各事例のページ
+  privacy: mixed
+- id: mercari-plugin
+  role: Notionの欲しい物を読み、メルカリで探して定価と比べ、お買い得の候補を出す
+  source: ChatGPTのメルカリプラグイン
+  privacy: private
+edges:
+- source: person
+  target: chatgpt
+  operation: talk
+  flow: information
+  evidence: 各事例のmeta.yamlを参照
+- source: person
+  target: claude-code
+  operation: request
+  flow: trigger
+  evidence: 各事例のmeta.yamlを参照
+- source: chatgpt
+  target: stores
+  operation: write
+  flow: information
+  evidence: 各事例のmeta.yamlを参照
+- source: stores
+  target: claude-code
+  operation: read
+  flow: information
+  evidence: 各事例のmeta.yamlを参照
+- source: claude-code
+  target: outputs
+  operation: write
+  flow: information
+  evidence: 各事例のmeta.yamlを参照
+- source: chatgpt
+  target: person
+  operation: morning-report
+  flow: information
+  evidence: 各事例のmeta.yamlを参照
+- source: stores
+  target: mercari-plugin
+  operation: read
+  flow: information
+  evidence: cases/allowance-shopping-plan のmeta.yamlを参照
+verification:
+  checked_on: '2026-11-02'
+  confirmed:
+  - 図の流れは、上の各事例・全体構成のREADMEとmeta.yamlに書いた流れを1枚に集めたもの
+  user_reported: []
+  unconfirmed:
+  - 各流れの稼働と効果の確認は、それぞれの事例・全体構成のページに従う。この図で新しく確かめたことは無い
+  - 全部が続けて自動で動くことは示さない（定期実行は時計の印の物だけ）
+evidence:
+- 各事例・全体構成のmeta.yaml
+visual:
+  cover: cover.png
+  language: ja
+  source: figure.py
+  explanation: null
+  render: python3 systems/overview/figure.py --font /path/to/NotoSansJP.ttf
+  dependencies:
+  - Python 3
+  - Pillow
+  - scripts/figkit.py
+  - 日本語フォント
+deck:
+- area: overview
+  role: overview
+  order: 10
+  figure: cover.png
+  alt: 入口からAI、置き場、出す物、本人までのデータの流れを 1 枚にした全体図

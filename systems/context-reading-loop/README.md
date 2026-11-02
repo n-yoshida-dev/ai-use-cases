@@ -17,6 +17,17 @@ ChatGPTが、会話から長期的に必要な差分を毎週personal-ai-context
 
 連携仕様とChatGPT側の有効設定を確認。毎回の保存成功、推薦の効果は検証していない。
 
+<details>
+<summary>中で動く3つの仕組みの図を見る</summary>
+
+![本人と ChatGPT の会話を、毎週日曜に ChatGPT が整理して非公開の置き場に書き足す図](part-context.png)
+
+![本人が話した進捗と感想を ChatGPT が読書記録に書く図](part-record.png)
+
+![読書記録・非公開の置き場・今週の会話を ChatGPT が読んで本を採点し、本棚のサイトから次の 1 冊が本人に届く図](part-review.png)
+
+</details>
+
 関連する個別ケース：[定期レビュー](../../cases/scheduled-reviews/)  
 外部の正本：[reading-log](https://github.com/n-yoshida-dev/reading-log) ／ personal-ai-context（非公開のためリンクなし）
 

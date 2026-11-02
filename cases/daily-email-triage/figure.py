@@ -1,4 +1,5 @@
-"""このケースの cover.png / flow.png を生成する。他ケースの画像には触れない。
+"""このケースの cover.png を生成する。他ケースの画像には触れない。
+手順の流れ図 flow.png は flow.html から描く（描き方は flow.html の先頭）。
 
     python cases/daily-email-triage/figure.py --font /absolute/path/日本語フォント
     （例）PYTHONPATH=<Pillow の場所> python3 cases/daily-email-triage/figure.py --font /usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc
@@ -73,29 +74,3 @@ fk.flow([(GPT + HALF, CY + 44), (PHX + 42, CY + 44), (PHX + 42, PHY - 6)], '朝�
 
 fk.save(HERE / 'cover.png')
 
-
-# ---- flow.png：必要な説明を補う図 ----
-def cards(title, items):
-    """fk.cards と同じ並びで、カードの高さを段ごとの行数（2〜3 行）に合わせて詰めたもの（fk.cards は 258px で下が空く）。"""
-    fk.begin()
-    fk.text(64, 56, title, 40)
-    y = 150
-    for row in range(0, len(items), 2):
-        pair = items[row:row + 2]
-        h = 110 + 46 * max(len(lines) for _, lines in pair)
-        for i, (label, lines) in enumerate(pair):
-            x = 64 + i * 670
-            fk.rr((x, y, x + 638, y + h))
-            fk.text(x + 28, y + 22, label, 28, fk.TEAL)
-            for k, line in enumerate(lines):
-                fk.text(x + 28, y + 90 + k * 46, line, 28)
-        y += h + 30
-
-
-cards('メール仕分け：作業と判断の分担', [
-    ('課題', ['通知を切ると大事なメールを見落とす', '全部読むにはノイズが多すぎる']),
-    ('AIの作業', ['毎朝、未読を読んで3つに仕分ける', '要対応はTodoistへ登録', '続けてTodoistのInboxを整理']),
-    ('人間の判断', ['判定基準を手順書に決めておく', 'メールの削除・返信と実際の対応は本人']),
-    ('確認すること', ['ラベル付与は移行の前後とも確認', '判定の正確さと時間削減は未測定']),
-])
-fk.save(HERE / 'flow.png')

@@ -1,6 +1,12 @@
 # AI Use Cases
 
-ChatGPT・Claude.aiのチャット／Work／スケジュール（Claude Codeのルーティンを含む）で、AIへ任せる作業と人間の判断を設計した事例集。図から概要をつかみ、気になるケースへ進めます。
+ChatGPT・Claude.aiのチャット／Work／スケジュール（Claude Codeのルーティンと、会話で続けている運用を含む）で、AIへ任せる作業と人間の判断を設計した事例集。図から概要をつかみ、気になるケースへ進めます。
+
+## 全体図
+
+<a href="systems/overview/"><img src="systems/overview/cover.png" width="420" alt="入口からAI、置き場、出す物、本人までのデータの流れを1枚にした全体図"></a>
+
+**[AIに任せている仕組みを1枚に](systems/overview/)**
 
 ## 仕組み全体
 
@@ -8,6 +14,11 @@ ChatGPT・Claude.aiのチャット／Work／スケジュール（Claude Codeの�
 | --- | --- | --- |
 | [![Todoistへ集まる入力と毎日の整理](systems/daily-task-hub/cover.png)](systems/daily-task-hub/) | [![複数AI・コンテキスト・読書の連携](systems/context-reading-loop/cover.png)](systems/context-reading-loop/) | [![タスク・予定・リポジトリの作業を1枚のボードへ](systems/cross-task-board/cover.png)](systems/cross-task-board/) |
 | **[メール・音声・手入力から実行へ](systems/daily-task-hub/)** | **[会話の文脈から次に読む本へ](systems/context-reading-loop/)** | **[今日やることを1枚のボードに](systems/cross-task-board/)** |
+
+| 欲しい物から購入まで | 記事のネタから投稿まで |
+| --- | --- |
+| [![ChatGPTが調べて比べた欲しい物をNotionに登録し、Claude Codeが買う月を計画画面に出し、ChatGPTのメルカリプラグインがお買い得を提案する図](systems/shopping-plan/cover.png)](systems/shopping-plan/) | [![記事の種類ごとに、ネタの出どころと出す先（Qiita・note）が変わる図](systems/article-writing/cover.png)](systems/article-writing/) |
+| **[欲しい物はNotionの1つ、買う月は値段とセールから](systems/shopping-plan/)** | **[記事の種類でネタの出どころと出す先を分ける](systems/article-writing/)** |
 
 [全体構成の一覧](systems/README.md)
 

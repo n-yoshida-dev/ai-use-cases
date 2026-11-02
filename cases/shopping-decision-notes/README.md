@@ -14,6 +14,6 @@
 
 記事執筆の資料としてClaude Codeに読ませるのは今後の想定で、執筆完了の実績には含めない。
 
-[買う時期と順番の計画](../allowance-shopping-plan/)
+[買う時期と順番の計画](../allowance-shopping-plan/) ／ [欲しい物から購入までの全体像](../../systems/shopping-plan/) ／ [記事のネタから投稿までの全体像](../../systems/article-writing/)
 
 [一覧へ戻る](../../README.md)

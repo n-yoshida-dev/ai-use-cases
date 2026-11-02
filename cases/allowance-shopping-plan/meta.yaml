@@ -57,10 +57,54 @@ visual:
   language: ja
   explanation: null
   source: cases/allowance-shopping-plan/figure.py
+  extra:  # README の折りたたみの図（2026-11-02 追加）
+  - {image: score.png, source: cases/allowance-shopping-plan/score.py}
+  - {image: mercari.png, source: cases/allowance-shopping-plan/mercari.py}
 links:
+  related_system: ../../systems/shopping-plan/
   related_case: ../shopping-decision-notes/
 platforms:
 - Claude Code
 - ChatGPT
 modes:
 - work
+deck:
+- area: shopping
+  role: part
+  order: 20
+  figure: score.png
+  alt: 棚卸しの答えを Claude Code が Notion に反映し、5 つの質問の答えから Notion が点数を出す図
+  title: 棚卸しと点数で優先度を決める
+  when: 足したとき・棚卸しのとき
+  ai: 5 つの質問の仮の答えを商品の情報から出す。計画画面で押した答え（要る・要らない、5 つの質問）を Notion に反映する。点数は Notion の数式が 5 つの答えから出す
+  me: 棚卸しで要る・要らないを押す。5 つの質問は、仮の答えと違う所だけ直す
+  more:
+    summary: 5 つの質問
+    open: true
+    items:
+    - 困っているか・代わりはあるか・どれくらい使うか・どれだけ良くなるか・待つと損するか
+    - 「待つと損」だけ 2 倍に数える。点数が高い物から、買う候補になる
+- area: shopping
+  role: part
+  order: 30
+  figure: cover.png
+  alt: 点数順の欲しい物・Keepa の値段の履歴・Amazon のセール日程・今あるお小遣いから、Claude Code が買う月を計画画面に出す図
+  title: 値段とセールから買う月を決める
+  when: 頼んだとき
+  ai: 点数の高い順に、Keepa（Amazon の値段の履歴を見るサービス）でどのセールでどれだけ下がるかを調べる。Amazon のセール日程と今あるお小遣いと合わせて、何月のセールで買えるかを計画画面に出す
+  me: 今あるお小遣いと買った物を伝える。買う順番の最終判断
+  more:
+    summary: 順番の調整
+    items:
+    - 前提になる物・比較中の物・欲しくなってから冷ます期間のルールで順番を調整する
+    - 買う順番は計画画面にだけ持つ。相談は Claude Code との会話で受け、決まったら画面を直す
+- area: shopping
+  role: part
+  order: 40
+  figure: mercari.png
+  alt: ChatGPT のメルカリプラグインが Notion の欲しい物と定価を読み、メルカリでお買い得の候補を提案する図
+  title: メルカリでお買い得を探す
+  when: 使うとき
+  ai: ChatGPT のメルカリプラグインが欲しい物の一覧（定価つき）を読み、メルカリで探す。商品の状態と値段を定価と比べ、「新品同様で半額なら買い」のように提案する
+  me: 提案を見て買うかを決める
+  result: 定価の 3 割ほどで、ほぼ新品同様の腕時計を買えた

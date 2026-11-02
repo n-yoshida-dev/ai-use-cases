@@ -74,9 +74,47 @@ visual:
   language: ja
   explanation: null
   source: cases/article-drafting-workflow/figure.py
+  extra:  # README の折りたたみの図（2026-11-02 追加）
+  - {image: note.png, source: cases/article-drafting-workflow/note.py}
+  - {image: voice.png, source: cases/article-drafting-workflow/voice.py}
 links:
+  related_system: ../../systems/article-writing/
   related_case: ../shopping-decision-notes/
 platforms:
 - Claude Code
 modes:
 - work
+deck:
+- area: article
+  role: part
+  order: 10
+  figure: cover.png
+  alt: ネタに本人が声で肉付けし、Claude Code が下書きを書き、本人が読んで直してから投稿する図
+  title: 下書きから投稿まで
+  when: 記事ごと
+  ai: ネタの資料を読んでから質問し、声の答えから下書きを書く。構成に OK が出てから本文を一気に書き、文章の検査を通す
+  me: 声で肉付けする。下書きを読んで直す。画像を貼って公開
+  more:
+    summary: 声で答えて、AI が書く
+    items:
+    - AI が元の資料を読んでから質問し、本人は声で答える。答えの原文はそのまま残す
+    - 文章の検査は、AI の文に出やすい癖を見つけるルール 2 つと、自分の NG 辞書（使わない言い回しの一覧）
+    - Qiita は限定共有で上げ、本人が画像を貼って公開する
+- area: article
+  role: part
+  order: 20
+  figure: note.png
+  alt: Qiita に公開した本文から Claude Code が note 版の下書きを書き、本人が直して note に出す図
+  title: note 版に書き直す
+  when: AI の活用の記事
+  ai: Qiita に公開した最終版の本文をもとに、体験談を中心にした note 版の下書きを書く。作り方は Qiita へのリンクにする
+  me: 下書きを読んで直し、note に出す
+- area: article
+  role: part
+  order: 30
+  figure: voice.png
+  alt: 本人の直しの差分を Claude Code が文章の原則と NG 辞書に足し、次の下書きがそれを読む図
+  title: 直すほど自分の文体になる
+  when: 直したとき
+  ai: 本人が直す前の下書きを残し、直した後との差分から「なぜ直したか」を文章の原則と NG 辞書に足す。次の下書きはそれを読んでから書く
+  me: ふだんどおり直す

@@ -127,3 +127,11 @@ evidence:
 - cases/daily-todoist-triage/README.md
 - cases/bookmark-to-action/README.md
 - 本人の今回の説明
+deck:
+- area: tasks
+  role: whole
+  order: 10
+  figure: cover.png
+  alt: メール・音声・手入力を Todoist に集め、ChatGPT が毎朝整理して本人が実行する図
+  heading: 置き場は Todoist の 1 つ
+  text: メール・音声・手入力、入口がどこでも置き場は Todoist の 1 つだけ。毎朝 6:00 に ChatGPT がメールを仕分け、続けて今日やることを 1〜3 件に絞る。日課も含めて、やることは全部ここに入れる。

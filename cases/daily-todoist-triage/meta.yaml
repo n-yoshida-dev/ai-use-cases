@@ -64,3 +64,22 @@ visual:
   source: cases/daily-todoist-triage/figure.py
 links:
   related_case: ../scheduled-reviews/
+deck:
+- area: tasks
+  role: part
+  order: 20
+  figure: cover.png
+  alt: 毎朝の Todoist 整理の図
+  title: Todoist の整理
+  when: 毎朝 6:00
+  ai: Inbox を分類し、所要時間と担当のタグ、優先度を付けて今日の候補を選ぶ
+  me: 整理の基準と触らない範囲を最初に決めて登録。あとは候補を実行
+  more:
+    summary: タグで「上から消化するだけ」にする
+    items:
+    - 所要時間：[[2分以内]][[10分以内]][[30分以内]][[30分超]]。すぐ始められる物に 1 つだけ。まだ始められない物には付けない
+    - 担当：[[本人対応]][[AI補助]][[ClaudeCodeに委譲]][[Workに委譲]][[いつか]]（Work は ChatGPT Work）
+    - 優先度：P1 = 重要かつ急ぐ、P2 = 重要だが急がない。条件待ち・先の日付・着手できるか不明は時間タグなしの P4（P3 は使わない）
+    - 今日の候補は 1〜3 件。足す分は合計 30〜60 分まで
+    - AI が入れた日付は説明欄に「AI 提案・理由」を残し、自分が付けた日付・期限・繰り返しは変えない
+    - 書き込めるのは Inbox だけ。更新したら読み直して、書いた内容が入ったか、前のタグが残っていないかを確かめる
