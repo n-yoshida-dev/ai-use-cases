@@ -16,6 +16,13 @@
 
 同じ毎朝の処理で[メール仕分け](../daily-email-triage/)を先に行い、登録されたタスクも整理する。
 
+<details>
+<summary>整理の手順の流れ図を見る</summary>
+
+![整理の基準を読み、Inboxのタスクを分類してタグと優先度を付け、今日の候補を1〜3件選び、書き込みを読み直して毎朝スマホに知らせる流れ](flow.png)
+
+</details>
+
 [タスク管理の全体像](../../systems/daily-task-hub/) ／ [横断タスクボード](../../systems/cross-task-board/)
 
 [一覧へ戻る](../../README.md)

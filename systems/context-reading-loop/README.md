@@ -28,6 +28,13 @@ ChatGPTが、会話から長期的に必要な差分を毎週personal-ai-context
 
 </details>
 
+<details>
+<summary>週1回の振り返りの手順の流れ図を見る</summary>
+
+![毎週日曜20:30にChatGPTが読書記録・非公開の置き場・今週の会話を読み、候補の本を5項目100点で採点し、点数をもとに次の1冊を決めて点数と振り返りをreading-logに書き、本棚サイトの「次に読む」から本人が次の1冊を採るか決める流れ](flow-review.png)
+
+</details>
+
 関連する個別ケース：[定期レビュー](../../cases/scheduled-reviews/)  
 外部の正本：[reading-log](https://github.com/n-yoshida-dev/reading-log) ／ personal-ai-context（非公開のためリンクなし）
 

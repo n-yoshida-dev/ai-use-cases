@@ -18,6 +18,13 @@ AIに記事を任せると、主語を抜く・繰り返す・凝った言い回
 - 構想：買い物の記事はNotionの購入判断ノートを材料にし、使った感想だけを書く（未着手）。
 
 <details>
+<summary>下書きから投稿までの手順の流れ図を見る</summary>
+
+![記事の種類ごとのネタから、Claude Codeの質問、本人の声の答え、下書きと検査、本人の直しを経て、種類ごとに出す先が分かれ、QiitaはClaude Codeが限定共有で上げて本人が画像を貼って公開し、AIの活用の記事だけnote版の下書きが本人に届く流れ](flow.png)
+
+</details>
+
+<details>
 <summary>note版に書き直す図、直すほど自分の文体になる図を見る</summary>
 
 ![Qiitaに公開した本文からClaude Codeがnote版の下書きを書き、本人が直してnoteに出す図](note.png)

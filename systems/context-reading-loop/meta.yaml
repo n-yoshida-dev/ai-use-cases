@@ -4,6 +4,8 @@ visual:
   cover: cover.png
   language: ja
   source: figure.py
+  explanation: flow-review.png  # 「週 1 回の振り返り」の手順の流れ図（README の折りたたみ）
+  explanation_source: systems/context-reading-loop/flow-review.html
   render: python figure.py /path/to/NotoSansJP.ttf
   dependencies:
   - Python 3
@@ -147,6 +149,8 @@ deck:
   when: 毎週日曜 20:30
   ai: 読書記録・非公開の置き場・直近 1 週間の会話の 3 つを読み、候補の本を 5 項目 100 点で採点して「次の 1 冊」を決める
   me: 提案を採るかどうか
+  flow: flow-review.png
+  flow_alt: 毎週日曜 20:30 に ChatGPT が読書記録・非公開の置き場・今週の会話を読み、候補の本を 5 項目 100 点で採点し、点数をもとに次の 1 冊を決めて点数と振り返りを reading-log に書き、本棚サイトの「次に読む」から本人が次の 1 冊を採るか決める流れ
   more:
     summary: 5 項目の点数と、読めなかった物の報告
     items:

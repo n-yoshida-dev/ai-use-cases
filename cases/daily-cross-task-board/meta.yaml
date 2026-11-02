@@ -56,8 +56,9 @@ visual:
   cover: cover.png
   kind: conceptual-diagram
   language: ja
-  explanation: null
+  explanation: flow.png
   source: cases/daily-cross-task-board/figure.py
+  explanation_source: cases/daily-cross-task-board/flow.html
 links:
   related_system: ../../systems/cross-task-board/
   related_case: ../daily-todoist-triage/
@@ -75,3 +76,5 @@ deck:
   when: 頼んだとき
   ai: 時刻の枠に割り付け、書いた件数と時刻の重なりを検算。遅れた日は日課ごと後ろへずらす
   me: 時間割の型。ボードを見て実行する
+  flow: flow.png
+  flow_alt: 本人の頼みで Claude Code がタスク・予定・リポジトリを集め、選ぶ順に今日と明日の枠へ割り付けて検算し、ボードを見た本人のチェックや声で Todoist に完了・リスケを反映する流れ

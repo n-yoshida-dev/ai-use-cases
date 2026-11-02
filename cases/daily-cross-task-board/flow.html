@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>今日と明日の時間割の流れ</title>
+<!-- アイコンは Simple Icons（CC0。https://simpleicons.org ）の Claude・Todoist・Google Calendar。各社の商標 -->
+<!--
+  このケースの flow.png（手順の流れ図。README の折りたたみに出す）の編集元。
+  cover.png は figure.py が描く。
+
+  再生成（このフォルダで。Chrome / Chromium のヘッドレス版を使う。幅 1000・高さ 2290 を 2 倍の解像度で撮る）：
+    chrome-headless-shell --headless --disable-gpu --no-sandbox --hide-scrollbars --force-device-scale-factor=2 \
+      --window-size=1000,2290 --screenshot="$PWD/flow.png" "file://$PWD/flow.html"
+  chrome-headless-shell は Playwright が入れる物でよい。
+  日本語フォントは Noto Sans CJK JP を入れておく。書き出したら欠字・はみ出し・切れを目視で確かめる。
+  スマホでは幅 640px ほどに縮むので、本文の字は 26px 以上、箱の中は 1〜2 行にする。
+-->
+<style>
+  :root {
+    --ink: #24292f; --muted: #5d6b7a; --line: #6b7682;
+    --ai-bg: #fbf1ec; --ai-bd: #ecc9b8; --ai-tx: #a4512f; --ai-box: #e2a68a;
+    --me-bg: #eef4fb; --me-bd: #c4d6ec; --me-tx: #2c5a8a; --me-box: #8fb0d6;
+  }
+  html, body { margin: 0; background: #ffffff; }
+  body { width: 1000px; font-family: "Noto Sans CJK JP", "Noto Sans JP", sans-serif; color: var(--ink); }
+  .wrap { padding: 24px 30px 28px; display: flex; flex-direction: column; align-items: center; }
+
+  .pill { display: flex; align-items: center; gap: 22px; background: var(--ink); color: #fff;
+          border-radius: 48px; padding: 14px 40px 14px 18px; font-size: 32px; font-weight: 700; }
+  .pill .ic { width: 60px; height: 60px; border-radius: 30px; background: #fff; display: grid; place-items: center; }
+
+  .arrow { width: 3px; height: 48px; background: var(--line); position: relative; margin-bottom: 12px; flex: none; }
+  .arrow::after { content: ""; position: absolute; left: 50%; bottom: -14px; transform: translateX(-50%);
+                  border: 11px solid transparent; border-top: 15px solid var(--line); border-bottom: 0; }
+  .arrow.s { height: 30px; }
+
+  .frame { width: 940px; box-sizing: border-box; border-radius: 18px; border: 2px solid; padding: 20px 28px 30px;
+           display: flex; flex-direction: column; align-items: center; }
+  .frame.ai { background: var(--ai-bg); border-color: var(--ai-bd); }
+  .frame.me { background: var(--me-bg); border-color: var(--me-bd); }
+  .head { align-self: flex-start; display: flex; align-items: center; gap: 14px; font-size: 32px; font-weight: 700; margin-bottom: 14px; }
+  .ai .head { color: var(--ai-tx); }
+  .me .head { color: var(--me-tx); }
+
+  .box { box-sizing: border-box; width: 600px; background: #fff; border: 2px solid; border-radius: 12px;
+         padding: 18px 24px; text-align: center; font-size: 30px; line-height: 1.45; }
+  .ai .box { border-color: var(--ai-box); }
+  .me .box { border-color: var(--me-box); }
+  .box.wide { width: 860px; }
+  .box b { font-weight: 700; }
+
+  .chips { display: flex; justify-content: center; gap: 16px; margin-bottom: 10px; }
+  .chip { display: flex; align-items: center; gap: 10px; font-size: 28px; padding: 6px 16px 6px 10px;
+          border-radius: 10px; background: #f6f8fa; border: 2px solid #d0d7de; }
+  .order { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 10px; }
+  .order span.k { font-size: 28px; font-weight: 700; padding: 6px 14px; border-radius: 10px; background: #fdf6f2; border: 2px solid var(--ai-box); }
+  .order span.g { font-size: 30px; color: var(--line); font-weight: 700; }
+  .checks { display: flex; justify-content: center; gap: 14px; margin-top: 10px; }
+  .checks span { font-size: 28px; padding: 4px 14px; border-radius: 10px; background: #edf6f0; border: 2px solid #8cc3a2; color: #2f6b4a; }
+  .checks span::before { content: "✓ "; font-weight: 700; }
+
+  .split { position: relative; width: 860px; height: 46px; flex: none; }
+  .split .v  { position: absolute; left: 50%; top: 0; width: 3px; height: 20px; background: var(--line); transform: translateX(-50%); }
+  .split .hz { position: absolute; left: 215px; right: 215px; top: 18px; height: 3px; background: var(--line); }
+  .split .d  { position: absolute; top: 18px; width: 3px; height: 16px; background: var(--line); }
+  .split .d::after { content: ""; position: absolute; left: 50%; bottom: -12px; transform: translateX(-50%);
+                     border: 10px solid transparent; border-top: 13px solid var(--line); border-bottom: 0; }
+  .results { display: flex; gap: 40px; margin-top: 10px; }
+  .res { width: 410px; box-sizing: border-box; border-radius: 12px; border: 2px solid; padding: 12px 16px; text-align: center; }
+  .res .t { font-size: 30px; font-weight: 700; }
+  .res .s { font-size: 27px; }
+  .res.a { background: #eef0fa; border-color: #8e99d6; } .res.a .t { color: #3b4a9a; }
+  .res.b { background: #fff3d6; border-color: #e0a106; } .res.b .t { color: #8a5f00; }
+  .merge { position: relative; width: 860px; height: 52px; flex: none; }
+  .merge .u  { position: absolute; top: 0; width: 3px; height: 22px; background: var(--line); }
+  .merge .hz { position: absolute; left: 215px; right: 215px; top: 20px; height: 3px; background: var(--line); }
+  .merge .v  { position: absolute; left: 50%; top: 20px; width: 3px; height: 18px; background: var(--line); transform: translateX(-50%); }
+  .merge .v::after { content: ""; position: absolute; left: 50%; bottom: -13px; transform: translateX(-50%);
+                     border: 10px solid transparent; border-top: 13px solid var(--line); border-bottom: 0; }
+
+  .board { width: 700px; box-sizing: border-box; border-radius: 16px; border: 3px solid var(--ink); background: #fff; overflow: hidden; }
+  .board .bar { background: #f1f3f5; border-bottom: 2px solid #d0d7de; padding: 12px 20px; display: flex; align-items: center; gap: 10px; }
+  .board .dot { width: 14px; height: 14px; border-radius: 7px; background: #aab2bb; }
+  .board .name { margin-left: 14px; font-size: 32px; font-weight: 700; }
+  .board .rows { padding: 16px 22px 20px; display: flex; flex-direction: column; gap: 12px; }
+  .board .row { display: flex; align-items: center; gap: 16px; font-size: 28px; border-radius: 10px; padding: 8px 16px; }
+  .board .row i { flex: none; width: 26px; height: 26px; border-radius: 6px; border: 3px solid currentColor; box-sizing: border-box; }
+  .row.a { background: #eef0fa; color: #3b4a9a; }
+  .row.b { background: #fff3d6; color: #8a5f00; }
+  .row.c { background: var(--ai-bg); color: var(--ai-tx); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="claude" viewBox="0 0 24 24"><path fill="#D97757" d="m4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.255h.3886l.0546-.1579-.1336-.0971-.1032-.0972L6.973 9.8356l-2.55-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z"/></symbol>
+    <symbol id="todoist" viewBox="0 0 24 24"><path fill="#E44332" d="M21 0H3C1.35 0 0 1.35 0 3v3.858s3.854 2.24 4.098 2.38c.31.18.694.177 1.004 0 .26-.147 8.02-4.608 8.136-4.675.279-.161.58-.107.748-.01.164.097.606.348.84.48.232.134.221.502.013.622l-9.712 5.59c-.346.2-.69.204-1.048.002C3.478 10.907.998 9.463 0 8.882v2.02l4.098 2.38c.31.18.694.177 1.004 0 .26-.147 8.020-4.609 8.136-4.676.279-.16.58-.106.748-.008.164.096.606.347.84.48.232.133.221.5.013.62-.208.121-9.288 5.346-9.712 5.590-.346.2-.69.205-1.048.002C3.478 14.951.998 13.506 0 12.926v2.02l4.098 2.38c.31.18.694.177 1.004 0 .26-.147 8.02-4.609 8.136-4.676.279-.16.58-.106.748-.009.164.097.606.348.84.48.232.133.221.502.013.622l-9.712 5.59c-.346.199-.69.204-1.048.001C3.478 18.994.998 17.55 0 16.97V21c0 1.65 1.35 3 3 3h18c1.65 0 3-1.35 3-3V3c0-1.65-1.35-3-3-3z"/></symbol>
+    <symbol id="gcal" viewBox="0 0 24 24"><path fill="#4285F4" d="M18.316 5.684H24v12.632h-5.684V5.684zM5.684 24h12.632v-5.684H5.684V24zM18.316 5.684V0H1.895A1.894 1.894 0 0 0 0 1.895v16.421h5.684V5.684h12.632zm-7.207 6.25v-.065c.272-.144.5-.349.687-.617s.279-.595.279-.982c0-.379-.099-.72-.3-1.025a2.050 2.050 0 0 0-.832-.714 2.703 2.703 0 0 0-1.197-.257c-.6 0-1.094.156-1.481.467-.386.311-.65.671-.793 1.078l1.085.452c.086-.249.224-.461.413-.633.189-.172.445-.257.767-.257.33 0 .602.088.816.264a.86.86 0 0 1 .322.703c0 .33-.12.589-.36.778-.24.19-.535.284-.886.284h-.567v1.085h.633c.407 0 .748.109 1.02.327.272.218.407.499.407.843 0 .336-.129.614-.387.832s-.565.327-.924.327c-.351 0-.651-.103-.897-.311-.248-.208-.422-.502-.521-.881l-1.096.452c.178.616.505 1.082.977 1.401.472.319.984.478 1.538.477a2.84 2.84 0 0 0 1.293-.291c.382-.193.684-.458.902-.794.218-.336.327-.72.327-1.149 0-.429-.115-.797-.344-1.105a2.067 2.067 0 0 0-.881-.689zm2.093-1.931l.602.913L15 10.045v5.744h1.187V8.446h-.827l-2.158 1.557zM22.105 0h-3.289v5.184H24V1.895A1.894 1.894 0 0 0 22.105 0zm-3.289 23.5l4.684-4.684h-4.684V23.5zM0 22.105C0 23.152.848 24 1.895 24h3.289v-5.184H0v3.289z"/></symbol>
+    <symbol id="folder" viewBox="0 0 40 30"><path fill="#2f7f73" d="M2 4a3 3 0 0 1 3-3h10l4 4h16a3 3 0 0 1 3 3v19a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3z"/><rect x="2" y="9" width="36" height="20" rx="3" fill="#dcefeb" stroke="#2f7f73" stroke-width="2"/></symbol>
+    <symbol id="person" viewBox="0 0 136 202"><ellipse cx="68" cy="34" rx="34" ry="34"/><path d="M0 142 V140 a62 62 0 0 1 62-62 h12 a62 62 0 0 1 62 62 V202 H0z"/></symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+
+  <!-- 本人の頼み -->
+  <div class="pill">
+    <span class="ic"><svg width="30" height="44" fill="#24292f"><use href="#person"/></svg></span>
+    「ボード更新して」
+  </div>
+  <div class="arrow"></div>
+
+  <!-- Claude Code -->
+  <div class="frame ai">
+    <div class="head"><svg width="38" height="38"><use href="#claude"/></svg>Claude Code</div>
+
+    <div class="box wide">
+      <div class="chips">
+        <span class="chip"><svg width="34" height="34"><use href="#todoist"/></svg>タスク</span>
+        <span class="chip"><svg width="34" height="34"><use href="#gcal"/></svg>予定</span>
+        <span class="chip"><svg width="40" height="30"><use href="#folder"/></svg>作業中のリポジトリ</span>
+      </div>
+      を読んで集める
+    </div>
+    <div class="arrow s"></div>
+
+    <div class="box wide">
+      この順で選ぶ
+      <div class="order">
+        <span class="k">期限</span><span class="g">›</span>
+        <span class="k">すぐ終わる</span><span class="g">›</span>
+        <span class="k">AIに任せる</span><span class="g">›</span>
+        <span class="k">重い物</span>
+      </div>
+    </div>
+    <div class="arrow s"></div>
+
+    <div class="box"><b>今日と明日</b>の枠に割り付け</div>
+    <div class="split"><div class="v"></div><div class="hz"></div><div class="d" style="left:214px"></div><div class="d" style="right:214px"></div></div>
+    <div class="results">
+      <div class="res a"><div class="t">朝・夜</div><div class="s">時刻つき・日課込み</div></div>
+      <div class="res b"><div class="t">平日の日中</div><div class="s">声で・AIに頼む物だけ</div></div>
+    </div>
+    <div class="merge"><div class="u" style="left:214px"></div><div class="u" style="right:214px"></div><div class="hz"></div><div class="v"></div></div>
+
+    <div class="box">AIに任せる <b>1〜3 件</b>に<br>依頼文を付ける</div>
+    <div class="arrow s"></div>
+
+    <div class="box wide">
+      ボードに書いて機械で検算
+      <div class="checks"><span>件数</span><span>時刻の重なり</span><span>日課の抜け</span></div>
+    </div>
+  </div>
+  <div class="arrow"></div>
+
+  <!-- 本人に届くボード -->
+  <div class="board">
+    <div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="name">ボード（Webページ）</span></div>
+    <div class="rows">
+      <div class="row a"><i></i>朝・夜の時間割</div>
+      <div class="row b"><i></i>平日の日中の配分</div>
+      <div class="row c"><i></i>AIに任せる＋依頼文</div>
+    </div>
+  </div>
+  <div class="arrow"></div>
+
+  <!-- 本人 -->
+  <div class="frame me">
+    <div class="head"><svg width="26" height="38" fill="#2c5a8a"><use href="#person"/></svg>本人</div>
+    <div class="box">ボードを見て実行し<br><b>チェックか声</b>で伝える</div>
+  </div>
+  <div class="arrow"></div>
+
+  <!-- Claude Code が Todoist に反映（本人が伝えたときだけ） -->
+  <div class="frame ai">
+    <div class="head"><svg width="38" height="38"><use href="#claude"/></svg>Claude Code</div>
+    <div class="box"><svg width="34" height="34" style="vertical-align:-5px;margin-right:8px"><use href="#todoist"/></svg>Todoist に<br><b>完了・リスケ</b>を反映</div>
+  </div>
+
+</div>
+</body>
+</html>

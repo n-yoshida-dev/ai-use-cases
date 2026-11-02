@@ -55,8 +55,13 @@ visual:
   cover: cover.png
   kind: conceptual-diagram
   language: ja
-  explanation: null
+  explanation:  # 手順の流れ図（README の折りたたみ。2026-11-02 追加）。値段とセールから買う月・メルカリでお買い得を探す
+  - flow-plan.png
+  - flow-mercari.png
   source: cases/allowance-shopping-plan/figure.py
+  explanation_source:
+  - cases/allowance-shopping-plan/flow-plan.html
+  - cases/allowance-shopping-plan/flow-mercari.html
   extra:  # README の折りたたみの図（2026-11-02 追加）
   - {image: score.png, source: cases/allowance-shopping-plan/score.py}
   - {image: mercari.png, source: cases/allowance-shopping-plan/mercari.py}
@@ -93,6 +98,8 @@ deck:
   when: 頼んだとき
   ai: 点数の高い順に、Keepa（Amazon の値段の履歴を見るサービス）でどのセールでどれだけ下がるかを調べる。Amazon のセール日程と今あるお小遣いと合わせて、何月のセールで買えるかを計画画面に出す
   me: 今あるお小遣いと買った物を伝える。買う順番の最終判断
+  flow: flow-plan.png
+  flow_alt: Claude Code が点数順の欲しい物を前提・比較中・冷ます期間の決まりで並べ、値段の履歴とセール日程と今あるお小遣いから、セールで下がる物は近いセールに、ほかはお金がたまった月に買う時期を決めて計画画面に出す流れ
   more:
     summary: 順番の調整
     items:
@@ -107,4 +114,6 @@ deck:
   when: 使うとき
   ai: ChatGPT のメルカリプラグインが欲しい物の一覧（定価つき）を読み、メルカリで探す。商品の状態と値段を定価と比べ、「新品同様で半額なら買い」のように提案する
   me: 提案を見て買うかを決める
+  flow: flow-mercari.png
+  flow_alt: ChatGPT のメルカリプラグインが定価つきの欲しい物をメルカリで探し、状態と値段を定価と比べてお買い得の物だけを提案する流れ
   result: 定価の 3 割ほどで、ほぼ新品同様の腕時計を買えた

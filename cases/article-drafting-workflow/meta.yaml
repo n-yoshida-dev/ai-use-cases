@@ -72,8 +72,9 @@ visual:
   cover: cover.png
   kind: conceptual-diagram
   language: ja
-  explanation: null
+  explanation: flow.png
   source: cases/article-drafting-workflow/figure.py
+  explanation_source: cases/article-drafting-workflow/flow.html
   extra:  # README の折りたたみの図（2026-11-02 追加）
   - {image: note.png, source: cases/article-drafting-workflow/note.py}
   - {image: voice.png, source: cases/article-drafting-workflow/voice.py}
@@ -94,6 +95,8 @@ deck:
   when: 記事ごと
   ai: ネタの資料を読んでから質問し、声の答えから下書きを書く。構成に OK が出てから本文を一気に書き、文章の検査を通す
   me: 声で肉付けする。下書きを読んで直す。画像を貼って公開
+  flow: flow.png
+  flow_alt: 記事の種類ごとのネタから、Claude Code の質問と本人の声の答え、下書きと検査、本人の直しを経て、種類ごとに出す先が分かれ、Qiita は本人が画像を貼って公開し、AI の活用の記事だけ note 版の下書きが本人に届く流れ
   more:
     summary: 声で答えて、AI が書く
     items:
