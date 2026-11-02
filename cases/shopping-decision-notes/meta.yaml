@@ -5,16 +5,16 @@ status: validated
 publication: published
 category: decision-support
 tags: [chatgpt, notion, comparison, decision-history]
-summary: 商品固有のメモと比較テーマの購入判断ノートを分け、本人が重視した条件と判断の変化をNotionへ残す。
+summary: 欲しいもの（1商品1行）と比較テーマの購入判断ノートを分け、本人が重視した条件と判断の変化をNotionへ残す。
 platforms: [ChatGPT]
 modes: [work]
 human_roles:
-- 困りごと・用途・好み・判断基準の説明
+- 困りごと・用途と条件の説明
 - AIによる解釈や評価の訂正
 - 購入判断と使用後の評価
 ai_roles:
 - 商品の調査・比較と会話中の判断の整理
-- 既存のNotionを確認し、商品メモと購入判断ノートへ不足分を追記
+- 既存のNotionを確認し、欲しいもの（1商品1行）と購入判断ノートへ不足分を追記
 - 本人発言・AIの解釈・確認済み事実の区別
 - 過去の判断を残し、現在の結論と未決事項を整理
 verification:
@@ -25,7 +25,7 @@ verification:
   - 商品ページに仕様・出典・注意点と、過去の評価から最新判断への追記がある
   - 参照した記録では、本人の明示的判断、AIの候補評価、未確認の購入・使用体験を区別している
   user_reported:
-  - 商品メモと購入判断ノートを分け、一覧に長文を置かない
+  - 欲しいもの（1商品1行）と購入判断ノートを分け、一覧に長文を置かない
   - 既存ノートと履歴を優先し、他の会話で生じた新しい判断を古い記録で上書きしない
   - Claude Codeが記事執筆時に読む資料として活用したい
   unconfirmed:

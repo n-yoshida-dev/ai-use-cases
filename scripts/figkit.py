@@ -14,6 +14,10 @@
   - ラベルは動くデータの名詞（新着メール・タスク・朝の報告）。動詞は AI の札の下に書く（「読んで仕分け」）
   - 往復・両端の矢印は描かない。読み書き両方の相手は、同じロゴを左右に 2 回置く（印は付けない）
   - 定期実行のきっかけは trigger() で AI の札の真上に置く。線の上に置かない
+  - 矢印は 1 色（TEAL）。色で意味を分けない（2026-11-02 本人）
+  - 今動いている流れだけを描く。予定の流れは描かず本文に書く（点線は使わない。2026-11-02）
+  - 最初に 1 回決めた手順書・基準は、AI が毎回読む置き場として AI の左に置く。本人からの矢印は描かない
+    （毎回本人が渡しているように見えるため。本人から引くのは毎回渡す頼みごと・進捗・答えだけ。2026-11-02）
   - 番号の丸・＊などの記号は使わない
 - 人は person()（顔を描かない 1 色の人型。2026-11-01 本人が選んだ形）
 """
@@ -77,19 +81,20 @@ def _head(points, color, width):
         d.line((x, y, x - 20 * math.cos(a + k), y - 20 * math.sin(a + k)), fill=color, width=width)
 
 
-def arrow(points, color=TEAL, width=4):
-    """データが動く向きの矢印（ラベルなし）。ふつうは flow() を使う。"""
-    d.line(points, fill=color, width=width, joint='curve')
-    _head(points, color, width)
+def arrow(points, width=4):
+    """データが動く向きの矢印（ラベルなし）。ふつうは flow() を使う。色は TEAL の 1 色だけ。"""
+    d.line(points, fill=TEAL, width=width, joint='curve')
+    _head(points, TEAL, width)
 
 
-def flow(points, label=None, at=None, size=23, color=TEAL, width=4):
+def flow(points, label=None, at=None, size=23, width=4):
     """データの流れ：points は出どころ → 行き先の順。label は動くデータの名詞（12 字以内）。
 
     ラベルは既定で一番長い横の区間の中央の上に置く（横の区間が無ければ一番長い縦の区間の右）。
     at=(x, y) を渡すと、その点を中央・上端にして置く。
     """
-    arrow(points, color, width)
+    arrow(points, width)
+    color = TEAL
     if not label:
         return
     if at:
@@ -105,6 +110,12 @@ def flow(points, label=None, at=None, size=23, color=TEAL, width=4):
         text(x0 + 14, (y0 + y1) / 2 - size / 2 - 4, label, size, color)
 
 
+def verb(cx, top, s):
+    """AI の札の下に書く動詞（「読んで仕分け」）。どの図でも灰色・24px にそろえる（2026-11-02）。
+    top は service() が名前を書いた行の下（名前つきの札なら cy + tile/2 + 12 + 36）。"""
+    centered(cx, top, s, 24, GRAY)
+
+
 def trigger(cx, top, label='毎朝6時', c=BLUE):
     """定期実行のきっかけ。時計と文字を 1 行にして、AI の札（上端 top・中心 cx）の真上に置く。"""
     r = 26
@@ -113,19 +124,6 @@ def trigger(cx, top, label='毎朝6時', c=BLUE):
     cy = top - r - 16
     clock(x0 + r, cy, r, c)
     text(x0 + 2 * r + 12, cy - 17, label, 24, c)
-
-
-def dashed_arrow(points, color=FAINT, width=4, dash=14, gap=10):
-    """まだ動いていない（予定の）流れを示す薄い点線の矢印。水平・垂直の線分向け。"""
-    for (x0, y0), (x1, y1) in zip(points, points[1:]):
-        length = math.hypot(x1 - x0, y1 - y0)
-        ux, uy = (x1 - x0) / length, (y1 - y0) / length
-        pos = 0
-        while pos < length - 20:
-            end = min(pos + dash, length - 20)
-            d.line((x0 + ux * pos, y0 + uy * pos, x0 + ux * end, y0 + uy * end), fill=color, width=width)
-            pos += dash + gap
-    _head(points, color, width)
 
 
 def logo(name, cx, cy, size=72):

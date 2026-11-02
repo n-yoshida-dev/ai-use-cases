@@ -8,9 +8,11 @@
 Python 3 / Pillow。部品は scripts/figkit.py（サービスのロゴは scripts/logos/）。
 生成後は欠字・はみ出し・重なり・ロゴの欠けを目視確認する。
 矢印 1 本＝データが動く向き（根元が出どころ、先端が行き先）。読まれる側を左、Claude Code を中央、書かれる側を右に置く。
-本人は読み書き両方の相手なので上に置く。本人から出る線は札の左の辺へ右向きに入れ、本人へ入る線は札の上の辺から真上に出して本人の下の辺へ入れる（主な流れと直角に逃がす）。
+本人は左に 1 回だけ置き、Claude Code へは声の回答と直しだけを送る。Claude Code の質問と下書きは本人との往復になるので線にせず、
+札の下の動詞（聞いて書く）に入れる（2026-11-02）。本人が Qiita で画像を貼って公開する流れは、Claude Code の札の上を通して右の Qiita へ入れる。
 文章の原則とNG辞書は読み書き両方の相手なので、左（読まれる側）と右（書かれる側）に 2 回置く。
-点線の矢印は、まだ動かしていない流れ（Notion の購入判断ノートを材料にする構想、note への下書き保存）。
+note は Claude Code が note 版の下書きのファイルを書くところまで。note への投稿は本人の手作業で自動にしていないので、note へは線を引かず書類の絵で示す。
+今動いている流れだけを描く。まだ動かしていない流れ（Notion の購入判断ノートを材料にする構想、note への下書き保存）は README に書き、図には描かない（2026-11-02）。
 """
 import argparse
 import sys
@@ -27,72 +29,53 @@ fk.init(parser.parse_args().font)
 
 fk.begin()
 
-
-def side_label(x, y, s, right=True, color=fk.TEAL, size=23):
-    """縦の線の横に置くラベル。right=False なら線の左に右寄せで置く。"""
-    if right:
-        fk.text(x + 14, y, s, size, color)
-    else:
-        fk.text(x - 14 - fk.width(s, size), y, s, size, color)
-
-
-# 中央：Claude Code（左の辺に入る線、右の辺から出る線）
-CX, CY, T = 720, 520, 240
-L, R = CX - T // 2, CX + T // 2          # 札の左右の辺
+# 中央：Claude Code（左の辺に入る線 4 本、右の辺から出る線 3 本）
+CX, CY, T = 720, 470, 260
+L, R, TOP = CX - T // 2, CX + T // 2, CY - T // 2
 fk.service('claude', CX, CY, 'Claude Code', tile=T)
-fk.centered(CX, CY + T // 2 + 50, '聞いて書き、投稿する', 22, fk.GRAY)
+fk.verb(CX, CY + T // 2 + 12 + 36, '聞いて書く')
 
-# 上：本人（s=1.1 の外形は x±75、y-92〜y+130）
-PX, PY, S = 720, 130, 1.1
-fk.person(PX, PY, S)
-PL, PR, PB = PX - 75, PX + 75, PY + 130
-fk.text(PX - 37 - 14 - fk.width('本人', 24), PY - 66, '本人', 24)
+# 左上：本人（s=1.2 の外形は x±82、y-101〜y+142）
+PX, PY, PS = 170, 200, 1.2
+fk.person(PX, PY, PS)
+PR = PX + 82 + 8
+fk.centered(PX, PY + 142 + 12, '本人', 25)
 
-# 本人 → Claude Code（左回りで札の左の辺へ）：直し・声の回答
-fk.flow([(PL, 205), (480, 205), (480, 475), (L, 475)])
-side_label(480, 240, '直し', right=False)
-fk.flow([(PL, 245), (530, 245), (530, 430), (L, 430)])
-side_label(530, 300, '声の回答')
-
-# Claude Code → 本人（札の上の辺から真上へ）：質問・下書き
-fk.flow([(735, CY - T // 2), (735, PB)])
-side_label(735, 352, '質問', right=False)
-fk.flow([(775, CY - T // 2), (775, PB)])
-side_label(775, 352, '下書き')
-
-# 左：読まれる側
-# ネタ帳 → 題材
-fk.folder(117, 285)
-fk.centered(170, 387, 'ネタ帳', 24)
-fk.flow([(236, 330), (400, 330), (400, 520), (L, 520)], '題材', at=(318, 293))
-
-# Notion の購入判断ノート → 判断と分析（構想・点線）
-fk.service('notion', 180, 565, '購入判断ノート', tile=120)
-fk.dashed_arrow([(252, 565), (L, 565)])
-fk.centered(340, 528, '判断と分析', 23, fk.GRAY)
-
-# 文章の原則とNG辞書 → 原則と辞書
-fk.checklist(118, 692)
-fk.centered(170, 820, '原則とNG辞書', 24)
-fk.flow([(236, 750), (400, 750), (400, 610), (L, 610)], '原則と辞書', at=(318, 713))
-
-# 右：書かれる側
-# Qiita：Claude Code が限定共有の記事を投稿し、本人が画像を貼って公開する
-QX, QY = 1270, 210
+# 本人 → Qiita（Claude Code の札の上を通る）：画像と公開設定
+QX, QY = 1270, 250
 fk.service('qiita', QX, QY, 'Qiita')
-fk.flow([(PR, 215), (QX - 66, 215)], '画像と公開設定', at=(1000, 178))
-fk.flow([(R, 520), (1070, 520), (1070, 255), (QX - 66, 255)])
-side_label(1070, 400, '限定共有の記事')
+fk.flow([(PR, 205), (QX - 66 - 8, 205)], '画像と公開設定', at=(CX, 205 - 37))
 
-# note：下書き保存はまだ動かしていない（点線）
-NX, NY = 1270, 565
-fk.service('note', NX, NY, 'note')
-fk.dashed_arrow([(R, 565), (NX - 66, 565)])
-fk.centered(1060, 577, 'note版の下書き', 23, fk.GRAY)
+# 本人 → Claude Code：声の回答・直し（入れ子の L 字で交差させない）
+# 線の間を 65px あけ、ラベルはどれも自分の線の上に置く
+fk.flow([(PR, 270), (520, 270), (520, CY - 90), (L - 8, CY - 90)], '声の回答', at=((PR + 520) / 2, 270 - 37))
+fk.flow([(PR, 335), (470, 335), (470, CY - 40), (L - 8, CY - 40)], '直し', at=((PR + 470) / 2, 335 - 37))
 
-# Claude Code → 文章の原則とNG辞書（書かれる側）：直しの差分
-fk.checklist(1218, 692)
-fk.centered(1270, 820, '原則とNG辞書', 24)
-fk.flow([(R, 610), (900, 610), (900, 750), (1206, 750)], '直しの差分', at=(1053, 713))
+# 左：ネタ帳 → 題材
+fk.folder(117, CY - 20)
+fk.centered(170, CY + 80, 'ネタ帳', 24)
+fk.flow([(236, CY + 25), (L - 8, CY + 25)], '題材', at=(380, CY + 25 - 37))
+
+# 左下：文章の原則とNG辞書（最初に決めて毎回読む置き場。本人からの線は引かない）
+fk.checklist(118, CY + 130)
+fk.centered(170, CY + 258, '原則とNG辞書', 24)
+fk.flow([(236, CY + 188), (330, CY + 188), (330, CY + 90), (L - 8, CY + 90)], '原則と辞書',
+        at=(450, CY + 90 - 37))
+
+# 右上：Qiita へ限定共有の記事
+fk.flow([(R + 8, CY - 90), (1080, CY - 90), (1080, QY + 30), (QX - 66 - 8, QY + 30)], '限定共有の記事',
+        at=((R + 1080) / 2, CY - 90 - 37))
+
+# 右：note 版の下書き（書類）
+NX = 1200
+fk.flow([(R + 8, CY + 10), (NX - 8, CY + 10)], '下書き', at=((R + NX) / 2, CY + 10 - 37))
+fk.doc(NX, CY + 10 - 79)
+fk.centered(NX + 70, CY + 10 + 79 + 12, 'note版の下書き', 24)
+
+# 右下：Claude Code → 文章の原則とNG辞書（書かれる側）：直しの差分
+fk.flow([(R + 8, CY + 90), (1080, CY + 90), (1080, CY + 230), (1210, CY + 230)], '直しの差分',
+        at=((R + 1080) / 2, CY + 90 - 37))
+fk.checklist(1218, CY + 172)
+fk.centered(1270, CY + 300, '原則とNG辞書', 24)
 
 fk.save(HERE / 'cover.png')

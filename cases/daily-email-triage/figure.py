@@ -21,7 +21,7 @@ fk.init(parser.parse_args().font)
 
 # ---- cover.png：一目で分かる入口（題名・注記は入れない） ----
 # 矢印 1 本＝データが動く向き（根元が出どころ、先端が行き先）。左＝読まれる側、中央＝AI、右＝書かれる側。
-# Gmail は読む相手（左）とラベルを付ける相手（右）の 2 回置く。本人は読む・受け取るの両方なので下に 1 回だけ置く。
+# Gmail は読む相手（左）とラベルを付ける相手（右）の 2 回置く。本人は朝の報告を受け取るだけなので下に 1 回置く。
 fk.begin()
 
 CY = 300                 # 主な流れ（Gmail → ルールで除外 → ChatGPT）の高さ
@@ -41,7 +41,7 @@ fk.flow([(FX + FW - SLOPE + 4, CY), (GPT - HALF, CY)], '残ったメール')
 # 中央：毎朝 6 時に動く ChatGPT（2026-10-28 に Claude Code のルーティンから移した）
 fk.trigger(GPT, CY - HALF, '毎朝6時')
 fk.service('openai', GPT, CY, 'ChatGPT')
-fk.centered(GPT, LABEL_Y + 36, '読んで仕分け', 25)
+fk.verb(GPT, LABEL_Y + 36, '読んで仕分け')
 
 # 右：要対応は Todoist のタスクに、仕分けのラベルは Gmail に書く
 TX, TY = 1290, 140       # Todoist
@@ -52,17 +52,16 @@ fk.flow([(GPT + HALF, CY - 44), (980, CY - 44), (980, TY), (TX - HALF, TY)], '�
 fk.flow([(GPT + HALF, CY), (1040, CY), (1040, GY), (GX - HALF, GY)], '仕分けラベル',
         at=((1040 + GX - HALF) / 2, GY - 37))
 
-# 下：本人。判定基準を手順書に書き、ChatGPT が毎朝それを読む。朝の報告は本人のスマホへ（0 件の日も）
+# 左下：判定基準を書いた手順書（GitHub の README）。最初に 1 回決めて置いておき、ChatGPT が毎朝読む。
+# 本人が毎回渡すものではないので、本人からの矢印は引かない（2026-11-02 本人）
+DX, DY = 400, 540                        # 手順書（GitHub）の札の中心
+fk.service('github', DX, DY, '手順書')
+fk.flow([(DX + HALF, DY), (620, DY), (620, CY + 44), (GPT - HALF, CY + 44)], '判定基準')
+
+# 下：本人。朝の報告を本人のスマホで受け取る（0 件の日も）
 PX, PY, PS = 740, 724, .8                # 人の中心。外形は x±68s、y-84s〜y+118s
-DOC = (600, 520, 770, 580)               # 手順書の札
-fk.rr(DOC, fk.NOTE, '#e7ca7c', 2, 12)
-fk.centered((DOC[0] + DOC[2]) / 2, DOC[1] + 12, '手順書', 26)
 fk.person(PX, PY, PS)
 fk.centered(PX, PY + 118 * PS + 12, '本人', 25)
-fk.flow([(PX, PY - 84 * PS - 8), (PX, DOC[3] + 4)], '判定基準',
-        at=(PX - 74, (PY - 84 * PS + DOC[3]) / 2 - 16))
-fk.flow([(640, DOC[1]), (640, CY + 44), (GPT - HALF, CY + 44)], '判定基準',
-        at=(578, (DOC[1] + CY + 44) / 2 + 20))
 
 PHX, PHY = 840, 640                      # スマホ（本人の手元）
 fk.phone(PHX, PHY, 84, 144)

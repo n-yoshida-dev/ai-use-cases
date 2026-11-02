@@ -14,20 +14,20 @@ import figkit as fk
 ap = argparse.ArgumentParser()
 ap.add_argument('--font', required=True)
 fk.init(ap.parse_args().font)
+fk.SIZE = (1440, 1500)           # 3 段あるので縦を伸ばす（save() が中身に合わせて切り詰める）
 fk.begin()
 
 # 矢印 1 本＝データが動く向き（根元が出どころ、先端が行き先）。線は fk.flow() だけ。
-# 読まれる側（入力）を左、ChatGPT を中央、書かれる側（出力）を右。読み書き両方の正本は左右に 2 回置く。
-# ChatGPT の札は 3 枚：上が毎週の読書レビュー、中が本人の会話での記録（定期実行ではないので時計なし）、
-# 下が毎週のコンテキスト更新。読書レビューは personal-ai-context へ書き戻さない（右の personal-ai-context へは下の札からだけ）。
-# 本人は下の中央寄り。reading-log から「次に読む本」を受け取り、右の 3 枚へ会話を渡す。
-LX, GX, RX = 220, 820, 1260      # 左：読まれる側、中：ChatGPT、右：書かれる正本
-AY, BY, UY = 165, 405, 712       # 読書レビュー・会話で記録・コンテキスト更新の段
-CY, RY = 130, 345                # 左の personal-ai-context・reading-log
-PX, PY = 430, 650                # 本人
-HALF = 66
-GL, GR = GX - HALF, GX + HALF    # ChatGPT の札の左右の端
-PR = PX + 54 + 14                # 本人の右（線の根元）
+# 上から 3 段：1 文脈を溜める／2 読書を記録する／3 週 1 回の振り返り。段どうしの線は交差させない。
+# 列：本人（左に 1 回）｜読まれる側｜ChatGPT（定期実行はきっかけを真上に）｜書かれる正本。
+# 同じ正本が別の段で読まれる・書かれるときは、段ごとにロゴを置き直す。
+# 最後に、振り返りを書いた reading-log が本棚サイトになり、本人が見る（図の下を回って本人の足もとへ）。
+PX, IX, GX, RX = 120, 400, 790, 1230     # 本人・読まれる側・ChatGPT・書かれる正本の列
+Y1, Y2, Y3 = 170, 440, 925               # 段 1・段 2・段 3 の中心
+HALF = 58
+TILE = 2 * HALF
+PY, PS = 360, .8                          # 本人
+GAP = 4                                   # 矢じりと札のすき間
 
 
 def lock(lx, ly, c=fk.BLUE):
@@ -37,51 +37,85 @@ def lock(lx, ly, c=fk.BLUE):
     fk.d.ellipse((lx - 4, ly - 1, lx + 4, ly + 7), fill=c)
 
 
-def store(name, x, y, private=False, lock_side=-1):
-    """正本の札（GitHub のロゴ）。名前は札の上。錠は lock_side（-1 左下・1 右下）の角。"""
-    fk.service('github', x, y)
-    fk.centered(x, y - HALF - 46, name, 25)
+def store(name, x, y, private=False):
+    """正本の札（GitHub のロゴ）。名前は札の上。非公開なら右下の角に錠。"""
+    fk.service('github', x, y, tile=TILE)
+    fk.centered(x, y - HALF - 44, name, 25)
     if private:
-        lock(x + lock_side * (HALF - 2), y + HALF - 12)
+        lock(x + HALF - 2, y + HALF - 12)
 
 
-def chatgpt(y, verb, when=None):
-    """ChatGPT の札。きっかけ（定期実行のときだけ）は真上、名前と動詞は下。"""
-    fk.service('openai', GX, y, 'ChatGPT')
+def bookshelf(x, y, w, h):
+    """本棚サイトの画面：ブラウザの枠に、背表紙の並んだ棚が 2 段。"""
+    fk.rr((x, y, x + w, y + h), 'white', fk.TEAL, 4, 14)
+    fk.d.rounded_rectangle((x + 2, y + 2, x + w - 2, y + 30), radius=12, fill='#e3efed')
+    for k in range(3):
+        fk.d.ellipse((x + 14 + k * 18, y + 11, x + 24 + k * 18, y + 21), fill=fk.TEAL)
+    colors = [fk.TEAL, fk.BLUE, fk.AMBER, fk.FAINT, fk.BLUE, fk.TEAL, fk.AMBER, fk.BLUE]
+    for row in range(2):
+        base = y + 34 + (row + 1) * (h - 50) / 2
+        bx = x + 18
+        for k in range(7):
+            bw = 16 + (k * 7 + row * 5) % 9
+            bh = 34 + (k * 11 + row * 7) % 16
+            fk.d.rectangle((bx, base - bh, bx + bw, base), fill=colors[(k + row * 3) % len(colors)])
+            bx += bw + 5
+        fk.d.line((x + 10, base + 2, x + w - 10, base + 2), fill=fk.INK, width=4)
+
+
+def chatgpt(x, y, verb=None, when=None):
+    """ChatGPT の札。きっかけ（定期実行のときだけ）は真上、名前と動詞（置き場なら中身）は下。"""
+    fk.service('openai', x, y, 'ChatGPT', tile=TILE)
     if when:
-        fk.trigger(GX, y - HALF, when)
-    fk.centered(GX, y + HALF + 52, verb, 24, fk.GRAY)
+        fk.trigger(x, y - HALF, when)
+    if verb:
+        fk.verb(x, y + HALF + 12 + 36, verb)
 
 
-store('personal-ai-context', LX, CY, True)
-store('reading-log', LX, RY)
-store('reading-log', RX, AY)
-store('personal-ai-context', RX, UY, True, 1)
+# 本人（左に 1 回）
+fk.person(PX, PY, PS)
+HEAD = PY - 84 * PS                       # 頭のてっぺん
+FOOT = PY + 118 * PS                      # 足もと
+fk.centered(PX, FOOT + 8, '本人', 25)
 
-chatgpt(AY, '読んで順位付け', '毎週')
-chatgpt(BY, '会話で記録')
-chatgpt(UY, '差分を整理', '毎週')
+# 段 1：文脈を溜める（本人 → ChatGPT の会話の履歴（置き場）→ 日曜 22:00 に差分 → personal-ai-context）
+chatgpt(IX, Y1, '会話の履歴')
+chatgpt(GX, Y1, '差分を整理', '日曜22:00')
+store('personal-ai-context', RX, Y1, True)
+fk.flow([(PX, HEAD - 14), (PX, Y1), (IX - HALF - GAP, Y1)], '会話')
+fk.flow([(IX + HALF, Y1), (GX - HALF - GAP, Y1)], '今週の会話')
+fk.flow([(GX + HALF, Y1), (RX - HALF - GAP, Y1)], '会話の差分')
 
-# 読書レビュー：入力（左・本人 → 上の ChatGPT）
-fk.flow([(LX + HALF, AY - 40), (GL, AY - 40)], '長期の文脈', color=fk.BLUE)
-fk.flow([(LX + HALF, RY), (470, RY), (470, AY), (GL, AY)], '読書記録', at=(378, RY - 37), color=fk.BLUE)
-fk.flow([(PR, 590), (560, 590), (560, AY + 40), (GL, AY + 40)], '今週の会話', at=(632, 300), color=fk.AMBER)
+# 段 2：読書を記録する（本人 → ChatGPT → reading-log）
+chatgpt(GX, Y2, '聞いて記録')
+store('reading-log', RX, Y2)
+fk.flow([(PX + 68 * PS + 14, Y2), (GX - HALF - GAP, Y2)], '進捗・感想')
+fk.flow([(GX + HALF, Y2), (RX - HALF - GAP, Y2)], '本ごとの記録')
 
-# 読書レビュー：出力（上の ChatGPT → 右の reading-log）。1 本 1 データ
-fk.flow([(GR, AY - 30), (RX - HALF, AY - 30)], '読む順位')
-fk.flow([(GR, AY + 30), (RX - HALF, AY + 30)], '週次レビュー', at=((GR + RX - HALF) / 2, AY + 42))
+# 段 3：週 1 回の振り返り（3 つを読む → 日曜 20:30 に採点 → reading-log）
+TOP, BOT = Y3 - 185, Y3 + 185             # 上と下の入力
+BEND = 660                                # 上下の入力が曲がる x
+store('reading-log', IX, TOP)
+store('personal-ai-context', IX, Y3, True)
+chatgpt(IX, BOT, '会話の履歴')              # 段 1 と同じ置き場（会話の履歴）
+chatgpt(GX, Y3, '100点で採点', '日曜20:30')
+store('reading-log', RX, Y3)
+fk.flow([(IX + HALF, TOP), (BEND, TOP), (BEND, Y3 - 36), (GX - HALF - GAP, Y3 - 36)], '本と前回レビュー',
+        at=((IX + HALF + BEND) / 2, TOP - 37), size=22)
+fk.flow([(IX + HALF, Y3), (GX - HALF - GAP, Y3)], '目標と現在地', size=22)
+fk.flow([(IX + HALF, BOT), (BEND, BOT), (BEND, Y3 + 36), (GX - HALF - GAP, Y3 + 36)], '今週の会話',
+        at=((IX + HALF + BEND) / 2, BOT - 37), size=22)
+# 出力の 2 本は、ラベルをどちらも自分の線の上に置く（線の間を空ける）
+fk.flow([(GX + HALF, Y3 - 34), (RX - HALF - GAP, Y3 - 34)], '本の点数')
+fk.flow([(GX + HALF, Y3 + 38), (RX - HALF - GAP, Y3 + 38)], '週次レビュー・次の1冊')
 
-# 会話で記録：本人の進捗・感想 → 中の ChatGPT → 右の reading-log（下から入る）
-fk.flow([(PR, 632), (660, 632), (660, BY), (GL, BY)], '進捗・感想', at=(579, 644), color=fk.AMBER)
-fk.flow([(GR, BY), (RX, BY), (RX, AY + HALF + 14)], '進捗・感想')
-
-# コンテキスト更新：本人の会話 → 下の ChatGPT → 右の personal-ai-context
-fk.flow([(PR, UY), (GL, UY)], '会話', at=((PR + GL) / 2, UY + 12), color=fk.AMBER)
-fk.flow([(GR, UY), (RX - HALF, UY)], '会話の差分')
-
-# 本人：reading-log の本棚を見て読む
-fk.person(PX, PY, .8)
-fk.centered(PX, PY + 94 + 10, '本人', 25)
-fk.flow([(LX, RY + HALF + 14), (LX, PY), (PX - 54 - 14, PY)], '次に読む本', at=(292, 520), color=fk.GRAY)
+# 本棚サイト：reading-log → 画面 → 本人（図の下を回って足もとへ）
+LW, LH = 210, 160
+LX0, LY0 = RX - LW / 2, BOT + 80
+fk.flow([(RX, Y3 + HALF + 8), (RX, LY0 - GAP)])
+bookshelf(LX0, LY0, LW, LH)
+fk.centered(RX, LY0 + LH + 12, '本棚サイト', 25)
+SY = LY0 + LH / 2 + 10
+fk.flow([(LX0 - GAP, SY), (PX, SY), (PX, FOOT + 54)], '次の1冊', at=(GX, SY - 37))
 
 fk.save(Path(__file__).with_name('cover.png'))

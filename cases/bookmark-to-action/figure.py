@@ -21,7 +21,7 @@ f.begin()
 AX, AY, AT = 640, 420, 170
 L, R, T, B = AX - AT / 2, AX + AT / 2, AY - AT / 2, AY + AT / 2
 bottom = f.service('openai', AX, AY, 'ChatGPT', tile=AT)
-f.centered(AX, bottom + 52, '読んで振り分け', 26, f.GRAY)
+f.verb(AX, bottom + 12 + 36, '読んで振り分け')
 
 # 左上：X の一時保存 → ChatGPT（ChatGPT が読みに行く）
 XY = AY - 60

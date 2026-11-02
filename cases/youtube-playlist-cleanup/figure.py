@@ -42,8 +42,8 @@ fk.person(230, 640, .65)
 fk.centered(230, 726, '本人', 26)
 
 # 中央：ChatGPT
-fk.service('openai', 740, 400, 'ChatGPT', tile=150)
-fk.centered(740, 532, '棚卸し・作成・統合・削除', 26, fk.TEAL)
+bottom = fk.service('openai', 740, 400, 'ChatGPT', tile=150)
+fk.verb(740, bottom + 12 + 36, '棚卸し・作成・統合・削除')   # 動詞は名前の真下（灰色・24px）
 
 # 右：整理後の YouTube のマイリスト
 fk.service('youtube', 1185, 150, 'YouTube', tile=110)
@@ -52,7 +52,7 @@ for x, y, c in [(1065, 300, fk.BLUE), (1197, 300, fk.TEAL), (1131, 422, fk.AMBER
 
 # 流れ（出どころ → 行き先）
 fk.flow([(445, 372), (661, 372)], '増えたマイリスト', at=(543, 326))
-fk.flow([(300, 650), (545, 650), (545, 432), (661, 432)], '残す・まとめる基準', at=(422, 604), color=fk.AMBER)
+fk.flow([(300, 650), (545, 650), (545, 432), (661, 432)], '残す・まとめる基準', at=(422, 604))
 fk.flow([(819, 400), (1040, 400)], '整理後のマイリスト', at=(925, 354))
 
 fk.save(HERE / 'cover.png')

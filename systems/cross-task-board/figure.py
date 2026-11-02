@@ -75,7 +75,7 @@ f.begin()
 AX, AY, AT = 680, 450, 200
 AL, AR, ATOP = AX - AT / 2, AX + AT / 2, AY - AT / 2
 f.service('claude', AX, AY, 'Claude Code', tile=AT)
-f.centered(AX, AY + AT / 2 + 50, '集めて時刻で組む', 22, f.TEAL)
+f.verb(AX, AY + AT / 2 + 12 + 36, '集めて時刻で組む')
 
 # 左：Claude Code が読む 5 つ。各行から札の左辺へ 40px 間隔で入る
 IX, X0 = 120, 190

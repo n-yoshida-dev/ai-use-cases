@@ -5,8 +5,8 @@ ChatGPT が毎朝整理して、本人が今日のタスクを受け取るまで
 - 本人は入力も受け取りもするので上に 1 回だけ置く。左の辺から音声メモ（頼んだときの ChatGPT へ）と
   手入力のタスク（Todoist の Inbox へ）を出し、右の辺で今日のタスク（右の Todoist から）を受ける
 - 頼んだときの ChatGPT（時計なし）：ブックマークの保存した投稿と音声メモを読み、
-  音声のタスクを Inbox（左の Todoist）へ、買い物タスクを別の Todoist（買い物プロジェクト）へ書く。
-  買い物の Todoist からは線を出さない（毎朝の整理の対象外）
+  音声のタスクと買い物タスク（買い物プロジェクト）を、同じ左の Todoist へ書く（2 本の線を並べる）。
+  Todoist の札は読まれる側（左）と書かれる側（右）の 2 つだけにする
 - 毎朝の ChatGPT（毎朝6時）：Gmail の新着メールと Inbox の未整理タスクを読み、
   右の Todoist へ要対応タスクと整理済みタスク、右の Gmail へ仕分けラベルを書く
 - 読み書き両方の相手（Gmail・Todoist）は左右に 2 回置き、左右の Todoist は同じ高さにそろえる
@@ -43,14 +43,13 @@ def above(x0, x1, y, head=True):
 
 def ai(cx, cy, verb):
     bottom = fk.service('openai', cx, cy, 'ChatGPT', tile=AT)
-    fk.centered(cx, bottom + 46, verb, 25, fk.TEAL)
+    fk.verb(cx, bottom + 12 + 36, verb)
 
 
 # ── 列の位置 ──────────────────────────────────────────────
 C1 = 95      # ブックマーク
 J1 = 200     # 音声メモが下りる縦の線
 C2 = 355     # 頼んだときの ChatGPT
-CS = 560     # 買い物の Todoist
 C3 = 710     # 読まれる側（Inbox の Todoist・Gmail）
 C4 = 990     # 毎朝の ChatGPT・本人
 C5 = 1320    # 書かれる側（Todoist・Gmail）
@@ -59,7 +58,6 @@ C5 = 1320    # 書かれる側（Todoist・Gmail）
 A = 395      # 毎朝の ChatGPT の中心
 M = A - 20   # 左右の Todoist の行（毎朝の ChatGPT の辺の上寄りに真っすぐ入る・出る）
 GB = 600     # Gmail の行（下）
-SY = 240     # 買い物の Todoist の行
 PS = .7      # 本人の大きさ
 PY = 120     # 本人の中心
 VY = PY + 44  # 音声メモが本人を出る高さ
@@ -83,14 +81,12 @@ fk.service('x', C1, XY, 'ブックマーク', tile=T)
 fk.flow([(C1 + H + GAP, XY), (a2l - GAP, XY)], '保存した投稿', size=LS,
         at=((C1 + H + GAP + a2l - GAP - 20) / 2, XY + 10))
 
-fk.service('todoist', CS, SY, 'Todoist', tile=T)
-fk.flow([(C2, a2t - GAP), (C2, SY), (CS - H - GAP, SY)], '買い物タスク', size=LS,
-        at=above(C2, CS - H - GAP, SY))
-
 # ── 読まれる側：Inbox の Todoist と Gmail ─────────────────────────
 fk.service('todoist', C3, M, 'Todoist', tile=T)
-fk.flow([(a2r + GAP, M), (C3 - H - GAP, M)], '音声のタスク', size=LS,
-        at=above(a2r + GAP, C3 - H - GAP, M))
+fk.flow([(a2r + GAP, M - 20), (C3 - H - GAP, M - 20)], '音声のタスク', size=LS,
+        at=above(a2r + GAP, C3 - H - GAP, M - 20))
+fk.flow([(a2r + GAP, M + 22), (C3 - H - GAP, M + 22)], '買い物タスク', size=LS,
+        at=((a2r + GAP + C3 - H - GAP - 20) / 2, M + 22 + 8))
 fk.flow([(pl, HY), (C3, HY), (C3, M - H - GAP)], '手入力のタスク', size=LS,
         at=(C3 + 14 + fk.width('手入力のタスク', LS) / 2, (HY + M - H) / 2 - LS / 2 - 4))
 

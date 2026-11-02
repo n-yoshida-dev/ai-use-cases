@@ -15,7 +15,7 @@ human_roles:
 - 買う順と保留の線の最終判断
 - 計画画面を見て、隣のチャットで順番を相談
 ai_roles:
-- ChatGPTによる候補調査・比較とNotionの商品メモへの整理
+- ChatGPTによる候補調査・比較とNotionの欲しいもの（1商品1行）への登録
 - Notionの欲しいものデータベースの読み取り（claude.aiのNotionコネクタ）
 - 買う順と買える月の計算
 - 計画画面（アーティファクト）の作成と更新
@@ -47,7 +47,7 @@ evidence:
 - type: artifact-metadata
   description: 2026-10-22にアーティファクトの一覧で計画画面の存在と更新日を確認。画面の中身は掲載しない。
 - type: saved-content-readback
-  description: 2026-10-31にNotionの商品メモで出品比較の保存記録を確認。検索操作そのものや出品内容の独立検証とは区別する。商品名・金額・出品URL・IDは転載しない。
+  description: 2026-10-31にNotionの欲しいものの商品ページで出品比較の保存記録を確認。検索操作そのものや出品内容の独立検証とは区別する。商品名・金額・出品URL・IDは転載しない。
 outcomes:
   measured: false
   notes: 試作段階。効果は未測定

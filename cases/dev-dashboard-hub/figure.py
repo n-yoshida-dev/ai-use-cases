@@ -74,7 +74,7 @@ fk.centered(100, CY + 194, 'リポジトリ', 25)
 hub(CX, CY, HW, HH)
 fk.trigger(CX, CY - HH / 2, '30分ごと')
 fk.centered(CX, CY + HH / 2 + 10, '常駐のハブ', 25)
-fk.centered(CX, CY + HH / 2 + 44, '集めて1枚に', 22, fk.GRAY)
+fk.verb(CX, CY + HH / 2 + 10 + 36, '集めて1枚に')
 
 # 入る線（ハブの左の辺に 60px あけて 2 本）
 # CI の縦の区間はハブの上の時計「30分ごと」から離すため、左（x=440）に寄せる
@@ -85,7 +85,7 @@ fk.flow([(140 + FW + 14, CY + 30), (HL, CY + 30)], 'TODO・引継ぎ・git', at=
 # 左下：Claude Code がリポジトリごとの集計スクリプトと画面を書く（主な流れと直角に、下から上へ）
 AX, AY = 226, CY + 330
 fk.service('claude', AX, AY, 'Claude Code')
-fk.centered(AX, AY + 66 + 46, '作る', 22, fk.GRAY)
+fk.verb(AX, AY + 66 + 12 + 36, '作る')
 fk.flow([(AX, AY - 66 - 12), (AX, CY - 10 + FH + 12)], '集計スクリプト・画面')
 
 # 右：1 枚の画面（進捗・あなた待ち・CI が並ぶ）
