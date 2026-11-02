@@ -21,7 +21,7 @@ related_systems:
 - cross-task-board
 nodes:
 - id: bookmarks
-  role: ブックマーク振り分け（2026-10-30から本人が頼んだときだけ）から近々の買い物を登録
+  role: ブックマーク振り分け（2026-10-30から本人が頼んだときだけ。今は休止中のため図には描かない）から近々の買い物を登録
   source: cases/bookmark-to-action
   privacy: private
 - id: gmail

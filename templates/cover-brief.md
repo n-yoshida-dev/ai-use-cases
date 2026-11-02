@@ -22,3 +22,16 @@
 `python cases/<id>/figure.py --font /absolute/path/日本語フォント` で、そのケースの図だけを生成する。
 フォントが違うと見た目が同じでもPNGのバイナリが変わるため、ケースを直すときは他ケースの画像を再生成しない。部品を直したときだけ全件を描き直す。
 生成後はcover.png（あればflow.pngも）の欠字・はみ出し・重なりを目視確認する。
+
+## 図を描けないとき（ChatGPT のチャットなど）
+
+画像生成や手描きで代わりの図を作らない。meta.yaml に次の形で書き、描くのは Claude Code に任せる（決まりの正本は `AGENTS.md`「見せ方と図」）。
+
+```yaml
+figure_todo:
+  - 図: cover.png
+    順番: 本人 → ChatGPT → Todoist     # 左から右への鎖。並べるのは同時に入る入力だけ
+    置く物: [本人, ChatGPT（毎朝6時）, Todoist]
+    矢印: [本人→ChatGPT「頼みごと」, ChatGPT→Todoist「整理済みタスク」]   # ラベルは動くデータの名詞、12 字以内
+    AI の動詞: 読んで仕分け
+```

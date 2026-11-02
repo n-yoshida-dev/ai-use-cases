@@ -139,7 +139,8 @@ def logo(name, cx, cy, size=72):
 def service(name, cx, cy, label=None, tile=132, c=LINE):
     """サービスの札：白い角丸の板にロゴ、下に名前。ロゴが無いサービスは板の中に名前を書く。
 
-    name は scripts/logos のファイル名（openai・claude・gmail・todoist・notion・googlecalendar・googlemaps・youtube・x・github・qiita・note）。
+    name は scripts/logos のファイル名（openai・claude・gmail・todoist・notion・googlecalendar・googlemaps・youtube・x・github・qiita・note・
+    amazon・keepa・mercari・raindrop。一覧と出どころは scripts/logos/README.md）。
     label を省くと名前の文字を出さない。板の大きさは tile（既定 132px）。
     """
     half = tile / 2
@@ -150,6 +151,21 @@ def service(name, cx, cy, label=None, tile=132, c=LINE):
     else:
         centered(cx, cy - 15, label or name, 26)
     return cy + half
+
+
+def plugin(host, guest, cx, cy, label=None, tile=132, c=LINE):
+    """プラグイン・コネクタで別のサービスを使う AI の札：1 枚の板に AI のロゴ × サービスのロゴを並べる
+    （例：ChatGPT のメルカリプラグイン＝plugin('openai', 'mercari', ...)。2026-11-02 本人「チャット GPT とメルカリのロゴが
+    掛け合わさってるみたいな見せ方」）。板は横長（幅 tile×1.7）。下に名前。板の左右の辺の x を返す。"""
+    w, half = tile * 1.7, tile / 2
+    rr((cx - w / 2, cy - half, cx + w / 2, cy + half), 'white', c, 3, 22)
+    size = int(tile * .5)
+    logo(host, cx - w * .24, cy, size)
+    centered(cx, cy - 22, '×', 30, GRAY)
+    logo(guest, cx + w * .24, cy, size)
+    if label:
+        centered(cx, cy + half + 12, label, 25)
+    return cx - w / 2, cx + w / 2
 
 
 def person(x, y, s=1, c=INK):

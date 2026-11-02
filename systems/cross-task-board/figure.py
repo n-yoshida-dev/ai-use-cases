@@ -5,9 +5,11 @@
 （フォントの道は位置引数でも受け付ける）
 
 矢印 1 本＝データが動く向き（根元が出どころ、先端が行き先）。線は flow() の 1 種類。
-左＝Claude Code が読む 5 つ、中央＝Claude Code、右＝書く先（ボードと Todoist）。
+左＝Claude Code が読む 3 つ（Todoist・カレンダー・作業中のリポジトリ）、中央＝Claude Code、
+右＝書く先（ボードと Todoist）。並ぶ入力は 3 本まで（計画・進捗・本人待ちはリポジトリ 1 本にまとめる）。
 Todoist は読む相手でも書く相手でもあるので、左と右に 2 回置く。
-本人はボードを見て、声で Claude Code に指示するので、AI の札の上に置く。
+本人はボードを見て、声で Claude Code に指示するので、左の入力とは別の向き（AI の札の上）に置く。
+ボードのタブの名前は実際の画面と同じ（スケジュール・AIに任せる・開発状況）。
 自動実行はしない（本人の依頼で作る）ので、時計は付けない。
 """
 import argparse
@@ -24,39 +26,24 @@ args = ap.parse_args()
 f.init(args.font or args.font_pos)
 
 
-def folder(x, y, w=78, h=62, c=f.TEAL):
-    f.rr((x, y, x + w * .5, y + 18), c, c, 1, 5)
-    f.rr((x, y + 10, x + w, y + h), 'white', c, 3, 7)
-    f.d.line((x + 14, y + 32, x + w - 14, y + 32), fill=f.LINE, width=5)
-    f.d.line((x + 14, y + 46, x + w - 28, y + 46), fill=f.LINE, width=5)
-
-
-def todo_page(x, y, s=68):
-    """各リポジトリのTODO.md（チェックボックスのある文書）"""
-    f.d.polygon([(x, y), (x + s - 16, y), (x + s, y + 16), (x + s, y + s), (x, y + s)],
-                fill='white', outline=f.AMBER)
-    f.d.line([(x, y), (x + s - 16, y), (x + s, y + 16), (x + s, y + s), (x, y + s), (x, y)],
-             fill=f.AMBER, width=3, joint='curve')
-    for k in range(2):
-        by = y + 18 + k * 22
-        f.d.rectangle((x + 10, by, x + 22, by + 12), outline=f.AMBER, width=3)
-        f.d.line((x + 30, by + 6, x + s - 12 - k * 12, by + 6), fill=f.AMBER, width=5)
-
-
-def bars(x, y, w=78, h=64):
-    f.rr((x, y, x + w, y + h), 'white', f.BLUE, 3, 8)
-    for k, bh in enumerate([22, 38, 30]):
-        f.d.rectangle((x + 14 + k * 20, y + h - 10 - bh, x + 26 + k * 20, y + h - 10),
-                      fill=[f.TEAL, f.BLUE, f.AMBER][k])
+def folder(x, y, w=100, h=70, c=f.TEAL):
+    """作業するフォルダ（リポジトリ）。"""
+    f.rr((x, y, x + 44, y + 18), c, c, 1, 6)
+    f.rr((x, y + 10, x + w, y + h), 'white', c, 3, 10)
+    f.d.line((x + 16, y + 36, x + w - 18, y + 36), fill=f.LINE, width=6)
+    f.d.line((x + 16, y + 54, x + w - 40, y + 54), fill=f.LINE, width=6)
 
 
 def board(x, y, w=380, h=290):
-    """横断タスクボード：タブ（予定・分野別・開発状況）と、朝・夜の時刻つきの行"""
+    """横断タスクボード：画面と同じ 3 つのタブと、朝・夜の時刻つきの行"""
     f.rr((x, y, x + w, y + h), 'white', f.BLUE, 3, 14)
-    for k, name in enumerate(['予定', '分野別', '開発状況']):
+    tx = x + 16
+    for k, name in enumerate(['スケジュール', 'AIに任せる', '開発状況']):
+        tw = f.width(name, 18) + 22
         fill = '#e7eef6' if k else f.BLUE
-        f.rr((x + 18 + k * 118, y + 16, x + 124 + k * 118, y + 52), fill, f.BLUE, 2, 9)
-        f.centered(x + 71 + k * 118, y + 18, name, 20, 'white' if k == 0 else f.BLUE)
+        f.rr((tx, y + 16, tx + tw, y + 50), fill, f.BLUE, 2, 9)
+        f.centered(tx + tw / 2, y + 19, name, 18, 'white' if k == 0 else f.BLUE)
+        tx += tw + 8
     for k, (t, c) in enumerate([('朝', f.TEAL), ('朝', f.TEAL), ('夜', f.BLUE), ('夜', f.BLUE)]):
         ry = y + 76 + k * 52
         f.rr((x + 18, ry, x + 100, ry + 36), '#eef3f3', c, 2, 8)
@@ -72,46 +59,43 @@ def board(x, y, w=380, h=290):
 f.begin()
 
 # 中央：PCのClaude Code（本人の依頼で動く。時計は付けない）
-AX, AY, AT = 680, 450, 200
+AX, AY, AT = 700, 460, 200
 AL, AR, ATOP = AX - AT / 2, AX + AT / 2, AY - AT / 2
 f.service('claude', AX, AY, 'Claude Code', tile=AT)
 f.verb(AX, AY + AT / 2 + 12 + 36, '集めて時刻で組む')
 
-# 左：Claude Code が読む 5 つ。各行から札の左辺へ 40px 間隔で入る
-IX, X0 = 120, 190
-rows = [210, 330, 450, 570, 690]
-f.service('todoist', IX, rows[0], tile=96)
-f.service('googlecalendar', IX, rows[1], tile=96)
-folder(IX - 39, rows[2] - 36)
-todo_page(IX - 34, rows[3] - 34)
-bars(IX - 39, rows[4] - 32)
-entry = [AY - 80, AY - 40, AY, AY + 40, AY + 80]
-bend = [500, 460, None, 460, 500]
-labels = ['タスク', '今日・明日の予定', '計画と引き継ぎ', '人間待ち', '開発状況']
-for ry, ey, bx, label in zip(rows, entry, bend, labels):
-    if bx is None:
-        pts = [(X0, ry), (AL - 4, ry)]
-    else:
-        pts = [(X0, ry), (bx, ry), (bx, ey), (AL - 4, ey)]
-    f.flow(pts, label, at=((X0 + (bx or AL)) / 2, ry - 37))
+# 左：Claude Code が読む 3 つ。上下の 2 本は x=BEND で折れて札の左辺へ 60px 間隔で入る
+IX, X0, BEND = 150, 222, 500
+f.service('todoist', IX, 240, 'Todoist', tile=110)
+f.flow([(X0, 240), (BEND, 240), (BEND, AY - 60), (AL - 4, AY - 60)], 'タスク',
+       at=((X0 + BEND) / 2, 240 - 37))
+f.service('googlecalendar', IX, AY, 'カレンダー', tile=110)
+f.flow([(X0, AY), (AL - 4, AY)], '今日・明日の予定', at=((X0 + AL) / 2, AY - 37))
+RY = 690
+folder(IX - 82, RY - 46)
+folder(IX - 18, RY - 26, c=f.BLUE)
+f.centered(IX, RY + 58, '作業中のリポジトリ', 24)
+RX0 = IX + 82 + 12
+f.flow([(RX0, RY), (BEND, RY), (BEND, AY + 60), (AL - 4, AY + 60)], '計画・進捗・本人待ち',
+       at=((RX0 + BEND) / 2, RY - 37))
 
 # 右：横断タスクボード（アーティファクトとデータベース）
-BX, BY = 1010, 290
-f.centered(BX + 160, BY - 44, '横断タスクボード', 27, f.BLUE)
-board(BX, BY)
-f.flow([(AR + 4, AY - 50), (BX - 6, AY - 50)], 'タスクと時間枠')
+BX, BY, BW = 1000, 300, 380
+f.centered(BX + BW / 2, BY - 44, '横断タスクボード', 27, f.BLUE)
+board(BX, BY, BW)
+f.flow([(AR + 4, AY - 50), (BX - 6, AY - 50)], '時間割・依頼文', at=((AR + BX) / 2 - 14, AY - 50 - 44))
 
 # 右下：Todoist への反映（本人が指示した分）
-TX, TY = 1195, 720
-f.service('todoist', TX, TY, tile=110)
-f.flow([(AR + 4, AY + 30), (890, AY + 30), (890, TY), (TX - 61, TY)], '完了・リスケ')
+TX, TY = BX + BW / 2, 730
+f.service('todoist', TX, TY, 'Todoist', tile=110)
+f.flow([(AR + 4, AY + 30), (870, AY + 30), (870, TY), (TX - 61, TY)], '完了・リスケ')
 
 # 上：本人がボードを見て実行し、声で指示する
 PY = 150
 f.person(AX, PY, .7)
 f.text(AX - 140, PY - 4, '本人', 26)
-f.flow([(BX + 340, BY - 6), (BX + 340, PY), (AX + 58, PY)], '時刻つきの予定',
-       at=((AX + 58 + BX + 340) / 2, PY - 37))
+f.flow([(BX + BW - 40, BY - 6), (BX + BW - 40, PY), (AX + 58, PY)], '時間割・依頼文',
+       at=((AX + 58 + BX + BW - 40) / 2, PY - 37))
 f.flow([(AX, PY + 96), (AX, ATOP - 6)], '声の指示')
 
 f.save(Path(__file__).with_name('cover.png'))

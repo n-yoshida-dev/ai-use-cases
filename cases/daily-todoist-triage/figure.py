@@ -4,13 +4,15 @@ python cases/daily-todoist-triage/figure.py --font /path/to/JapaneseFont.ttf
 部品は scripts/figkit.py。他ケースの画像には触れない。
 
 構図（矢印 1 本＝データが動く向き。左＝読まれる側、中央＝AI、右＝書かれる側）：
-左上が Todoist の Inbox（たまった札）、左下が整理の基準を書いた手順書（GitHub の personal-ai-context の workflows.md。
-6 時の指示文はこの節を読むだけ）。メールの図（daily-email-triage）と同じく GitHub の札に「手順書」と書く。
-手順書は ChatGPT が毎朝読む置き場なので、本人からの矢印は描かない（毎回本人が渡しているように見えるため。2026-11-02 本人）。
-この図では本人が毎回渡すもの・受け取るものが無いので、本人は描かない。
-中央が毎朝 6 時に動く ChatGPT。右が整理されたあとの Todoist と、その中身の例（札の真下に置き、Todoist の中身として読ませる）：
-タスク 2 行・時間タグ（2分以内）・担当タグ（本人対応）・優先度の旗。親子（サブタスク）の整理は台帳で未確認なので描かない。
-流れ：Inbox → ChatGPT（タスク）、手順書 → ChatGPT（整理の基準）、ChatGPT → Todoist（整理済みタスク）。
+左右どちらも「Todoist の Inbox」の枠（同じ形・同じ見出し）。ChatGPT が書き込むのは Inbox だけなので、
+右は別の置き場ではなく、同じ Inbox の整理後の姿として描く（2026-11-02 の点検で、左の Inbox と右の Todoist が
+別の置き場に見えると指摘があった）。左の枠にはばらばらの札、右の枠には整理後の中身の例
+（タスク 2 行・時間タグ（2分以内）・担当タグ（本人対応）・優先度の旗）。親子（サブタスク）の整理は台帳で未確認なので描かない。
+左下が整理の基準を書いた手順書（GitHub）。6 時の指示文はこの節を読むだけ。メールの図（daily-email-triage）と同じく
+GitHub の札に「手順書」と書く。手順書は ChatGPT が毎朝読む置き場なので、本人からの矢印は描かない
+（毎回本人が渡しているように見えるため。2026-11-02 本人）。この図では本人が毎回渡すもの・受け取るものが無いので、本人は描かない。
+中央が毎朝 6 時に動く ChatGPT。
+流れ：Inbox（整理前）→ ChatGPT（未整理タスク）、手順書 → ChatGPT（整理の基準）、ChatGPT → Inbox（整理済みタスク）。
 """
 import argparse, sys
 from pathlib import Path
@@ -37,30 +39,42 @@ def task_card(x, y, c):
         d.line((x + 30, y + 30 + k * 27, x + 30 + w, y + 30 + k * 27), fill=fk.LINE, width=6)
 
 
-# 左上：Todoist の中の Inbox。小さな Todoist のロゴと「Inbox」を頭に付けた枠の中に札を重ねる
-fk.rr((60, 150, 350, 420), '#f1f3f1', fk.LINE, 3, 20)
-fk.logo('todoist', 100, 184, 36)
-fk.text(126, 166, 'Inbox', 26, fk.INK)
-task_card(96, 214, fk.BLUE)
-task_card(160, 274, fk.AMBER)
+FW, FH = 380, 260   # Inbox の枠（左右で同じ大きさ）
+FY = CY - FH / 2    # 枠の上端
+
+
+def inbox(x0):
+    """Todoist の Inbox の枠：小さな Todoist のロゴと「Todoist の Inbox」を頭に付ける。左右で同じ形にし、同じ置き場と読ませる。"""
+    fk.rr((x0, FY, x0 + FW, FY + FH), '#f1f3f1', fk.LINE, 3, 20)
+    fk.logo('todoist', x0 + 40, FY + 34, 36)
+    fk.text(x0 + 66, FY + 16, 'Todoist の Inbox', 26, fk.INK)
+    return x0 + FW
+
+
+# 左：整理前の Inbox。ばらばらの札を重ねる
+LX = 50
+lr = inbox(LX)
+task_card(LX + 78, FY + 66, fk.BLUE)
+task_card(LX + 142, FY + 126, fk.AMBER)
 
 # 左下：整理の基準を書いた手順書（GitHub）。最初に決めて置いておき、ChatGPT が毎朝読む
-NY = 540            # 下の段の中心の高さ
-fk.service('github', 205, NY, '手順書')
+NY = 560            # 下の段の中心の高さ
+GX = LX + FW / 2
+fk.service('github', GX, NY, '手順書')
 
 # 中央：ChatGPT（毎朝 6 時に動く）
 fk.trigger(AX, CY - HALF, '毎朝6時')
 fk.service('openai', AX, CY, 'ChatGPT')
 fk.verb(AX, CY + HALF + 12 + 36, '読んで整理')
 
-# 左 → 中央：Inbox のタスク（左の辺の上寄り）と、手順書の整理の基準（左の辺の下寄り）
-fk.flow([(362, CY - 28), (AX - HALF - 6, CY - 28)], 'タスク')
-fk.flow([(205 + HALF + 6, NY), (580, NY), (580, CY + 28), (AX - HALF - 6, CY + 28)], '整理の基準')
+# 左 → 中央：Inbox の未整理タスク（左の辺の上寄り）と、手順書の整理の基準（左の辺の下寄り）
+fk.flow([(lr + 12, CY - 28), (AX - HALF - 6, CY - 28)], '未整理タスク')
+fk.flow([(GX + HALF + 6, NY), (580, NY), (580, CY + 28), (AX - HALF - 6, CY + 28)], '整理の基準')
 
-# 中央 → 右：整理済みのタスクを Todoist へ
-TX = 1190
-fk.service('todoist', TX, CY, 'Todoist')
-fk.flow([(AX + HALF + 14, CY), (TX - HALF - 8, CY)], '整理済みタスク')
+# 中央 → 右：整理済みのタスクを同じ Inbox へ戻す
+RX = 1440 - LX - FW
+inbox(RX)
+fk.flow([(AX + HALF + 14, CY), (RX - 12, CY)], '整理済みタスク')
 
 
 def tag(x, y, s, c, fill, h=40, size=22):
@@ -73,9 +87,9 @@ def tag(x, y, s, c, fill, h=40, size=22):
     return x + w
 
 
-# 右：Todoist の札の真下に、整理されたあとの中身（タスク 2 行・時間タグ・担当タグ・優先度の旗）
+# 右の枠の中：整理されたあとの中身（タスク 2 行・時間タグ・担当タグ・優先度の旗）
 cw = 340
-px, py = TX - cw / 2, CY + HALF + 12 + 36 + 16
+px, py = RX + (FW - cw) / 2, FY + 66
 fk.rr((px, py, px + cw, py + 176), 'white', fk.TEAL, 3, 16)
 for k, w in enumerate((210, 176)):
     y = py + 28 + k * 44

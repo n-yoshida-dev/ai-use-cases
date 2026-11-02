@@ -10,7 +10,7 @@ tags:
 - gmail
 - triage
 - automation
-summary: ルールで先にノイズを外し、残りをAIが毎朝読んで仕分け、毎朝通知する（0件の日も）。2026-10-28にClaude CodeのルーティンからChatGPTの毎朝のTodoist整理の前段へ移した。
+summary: Gmailのフィルタで先にノイズを既読にして受信トレイから外し（削除はしない）、残りをAIが毎朝読んで仕分け、毎朝通知する（0件の日も）。2026-10-28にClaude CodeのルーティンからChatGPTの毎朝のTodoist整理の前段へ移した。
 human_roles:
 - 判定基準の決定（修正は必要なときだけ）
 - 実行するAIを移す判断

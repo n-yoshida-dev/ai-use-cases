@@ -24,16 +24,19 @@ fk.init(parser.parse_args().font)
 # Gmail は読む相手（左）とラベルを付ける相手（右）の 2 回置く。本人は朝の報告を受け取るだけなので下に 1 回置く。
 fk.begin()
 
-CY = 300                 # 主な流れ（Gmail → ルールで除外 → ChatGPT）の高さ
+CY = 300                 # 主な流れ（Gmail → フィルタ → ChatGPT）の高さ
 GPT = 760                # ChatGPT の中心 x
 HALF = 66                # service() の札の半分
 LABEL_Y = CY + HALF + 12  # service() が名前を書く高さ。同じ列の名前はここに揃える
 
-# 左：Gmail の新着 → ルールで先に除外（AI を使わない層）→ 残りを ChatGPT が読む
+# 左：Gmail の新着 → Gmail のフィルタ（AI を使わない層）→ 残りを ChatGPT が読む
+# フィルタはノイズを既読にして受信トレイから外す（アーカイブ）だけで、削除はしない。
+# 「除外」は削除にも読めたので、名前「フィルタ」の下に何をするかを書く（2026-11-02）
 fk.service('gmail', 130, CY, 'Gmail')
 FX, FW, FH = 340, 120, 130
 fk.funnel(FX, CY - FH / 2, FW, FH)
-fk.centered(FX + FW / 2, LABEL_Y, 'ルールで除外', 25)
+fk.centered(FX + FW / 2, LABEL_Y, 'フィルタ', 25)
+fk.verb(FX + FW / 2, LABEL_Y + 36, 'ノイズは既読で保管')
 SLOPE = FW * .38 * (FH / 2) / (FH * .55)   # 中心の高さでの、漏斗の縁の内側への入り込み
 fk.flow([(130 + HALF, CY), (FX + SLOPE - 4, CY)], '新着メール')
 fk.flow([(FX + FW - SLOPE + 4, CY), (GPT - HALF, CY)], '残ったメール')

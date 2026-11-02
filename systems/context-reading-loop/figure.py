@@ -84,7 +84,7 @@ chatgpt(GX, Y1, '差分を整理', '日曜22:00')
 store('personal-ai-context', RX, Y1, True)
 fk.flow([(PX, HEAD - 14), (PX, Y1), (IX - HALF - GAP, Y1)], '会話')
 fk.flow([(IX + HALF, Y1), (GX - HALF - GAP, Y1)], '今週の会話')
-fk.flow([(GX + HALF, Y1), (RX - HALF - GAP, Y1)], '会話の差分')
+fk.flow([(GX + HALF, Y1), (RX - HALF - GAP, Y1)], '目標・今の状況の更新', size=22)   # 段 3 が読む物と同じ言葉
 
 # 段 2：読書を記録する（本人 → ChatGPT → reading-log）
 chatgpt(GX, Y2, '聞いて記録')
@@ -94,20 +94,19 @@ fk.flow([(GX + HALF, Y2), (RX - HALF - GAP, Y2)], '本ごとの記録')
 
 # 段 3：週 1 回の振り返り（3 つを読む → 日曜 20:30 に採点 → reading-log）
 TOP, BOT = Y3 - 185, Y3 + 185             # 上と下の入力
-BEND = 660                                # 上下の入力が曲がる x
+BEND = 680                                # 上下の入力が曲がる x
 store('reading-log', IX, TOP)
 store('personal-ai-context', IX, Y3, True)
 chatgpt(IX, BOT, '会話の履歴')              # 段 1 と同じ置き場（会話の履歴）
-chatgpt(GX, Y3, '100点で採点', '日曜20:30')
+chatgpt(GX, Y3, '5項目100点で採点', '日曜20:30')
 store('reading-log', RX, Y3)
-fk.flow([(IX + HALF, TOP), (BEND, TOP), (BEND, Y3 - 36), (GX - HALF - GAP, Y3 - 36)], '本と前回レビュー',
+fk.flow([(IX + HALF, TOP), (BEND, TOP), (BEND, Y3 - 36), (GX - HALF - GAP, Y3 - 36)], '本・前回の振り返り',
         at=((IX + HALF + BEND) / 2, TOP - 37), size=22)
-fk.flow([(IX + HALF, Y3), (GX - HALF - GAP, Y3)], '目標と現在地', size=22)
+fk.flow([(IX + HALF, Y3), (GX - HALF - GAP, Y3)], '目標・今の状況', size=22)
 fk.flow([(IX + HALF, BOT), (BEND, BOT), (BEND, Y3 + 36), (GX - HALF - GAP, Y3 + 36)], '今週の会話',
         at=((IX + HALF + BEND) / 2, BOT - 37), size=22)
-# 出力の 2 本は、ラベルをどちらも自分の線の上に置く（線の間を空ける）
-fk.flow([(GX + HALF, Y3 - 34), (RX - HALF - GAP, Y3 - 34)], '本の点数')
-fk.flow([(GX + HALF, Y3 + 38), (RX - HALF - GAP, Y3 + 38)], '週次レビュー・次の1冊')
+# 出力は 1 本（並んで走る線を増やさない。次の 1 冊は点数から本棚サイトで見る）
+fk.flow([(GX + HALF, Y3), (RX - HALF - GAP, Y3)], '本ごとの点数')
 
 # 本棚サイト：reading-log → 画面 → 本人（図の下を回って足もとへ）
 LW, LH = 210, 160

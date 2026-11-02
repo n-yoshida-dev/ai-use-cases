@@ -26,7 +26,7 @@ f.verb(AX, bottom + 12 + 36, '読んで振り分け')
 # 左上：X の一時保存 → ChatGPT（ChatGPT が読みに行く）
 XY = AY - 60
 f.service('x', 240, XY, 'X')
-f.flow([(306, XY), (L, XY)], '一時保存')
+f.flow([(306, XY), (L, XY)], '保存した投稿')
 
 # 左下：本人 → ChatGPT（依頼と、迷うものの判断）
 PX, PY = 240, 640

@@ -26,12 +26,14 @@ fk.init(args.font)
 fk.begin()
 
 # 矢印 1 本＝データが動く向き（根元が出どころ、先端が行き先）。ラベルは動くデータの名詞。線はすべて TEAL。
-# 左＝会話の区切りで書く Claude Code、中央左＝2 つのファイル（読まれる側）、中央＝本人、中央右＝次の会話の Claude Code、
+# 左＝作業を終える前に書く Claude Code、中央左＝2 つのファイル（読まれる側）、中央＝本人、中央右＝次の会話の Claude Code、
 # 右＝答えを書かれる TODO（読み書き両方の相手なので TODO を左右に 2 回置く）。
-# 本人は TODO の確認待ちを受け取り、答えを次の会話の Claude Code へ渡す。Claude Code から本人への直接の線は引かない
+# 本人は TODO の本人待ちを受け取り、答えを次の会話の Claude Code へ渡す。Claude Code から本人への直接の線は引かない
 # （問いと答えが同じ 2 つの間の往復になるため。2026-11-02）。本人は TODO と次の会話の Claude Code の間に 1 回だけ置く。
 # 古さの点検は左の TODO を読み、指摘を次の会話の Claude Code へ渡す（会話の始めのフック）ので、TODO の真下に置く。
 # 横断タスクボードは右の TODO を読むので、その下に置く。定期実行はしないので時計は付けない。
+# 言葉（2026-11-02）：本人「会話の区切りで書くっていうのが全然意味わかんない」ので、場面が浮かぶ「作業を終える前に書く」にする。
+# 左右の Claude Code の違いが見え、右の札から TODO へ答えを書くことも読めるよう、右の動詞は「次の会話で読んで書く」。HANDOFF の中身は「今の状況」、本人の確認待ちは「本人待ち」（資料全体の統一語）。
 
 # 中央右：次の会話の Claude Code（ほかの位置の基準）
 CX, CY, CT = 1030, 520, 180
@@ -46,33 +48,33 @@ fk.doc(DX, HY - 79, DW, c=fk.BLUE)
 fk.centered(DX + DW / 2, TY - 79 - 42, 'TODO', 28, fk.AMBER)
 fk.doc(DX, TY - 79, DW, c=fk.AMBER)
 
-# 左：会話の区切りで書く Claude Code
-AX, AY = 150, (HY + TY) // 2
+# 左：作業を終える前に書く Claude Code
+AX, AY = 135, (HY + TY) // 2           # 動詞「作業を終える前に書く」と縦の線の間をあける
 fk.service('claude', AX, AY, 'Claude Code', tile=150)
-fk.verb(AX, AY + 75 + 12 + 36, '会話の区切りで書く')
+fk.verb(AX, AY + 75 + 12 + 36, '作業を終える前に書く')
 VX = 280
-fk.flow([(AX + 79, AY - 40), (VX, AY - 40), (VX, HY), (DX - 4, HY)], '現在地', at=((VX + DX - 4) / 2, HY - 37))
-fk.flow([(AX + 79, AY + 40), (VX, AY + 40), (VX, TY), (DX - 4, TY)], '確認待ち・保留',
+fk.flow([(AX + 79, AY - 40), (VX, AY - 40), (VX, HY), (DX - 4, HY)], '今の状況', at=((VX + DX - 4) / 2, HY - 37))
+fk.flow([(AX + 79, AY + 40), (VX, AY + 40), (VX, TY), (DX - 4, TY)], '本人待ち・保留',
         at=((VX + DX - 4) / 2, TY - 37))
 
-# 中央：本人。TODO の確認待ちを受け取り、答えを次の会話の Claude Code へ渡す
+# 中央：本人。TODO の本人待ちを受け取り、答えを次の会話の Claude Code へ渡す
 PS = .8
 PX, PY = 780, TY - 44           # 胴の中ほどが TODO と同じ高さに来る
 PL, PR = PX - 68 * PS, PX + 68 * PS
 fk.person(PX, PY, PS)
 fk.centered(PX, PY + 118 * PS + 10, '本人', 24)
-fk.flow([(DR, TY), (PL - 8, TY)], '確認待ち', at=((DR + PL - 8) / 2 - 8, TY - 37))
+fk.flow([(DR, TY), (PL - 8, TY)], '本人待ち', at=((DR + PL - 8) / 2 - 8, TY - 37))
 
-# 次の会話の Claude Code：左の辺に 3 本（現在地・答え・古さの指摘）を 60px 間隔で受ける
+# 次の会話の Claude Code：左の辺に 3 本（今の状況・答え・古さの指摘）を 60px 間隔で受ける
 fk.service('claude', CX, CY, 'Claude Code', tile=CT)
-fk.verb(CX, CY + CT // 2 + 12 + 36, '読んで書く')
-E1, E3 = 880, 900
-fk.flow([(DR, HY), (E1, HY), (E1, CY - 60), (IN, CY - 60)], '現在地', at=((DR + E1) / 2, HY - 37))
+fk.verb(CX, CY + CT // 2 + 12 + 36, '次の会話で読んで書く')
+E1, E3 = 880, 870                             # E3 は右の動詞と縦の線の間をあけるため左へ
+fk.flow([(DR, HY), (E1, HY), (E1, CY - 60), (IN, CY - 60)], '今の状況', at=((DR + E1) / 2, HY - 37))
 fk.flow([(PR + 8, CY), (IN, CY)], '答え', at=((PR + 8 + IN) / 2 - 4, CY - 37))
 
 # TODO の真下：古さの点検。TODO を読み、指摘を次の会話の Claude Code へ渡す
 KX, KY = DX + DW / 2 - 52, TY + 79 + 46  # 点検の左端と上端
-fk.flow([(DX + DW / 2, TY + 83), (DX + DW / 2, KY - 6)], '確認待ち・保留')
+fk.flow([(DX + DW / 2, TY + 83), (DX + DW / 2, KY - 6)], '本人待ち・保留')
 fk.checklist(KX, KY)
 fk.centered(KX + 52, KY + 126, '古さの点検', 24, fk.TEAL)
 KM = KY + 58
@@ -89,7 +91,7 @@ fk.flow([(CX + CT // 2 + 4, RY), (RX - 4, RY)], '答え', at=((CX + CT // 2 + RX
 BOT = RY + 79 + 92
 BC = RX + DW / 2
 BX0, BX1 = BC - 85, BC + 85
-fk.flow([(BC, RY + 83), (BC, BOT - 6)], '確認待ち')
+fk.flow([(BC, RY + 83), (BC, BOT - 6)], '本人待ち')
 fk.rr((BX0, BOT, BX1, BOT + 116), 'white', fk.BLUE, 3, 14)
 for k, w in enumerate([80, 56, 70]):
     ry = BOT + 16 + k * 32

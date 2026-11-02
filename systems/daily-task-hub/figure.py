@@ -1,14 +1,16 @@
-"""全体概念図（daily-task-hub）。ブックマーク・音声・手入力・メールを Todoist に集め、
+"""全体概念図（daily-task-hub）。音声・手入力・メールを Todoist に集め、
 ChatGPT が毎朝整理して、本人が今日のタスクを受け取るまでの流れ。
 
 矢印 1 本＝データが動く向き（根元が出どころ、先端が行き先）。読まれる側を左、AI を中央、書かれる側を右に置く。
 - 本人は入力も受け取りもするので上に 1 回だけ置く。左の辺から音声メモ（頼んだときの ChatGPT へ）と
   手入力のタスク（Todoist の Inbox へ）を出し、右の辺で今日のタスク（右の Todoist から）を受ける
-- 頼んだときの ChatGPT（時計なし）：ブックマークの保存した投稿と音声メモを読み、
-  音声のタスクと買い物タスク（買い物プロジェクト）を、同じ左の Todoist へ書く（2 本の線を並べる）。
-  Todoist の札は読まれる側（左）と書かれる側（右）の 2 つだけにする
+- 頼んだときの ChatGPT（時計なし）：音声メモを読み、音声のタスクを左の Todoist へ書く
 - 毎朝の ChatGPT（毎朝6時）：Gmail の新着メールと Inbox の未整理タスクを読み、
-  右の Todoist へ要対応タスクと整理済みタスク、右の Gmail へ仕分けラベルを書く
+  右の Todoist へ整理済みタスク、右の Gmail へ仕分けラベルを書く
+- 同じ行き先へは 1 本だけ引く（2026-11-02 の点検で、平行な 2 本は順番が読みにくいと指摘）。メール由来のタスクも
+  同じ朝の整理に乗るので「整理済みタスク」1 本にまとめ、内訳はメール仕分けと Todoist 整理の図に任せる
+- ブックマークの振り分け（買い物タスクの入口）は、2026-10-30 から定期では回さない休止中なので描かない
+  （図には今動いている流れだけを描く）
 - 読み書き両方の相手（Gmail・Todoist）は左右に 2 回置き、左右の Todoist は同じ高さにそろえる
 
 再生成:
@@ -47,16 +49,14 @@ def ai(cx, cy, verb):
 
 
 # ── 列の位置 ──────────────────────────────────────────────
-C1 = 95      # ブックマーク
-J1 = 200     # 音声メモが下りる縦の線
-C2 = 355     # 頼んだときの ChatGPT
-C3 = 710     # 読まれる側（Inbox の Todoist・Gmail）
-C4 = 990     # 毎朝の ChatGPT・本人
-C5 = 1320    # 書かれる側（Todoist・Gmail）
+C2 = 230     # 頼んだときの ChatGPT
+C3 = 560     # 読まれる側（Inbox の Todoist・Gmail）
+C4 = 880     # 毎朝の ChatGPT・本人
+C5 = 1210    # 書かれる側（Todoist・Gmail）
 
 # ── 行の位置 ──────────────────────────────────────────────
 A = 395      # 毎朝の ChatGPT の中心
-M = A - 20   # 左右の Todoist の行（毎朝の ChatGPT の辺の上寄りに真っすぐ入る・出る）
+M = A - 20   # Todoist の行（頼んだときの ChatGPT → 左の Todoist → 毎朝の ChatGPT → 右の Todoist を 1 本の鎖にする）
 GB = 600     # Gmail の行（下）
 PS = .7      # 本人の大きさ
 PY = 120     # 本人の中心
@@ -69,24 +69,17 @@ fk.person(C4, PY, PS)
 fk.centered(C4, PY + 118 * PS + 10, '本人', 25)
 pl, pr = C4 - 68 * PS - GAP, C4 + 68 * PS + GAP
 
-# ── 頼んだときの ChatGPT ─────────────────────────────────────
+# ── 頼んだときの ChatGPT：音声メモを受けて Todoist へ ──────────────────
 ai(C2, M, '頼まれて登録')
 a2l, a2r, a2t = C2 - AH, C2 + AH, M - AH
 
-fk.flow([(pl, VY), (J1, VY), (J1, M - 28), (a2l - GAP, M - 28)], '音声メモ', size=LS,
-        at=((J1 + C2) / 2 + 10, VY - LS - 14))
-
-XY = M + 28
-fk.service('x', C1, XY, 'ブックマーク', tile=T)
-fk.flow([(C1 + H + GAP, XY), (a2l - GAP, XY)], '保存した投稿', size=LS,
-        at=((C1 + H + GAP + a2l - GAP - 20) / 2, XY + 10))
+fk.flow([(pl, VY), (C2, VY), (C2, a2t - GAP)], '音声メモ', size=LS,
+        at=above(C2, pl, VY, head=False))
 
 # ── 読まれる側：Inbox の Todoist と Gmail ─────────────────────────
 fk.service('todoist', C3, M, 'Todoist', tile=T)
-fk.flow([(a2r + GAP, M - 20), (C3 - H - GAP, M - 20)], '音声のタスク', size=LS,
-        at=above(a2r + GAP, C3 - H - GAP, M - 20))
-fk.flow([(a2r + GAP, M + 22), (C3 - H - GAP, M + 22)], '買い物タスク', size=LS,
-        at=((a2r + GAP + C3 - H - GAP - 20) / 2, M + 22 + 8))
+fk.flow([(a2r + GAP, M), (C3 - H - GAP, M)], '音声のタスク', size=LS,
+        at=above(a2r + GAP, C3 - H - GAP, M))
 fk.flow([(pl, HY), (C3, HY), (C3, M - H - GAP)], '手入力のタスク', size=LS,
         at=(C3 + 14 + fk.width('手入力のタスク', LS) / 2, (HY + M - H) / 2 - LS / 2 - 4))
 
@@ -108,11 +101,9 @@ TRl = C5 - H
 fk.service('todoist', C5, M, 'Todoist', tile=T)
 fk.service('gmail', C5, GB, 'Gmail', tile=T)
 
-fk.flow([(a1r + GAP, A - 40), (TRl - GAP, A - 40)], '要対応タスク', size=LS,
-        at=above(a1r + GAP, TRl - GAP, A - 40))
-J4 = a1r + 43
-fk.flow([(a1r + GAP, A), (TRl - GAP, A)], '整理済みタスク', size=LS,
-        at=((J4 + 14 + TRl - GAP - 24) / 2, A + 8))
+fk.flow([(a1r + GAP, M), (TRl - GAP, M)], '整理済みタスク', size=LS,
+        at=above(a1r + GAP, TRl - GAP, M))
+J4 = a1r + 50
 fk.flow([(a1r + GAP, A + 40), (J4, A + 40), (J4, GB), (TRl - GAP, GB)], '仕分けラベル', size=LS,
         at=above(J4, TRl - GAP, GB))
 

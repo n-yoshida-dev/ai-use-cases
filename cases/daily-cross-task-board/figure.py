@@ -57,36 +57,36 @@ fk.begin()
 
 # 矢印 1 本＝データが動く向き（根元が出どころ、先端が行き先）。ラベルは動くデータの名詞。
 # 左＝読まれる側（Todoist・カレンダー・各リポジトリ）、中央＝Claude Code、
-# 右＝書かれる側（ボード・Todoist の完了と日付）。
+# 右＝書かれる側（ボード・Todoist の完了とリスケ）。
 # Todoist は読み書き両方の相手なので、左（読まれる側）と右（書かれる側）に 2 回置く。
-# 本人はボードの真上に 1 回だけ置く。ボードから時間割と依頼文を受け取り（上向き）、依頼と完了の指示を Claude Code へ出し（左へ出て下向き）、
-# 依頼文を別フォルダの会話に貼る（右向き）。Claude Code から別フォルダの会話へは線を引かない
+# 本人はボードの真上に 1 回だけ置く。ボードから時間割と依頼文を受け取り（上向き）、依頼・完了の指示を Claude Code へ出し（左へ出て下向き）、
+# 依頼文をほかの作業の会話（そのリポジトリで開く新しい会話）に貼る（右向き）。Claude Code からその会話へは線を引かない
 # （Claude Code は依頼文を作るだけで、貼るのは本人。自動で送っているように見えるため。2026-11-02）。
 # 自動実行はしないので時計（きっかけ）は付けない。
 # 書いたあとの読み直し（検算）は、ボードとの逆向きの線を並べないため、札の下の動詞に入れる。
-CX, CY = 600, 480
+CX, CY = 640, 480
 fk.service('claude', CX, CY, 'Claude Code', tile=160)
 fk.verb(CX, CY + 80 + 12 + 36, '組んで検算')
 
 # 左：読まれる側
-LX, ELB, ELB2 = 140, 430, 480
+LX, ELB, ELB2 = 170, 460, 520
 fk.service('todoist', LX, 290, 'Todoist')
 fk.flow([(LX + 72, 290), (ELB, 290), (ELB, CY - 50), (CX - 84, CY - 50)], 'タスク', at=((LX + 72 + ELB) / 2, 290 - 37))
 fk.service('googlecalendar', LX, CY, 'カレンダー')
-fk.flow([(LX + 72, CY), (CX - 84, CY)], '予定表', at=((LX + 72 + ELB) / 2, CY - 37))
-folder(LX - 92, 636, 100, 70)
-folder(LX - 32, 654, 100, 70, fk.BLUE)
-fk.centered(LX - 22, 738, 'リポジトリ', 25)
-fk.flow([(LX + 78, 680), (ELB2, 680), (ELB2, CY + 50), (CX - 84, CY + 50)], '計画・進捗・人間待ち',
-        at=((LX + 78 + ELB2) / 2, 680 - 37))
+fk.flow([(LX + 72, CY), (CX - 84, CY)], '今日・明日の予定', at=((LX + 72 + ELB) / 2, CY - 37))
+folder(LX - 82, 636, 100, 70)
+folder(LX - 18, 654, 100, 70, fk.BLUE)
+fk.centered(LX, 738, '作業中のリポジトリ', 24)
+fk.flow([(LX + 94, 680), (ELB2, 680), (ELB2, CY + 50), (CX - 84, CY + 50)], '計画・進捗・本人待ち',
+        at=((LX + 94 + ELB2) / 2, 680 - 37))
 
 # 右：横断タスクボード（時刻の枠・配分の枠。「AIに任せる」の欄に依頼文が付く）
-bx0, by0, bx1 = 900, 300, 1390
+bx0, by0, bx1 = 920, 300, 1390
 by1 = by0 + 276
 BCX = (bx0 + bx1) // 2
 fk.flow([(CX + 84, CY - 40), (bx0 - 4, CY - 40)], '時間割・依頼文', at=((CX + 84 + bx0) / 2 - 16, CY - 40 - 37))
 fk.rr((bx0, by0, bx1, by1), 'white', fk.BLUE, 3, 14)
-for k, (name, on) in enumerate([('予定', True), ('AIに任せる', False), ('開発状況', False)]):
+for k, (name, on) in enumerate([('スケジュール', True), ('AIに任せる', False), ('開発状況', False)]):
     tx = bx0 + 22 + k * 150
     fk.rr((tx, by0 + 12, tx + 140, by0 + 46), fk.BLUE if on else '#eef3f8', fk.BLUE, 2, 9)
     fk.centered(tx + 70, by0 + 14, name, 20, 'white' if on else fk.BLUE)
@@ -98,29 +98,29 @@ row(bx0 + 30, by0 + 192, '声で 2分', fk.TEAL, 200, tag_w=112)
 row(bx0 + 30, by0 + 230, 'AIへ 10分', fk.TEAL, 170, tag_w=112)
 fk.centered(BCX, by1 + 10, '横断タスクボード', 27, fk.BLUE)
 
-# 右下：Todoist（書かれる側。本人の指示による完了・日付変更・削除）
+# 右下：Todoist（書かれる側。本人の指示による完了・リスケ）
 TX, TY = BCX, 720
-fk.flow([(CX + 84, CY + 40), (780, CY + 40), (780, TY), (TX - 59, TY)], '完了・日付・削除',
-        at=((780 + TX - 59) / 2, TY - 37))
+fk.flow([(CX + 84, CY + 40), (790, CY + 40), (790, TY), (TX - 59, TY)], '完了・リスケ',
+        at=((790 + TX - 59) / 2, TY - 37))
 fk.service('todoist', TX, TY, 'Todoist', tile=110)
 
 # 上：本人（ボードの上）。ボードの時間割と依頼文を受け取り（上向き）、依頼を出し（左へ出て下向き）、
-# 依頼文を別フォルダの会話に貼る（右向き）
+# 依頼文をほかの作業の会話に貼る（右向き）
 PX, PY, PS = 1010, 100, .72
 PL, PR = PX - 68 * PS - 8, PX + 68 * PS + 8
 fk.person(PX, PY, PS)
 fk.centered(PX, PY + 93, '本人', 24)
 fk.flow([(PX, by0 - 4), (PX, PY + 136)], '時間割・依頼文',
         at=(PX + 14 + fk.width('時間割・依頼文', 23) / 2, (by0 + PY + 136) / 2 - 16))
-fk.flow([(PL, PY + 40), (CX, PY + 40), (CX, CY - 84)], '依頼と完了の指示',
+fk.flow([(PL, PY + 40), (CX, PY + 40), (CX, CY - 84)], '依頼・完了の指示',
         at=((CX + PL) / 2, PY + 40 - 37))
 
-# 右上：別のフォルダの会話（フォルダに吹き出しを重ね、リポジトリと見分ける）。本人が依頼文を貼る
+# 右上：ほかの作業の会話（そのリポジトリで開く新しい会話。フォルダに吹き出しを重ね、左のリポジトリと見分ける）。本人が依頼文を貼る
 FX, FY = 1190, PY + 40
 fk.flow([(PR, FY), (FX - 4, FY)], '依頼文')
 folder(FX, FY - 40, 100, 70)
 folder(FX + 60, FY - 22, 100, 70, fk.BLUE)
 chat_bubble(FX + 130, FY - 58)
-fk.centered(FX + 90, FY + 64, '別フォルダの会話', 25)
+fk.centered(FX + 90, FY + 64, 'ほかの作業の会話', 25)
 
 fk.save(HERE / 'cover.png')
