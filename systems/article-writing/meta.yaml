@@ -94,7 +94,7 @@ deck:
   figure: cover.png
   alt: 商品紹介は購入判断ノートから note へ、AI の活用はネタ帳と公開カタログから Qiita のあと note 版を note へ、技術記事はネタ帳から Qiita へ出す図
   heading: 記事の種類でネタの出どころと出す先が変わる
-  text: 商品紹介は Notion の購入判断ノートをネタに note だけへ。AI の活用はネタ帳（記事の候補の置き場）と、AI の活用事例を公開しているカタログ（ai-use-cases）をネタに Qiita へ書き、そのあと note 向けに書き直して note にも出す。技術記事はネタ帳から Qiita だけへ。どの記事も、ネタに本人が声で肉付けしてから AI が書き、投稿するのは本人。
+  text: 商品紹介は Notion の購入判断ノートをネタに note だけへ。AI の活用の記事はネタ帳（記事の候補の置き場）と、AI の活用事例を公開しているカタログ（ai-use-cases）をネタに Qiita へ書き、そのあと note 向けに書き直して note にも出す。技術記事はネタ帳から Qiita だけへ。どの記事も、ネタに本人が声で肉付けしてから AI が書き、投稿するのは本人。
 visual:
   cover: cover.png
   language: ja
