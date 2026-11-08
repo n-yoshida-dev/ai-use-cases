@@ -35,15 +35,16 @@ def folder(x, y, w=100, h=70, c=f.TEAL):
 
 
 def board(x, y, w=380, h=290):
-    """横断タスクボード：画面と同じ 3 つのタブと、朝・夜の時刻つきの行"""
+    """横断タスクボード：画面と同じ 4 つのタブ（2026-11-08 に日付を足した）と、朝・夜の時刻つきの行"""
     f.rr((x, y, x + w, y + h), 'white', f.BLUE, 3, 14)
-    tx = x + 16
-    for k, name in enumerate(['スケジュール', 'AIに任せる', '開発状況']):
-        tw = f.width(name, 18) + 22
+    tabs = ['スケジュール', '日付', 'AIに任せる', '開発状況']
+    tx = x + (w - sum(f.width(n, 16) + 16 for n in tabs) - 6 * (len(tabs) - 1)) / 2  # 左右の余白をそろえる
+    for k, name in enumerate(tabs):
+        tw = f.width(name, 16) + 16
         fill = '#e7eef6' if k else f.BLUE
         f.rr((tx, y + 16, tx + tw, y + 50), fill, f.BLUE, 2, 9)
-        f.centered(tx + tw / 2, y + 19, name, 18, 'white' if k == 0 else f.BLUE)
-        tx += tw + 8
+        f.centered(tx + tw / 2, y + 20, name, 16, 'white' if k == 0 else f.BLUE)
+        tx += tw + 6
     for k, (t, c) in enumerate([('朝', f.TEAL), ('朝', f.TEAL), ('夜', f.BLUE), ('夜', f.BLUE)]):
         ry = y + 76 + k * 52
         f.rr((x + 18, ry, x + 100, ry + 36), '#eef3f3', c, 2, 8)

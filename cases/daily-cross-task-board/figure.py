@@ -86,10 +86,14 @@ by1 = by0 + 276
 BCX = (bx0 + bx1) // 2
 fk.flow([(CX + 84, CY - 40), (bx0 - 4, CY - 40)], '時間割・依頼文', at=((CX + 84 + bx0) / 2 - 16, CY - 40 - 37))
 fk.rr((bx0, by0, bx1, by1), 'white', fk.BLUE, 3, 14)
-for k, (name, on) in enumerate([('スケジュール', True), ('AIに任せる', False), ('開発状況', False)]):
-    tx = bx0 + 22 + k * 150
-    fk.rr((tx, by0 + 12, tx + 140, by0 + 46), fk.BLUE if on else '#eef3f8', fk.BLUE, 2, 9)
-    fk.centered(tx + 70, by0 + 14, name, 20, 'white' if on else fk.BLUE)
+# タブは画面と同じ 4 つ（2026-11-08 に日付を足した）。字は 18、列は枠の中央にそろえる
+TABS = [('スケジュール', True), ('日付', False), ('AIに任せる', False), ('開発状況', False)]
+tx = BCX - (sum(fk.width(n, 18) + 18 for n, _ in TABS) + 8 * (len(TABS) - 1)) / 2
+for name, on in TABS:
+    tw = fk.width(name, 18) + 18
+    fk.rr((tx, by0 + 12, tx + tw, by0 + 46), fk.BLUE if on else '#eef3f8', fk.BLUE, 2, 9)
+    fk.centered(tx + tw / 2, by0 + 15, name, 18, 'white' if on else fk.BLUE)
+    tx += tw + 8
 row(bx0 + 30, by0 + 60, '5:30', fk.BLUE, 230, True)
 row(bx0 + 30, by0 + 98, '20:30', fk.BLUE, 190)
 row(bx0 + 30, by0 + 136, '21:45', fk.BLUE, 150)

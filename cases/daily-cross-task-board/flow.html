@@ -8,9 +8,9 @@
   このケースの flow.png（手順の流れ図。README の折りたたみに出す）の編集元。
   cover.png は figure.py が描く。
 
-  再生成（このフォルダで。Chrome / Chromium のヘッドレス版を使う。幅 1000・高さ 2290 を 2 倍の解像度で撮る）：
+  再生成（このフォルダで。Chrome / Chromium のヘッドレス版を使う。幅 1000・高さ 2420 を 2 倍の解像度で撮る。2026-11-08 に 2 か所足して 2290 から伸びた）：
     chrome-headless-shell --headless --disable-gpu --no-sandbox --hide-scrollbars --force-device-scale-factor=2 \
-      --window-size=1000,2290 --screenshot="$PWD/flow.png" "file://$PWD/flow.html"
+      --window-size=1000,2420 --screenshot="$PWD/flow.png" "file://$PWD/flow.html"
   chrome-headless-shell は Playwright が入れる物でよい。
   日本語フォントは Noto Sans CJK JP を入れておく。書き出したら欠字・はみ出し・切れを目視で確かめる。
   スマホでは幅 640px ほどに縮むので、本文の字は 26px 以上、箱の中は 1〜2 行にする。
@@ -88,6 +88,9 @@
   .row.a { background: #eef0fa; color: #3b4a9a; }
   .row.b { background: #fff3d6; color: #8a5f00; }
   .row.c { background: var(--ai-bg); color: var(--ai-tx); }
+  .row.d { background: #edf6f0; color: #2f6b4a; }
+  .subs { display: flex; justify-content: center; gap: 14px; margin-top: 12px; }
+  .subs span { font-size: 26px; padding: 4px 14px; border-radius: 10px; background: #f6f8fa; border: 2px solid #d0d7de; color: var(--muted); }
 </style>
 </head>
 <body>
@@ -121,6 +124,7 @@
         <span class="chip"><svg width="40" height="30"><use href="#folder"/></svg>作業中のリポジトリ</span>
       </div>
       を読んで集める
+      <div class="subs"><span>説明欄の締め切り・前提</span><span>任せた先の最後のコミット</span></div>
     </div>
     <div class="arrow s"></div>
 
@@ -160,6 +164,7 @@
       <div class="row a"><i></i>朝・夜の時間割</div>
       <div class="row b"><i></i>平日の日中の配分</div>
       <div class="row c"><i></i>AIに任せる＋依頼文</div>
+      <div class="row d"><i></i>日付ごとの一覧・★今日やる物</div>
     </div>
   </div>
   <div class="arrow"></div>
