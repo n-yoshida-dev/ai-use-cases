@@ -56,6 +56,8 @@ evidence:
   description: 最新mainの非公開運用ルールの該当節を読み、日曜の大きな目標の見直しが無いことを照合。本文は転載しない。
 - type: automation-run-record
   description: 2026-10-31朝のcompleted記録と同一実行の完了報告を照合。報告は開始後に作成されており、更新・再取得を行った旨がある。実データの独立検証や配信到達の証明とは区別する。
+- type: output-inspection
+  description: 公開済みのQiita記事（https://qiita.com/n-yoshida-dev/items/f21e12f36b31f094dbd1）が存在することを確認。本文の正しさや効果を検証したものではない。
 outcomes:
   measured: false
   notes: 現行設定と直近の完了記録・更新検証の報告を確認。毎回の成功率、判定精度、削減時間は未測定。

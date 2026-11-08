@@ -23,6 +23,6 @@
 
 </details>
 
-[タスク管理の全体像](../../systems/daily-task-hub/) ／ [横断タスクボード](../../systems/cross-task-board/)
+[公開した記事（Qiita）](https://qiita.com/n-yoshida-dev/items/f21e12f36b31f094dbd1) ／ [タスク管理の全体像](../../systems/daily-task-hub/) ／ [横断タスクボード](../../systems/cross-task-board/)
 
 [一覧へ戻る](../../README.md)
