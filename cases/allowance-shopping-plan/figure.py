@@ -9,7 +9,7 @@ Python 3 / Pillow。部品は scripts/figkit.py（サービスはロゴの札 fk
 - 左（同じ AI に同時に入る入力を 3 本まで）：Notion の欲しいもの（点数順の一覧）・Keepa（値段の履歴）・Amazon（セール日程）
 - 上：本人（今あるお小遣い。チャットで伝える）。左の 3 本と並べないよう、Claude Code の真上から入れる
 - 中央：Claude Code（お小遣いで買う月を決める。買い物の全体像の図と同じ動詞にそろえる）
-- 右：計画画面（買う時期のまとまり「今すぐ」「セール」「◯月」に商品が並ぶ）
+- 右：計画画面（上に 1 年のお金の流れ＝残高の線が毎月上がり、買う日に下がる。丸が買う物。下に買う時期のまとまり「今すぐ」「セール」「◯月」に商品が並ぶ。2026-11-10 の作り直しに合わせた）
 棚卸しと 5 つの質問で点数をつける作業、Notion への状態の書き戻し、ChatGPT が Notion に登録する流れは別の図に任せる。
 生成後は欠字・はみ出し・重なり・ロゴの欠けを目視確認する。
 """
@@ -56,18 +56,32 @@ def scored_list(x0, cy, w=200):
 
 
 def plan_screen(x0, y0, x1, y1):
-    """計画画面：買う時期のまとまり（今すぐ・セール・◯月）ごとに商品の四角が並ぶ。下に名前。"""
+    """計画画面：上に 1 年のお金の流れ（残高の線が毎月上がり、買う日に下がる。丸が買う物）、下に買う時期のまとまり（今すぐ・セール・◯月）ごとに商品の四角。下に名前。"""
     fk.rr((x0, y0, x1, y1), 'white', fk.TEAL, 3, 14)
     d.rounded_rectangle((x0 + 2, y0 + 2, x1 - 2, y0 + 30), radius=12, fill='#e7eef6')
+    # 残高の線：1 段ずつ上がり、買う日（丸）に下がる
+    fk.rr((x0 + 20, y0 + 44, x1 - 20, y0 + 134), '#f4f7f6', fk.LINE, 2, 10)
+    gx0, gx1, base, top = x0 + 34, x1 - 34, y0 + 122, y0 + 62
+    levels = [.4, .7, 1.0, .2, .5, .8, .1, .4, .7]
+    w = (gx1 - gx0) / len(levels)
+    pts, buys = [], []
+    for k, lv in enumerate(levels):
+        y = base - lv * (base - top)
+        if k and lv < levels[k - 1]:
+            buys.append((gx0 + k * w, base - levels[k - 1] * (base - top)))
+        pts += [(gx0 + k * w, y), (gx0 + (k + 1) * w, y)]
+    d.line(pts, fill=fk.BLUE, width=4, joint='curve')
+    for bx, by in buys:
+        d.ellipse((bx - 10, by - 10, bx + 10, by + 10), fill=fk.NOTE, outline=fk.AMBER, width=3)
     cols = ['今すぐ', 'セール', '◯月']
     cw = (x1 - x0 - 32) / 3
     for k, (name, n) in enumerate(zip(cols, (2, 3, 2))):
         cx0 = x0 + 16 + k * cw
-        fk.rr((cx0 + 4, y0 + 46, cx0 + cw - 4, y1 - 18), '#f4f7f6', fk.LINE, 2, 10)
-        fk.centered(cx0 + cw / 2, y0 + 54, name, 22, fk.TEAL)
+        fk.rr((cx0 + 4, y0 + 146, cx0 + cw - 4, y1 - 18), '#f4f7f6', fk.LINE, 2, 10)
+        fk.centered(cx0 + cw / 2, y0 + 152, name, 22, fk.TEAL)
         for r in range(n):
-            ry = y0 + 96 + r * 48
-            fk.rr((cx0 + 18, ry, cx0 + cw - 18, ry + 36), fk.NOTE, fk.AMBER, 2, 7)
+            ry = y0 + 192 + r * 44
+            fk.rr((cx0 + 18, ry, cx0 + cw - 18, ry + 34), fk.NOTE, fk.AMBER, 2, 7)
     fk.centered((x0 + x1) / 2, y1 + 12, '計画画面', 25)
 
 
@@ -97,7 +111,7 @@ fk.service('claude', CX, CY, 'Claude Code', tile=TILE)
 fk.verb(CX, CY + HALF + 12 + 36, 'お小遣いで買う月を決める')
 
 # ── 右：計画画面 ──────────────────────────────────────
-SX0, SY0, SX1, SY1 = 1032, CY - 140, 1388, CY + 140
+SX0, SY0, SX1, SY1 = 1032, CY - 172, 1388, CY + 172
 fk.flow([(R + 6, CY), (SX0 - GAP, CY)], 'いつ何を買うか', size=LS)
 plan_screen(SX0, SY0, SX1, SY1)
 
