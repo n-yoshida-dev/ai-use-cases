@@ -82,28 +82,33 @@ fk.flow([(LX + 94, 680), (ELB2, 680), (ELB2, CY + 50), (CX - 84, CY + 50)], '計
 
 # 右：横断タスクボード（時刻の枠・配分の枠。「AIに任せる」の欄に依頼文が付く）
 bx0, by0, bx1 = 920, 300, 1390
-by1 = by0 + 276
+by1 = by0 + 316
 BCX = (bx0 + bx1) // 2
 fk.flow([(CX + 84, CY - 40), (bx0 - 4, CY - 40)], '時間割・依頼文', at=((CX + 84 + bx0) / 2 - 16, CY - 40 - 37))
 fk.rr((bx0, by0, bx1, by1), 'white', fk.BLUE, 3, 14)
-# タブは画面と同じ 4 つ（2026-11-08 に日付を足した）。字は 18、列は枠の中央にそろえる
-TABS = [('スケジュール', True), ('日付', False), ('AIに任せる', False), ('開発状況', False)]
-tx = BCX - (sum(fk.width(n, 18) + 18 for n, _ in TABS) + 8 * (len(TABS) - 1)) / 2
-for name, on in TABS:
-    tw = fk.width(name, 18) + 18
-    fk.rr((tx, by0 + 12, tx + tw, by0 + 46), fk.BLUE if on else '#eef3f8', fk.BLUE, 2, 9)
-    fk.centered(tx + tw / 2, by0 + 15, name, 18, 'white' if on else fk.BLUE)
-    tx += tw + 8
-row(bx0 + 30, by0 + 60, '5:30', fk.BLUE, 230, True)
-row(bx0 + 30, by0 + 98, '20:30', fk.BLUE, 190)
-row(bx0 + 30, by0 + 136, '21:45', fk.BLUE, 150)
-fk.d.line((bx0 + 24, by0 + 180, bx1 - 24, by0 + 180), fill=fk.LINE, width=2)
-row(bx0 + 30, by0 + 192, '声で 2分', fk.TEAL, 200, tag_w=112)
-row(bx0 + 30, by0 + 230, 'AIへ 10分', fk.TEAL, 170, tag_w=112)
+# タブは画面と同じ 6 つ（2026-11-08 に日付、2026-11-10 に目標と確認待ちを足し、分野ごとのタブを外した）。
+# 画面の並びのまま 3 つずつ 2 段。字は 18、段ごとに枠の中央にそろえる
+TABS = [[('スケジュール', True), ('目標', False), ('日付', False)],
+        [('確認待ち', False), ('開発状況', False), ('AIに任せる', False)]]
+for k, tabs in enumerate(TABS):
+    ty = by0 + 12 + k * 40
+    tx = BCX - (sum(fk.width(n, 18) + 18 for n, _ in tabs) + 8 * (len(tabs) - 1)) / 2
+    for name, on in tabs:
+        tw = fk.width(name, 18) + 18
+        fk.rr((tx, ty, tx + tw, ty + 34), fk.BLUE if on else '#eef3f8', fk.BLUE, 2, 9)
+        fk.centered(tx + tw / 2, ty + 3, name, 18, 'white' if on else fk.BLUE)
+        tx += tw + 8
+RY0 = by0 + 40  # タブを 2 段にした分、行を下げる
+row(bx0 + 30, RY0 + 60, '5:30', fk.BLUE, 230, True)
+row(bx0 + 30, RY0 + 98, '20:30', fk.BLUE, 190)
+row(bx0 + 30, RY0 + 136, '21:45', fk.BLUE, 150)
+fk.d.line((bx0 + 24, RY0 + 180, bx1 - 24, RY0 + 180), fill=fk.LINE, width=2)
+row(bx0 + 30, RY0 + 192, '声で 2分', fk.TEAL, 200, tag_w=112)
+row(bx0 + 30, RY0 + 230, 'AIへ 10分', fk.TEAL, 170, tag_w=112)
 fk.centered(BCX, by1 + 10, '横断タスクボード', 27, fk.BLUE)
 
 # 右下：Todoist（書かれる側。本人の指示による完了・リスケ）
-TX, TY = BCX, 720
+TX, TY = BCX, 760
 fk.flow([(CX + 84, CY + 40), (790, CY + 40), (790, TY), (TX - 59, TY)], '完了・リスケ',
         at=((790 + TX - 59) / 2, TY - 37))
 fk.service('todoist', TX, TY, 'Todoist', tile=110)

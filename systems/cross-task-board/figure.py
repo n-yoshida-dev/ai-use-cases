@@ -9,7 +9,7 @@
 右＝書く先（ボードと Todoist）。並ぶ入力は 3 本まで（計画・進捗・本人待ちはリポジトリ 1 本にまとめる）。
 Todoist は読む相手でも書く相手でもあるので、左と右に 2 回置く。
 本人はボードを見て、声で Claude Code に指示するので、左の入力とは別の向き（AI の札の上）に置く。
-ボードのタブの名前は実際の画面と同じ（スケジュール・AIに任せる・開発状況）。
+ボードのタブの名前は実際の画面と同じ（スケジュール・目標・日付・確認待ち・開発状況・AIに任せる）。
 自動実行はしない（本人の依頼で作る）ので、時計は付けない。
 """
 import argparse
@@ -34,19 +34,22 @@ def folder(x, y, w=100, h=70, c=f.TEAL):
     f.d.line((x + 16, y + 54, x + w - 40, y + 54), fill=f.LINE, width=6)
 
 
-def board(x, y, w=380, h=290):
-    """横断タスクボード：画面と同じ 4 つのタブ（2026-11-08 に日付を足した）と、朝・夜の時刻つきの行"""
+def board(x, y, w=380, h=330):
+    """横断タスクボード：画面と同じ 6 つのタブ（2026-11-08 に日付、2026-11-10 に目標と確認待ちを足し、
+    分野ごとのタブを外した）を画面の並びのまま 3 つずつ 2 段にし、その下に朝・夜の時刻つきの行"""
     f.rr((x, y, x + w, y + h), 'white', f.BLUE, 3, 14)
-    tabs = ['スケジュール', '日付', 'AIに任せる', '開発状況']
-    tx = x + (w - sum(f.width(n, 16) + 16 for n in tabs) - 6 * (len(tabs) - 1)) / 2  # 左右の余白をそろえる
-    for k, name in enumerate(tabs):
-        tw = f.width(name, 16) + 16
-        fill = '#e7eef6' if k else f.BLUE
-        f.rr((tx, y + 16, tx + tw, y + 50), fill, f.BLUE, 2, 9)
-        f.centered(tx + tw / 2, y + 20, name, 16, 'white' if k == 0 else f.BLUE)
-        tx += tw + 6
+    rows = [['スケジュール', '目標', '日付'], ['確認待ち', '開発状況', 'AIに任せる']]
+    for r, tabs in enumerate(rows):
+        ty = y + 16 + r * 40
+        tx = x + (w - sum(f.width(n, 16) + 16 for n in tabs) - 6 * (len(tabs) - 1)) / 2  # 左右の余白をそろえる
+        for k, name in enumerate(tabs):
+            tw = f.width(name, 16) + 16
+            on = r == 0 and k == 0
+            f.rr((tx, ty, tx + tw, ty + 34), f.BLUE if on else '#e7eef6', f.BLUE, 2, 9)
+            f.centered(tx + tw / 2, ty + 4, name, 16, 'white' if on else f.BLUE)
+            tx += tw + 6
     for k, (t, c) in enumerate([('朝', f.TEAL), ('朝', f.TEAL), ('夜', f.BLUE), ('夜', f.BLUE)]):
-        ry = y + 76 + k * 52
+        ry = y + 116 + k * 52
         f.rr((x + 18, ry, x + 100, ry + 36), '#eef3f3', c, 2, 8)
         f.centered(x + 59, ry + 3, t, 20, c)
         f.d.line((x + 118, ry + 18, x + w - 80 - (k % 2) * 60, ry + 18), fill=f.LINE, width=6)
@@ -87,7 +90,7 @@ board(BX, BY, BW)
 f.flow([(AR + 4, AY - 50), (BX - 6, AY - 50)], '時間割・依頼文', at=((AR + BX) / 2 - 14, AY - 50 - 44))
 
 # 右下：Todoist への反映（本人が指示した分）
-TX, TY = BX + BW / 2, 730
+TX, TY = BX + BW / 2, 770
 f.service('todoist', TX, TY, 'Todoist', tile=110)
 f.flow([(AR + 4, AY + 30), (870, AY + 30), (870, TY), (TX - 61, TY)], '完了・リスケ')
 
